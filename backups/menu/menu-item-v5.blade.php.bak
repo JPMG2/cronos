@@ -1,0 +1,359 @@
+@props([
+    "menu",
+    "openMenus" => [],
+    "level" => 0,
+    "collapsed" => false,
+])
+
+@php
+    $children = $menu->childrenRecursive ?? collect();
+    $hasChildren = $children->count() > 0;
+    $isOpen = in_array($menu->id, $openMenus);
+    $isActive = ! $hasChildren && $menu->route && \Illuminate\Support\Facades\Route::has($menu->route) && request()->routeIs($menu->route);
+
+    $href = "#";
+    if (! $hasChildren && $menu->route && \Illuminate\Support\Facades\Route::has($menu->route)) {
+        try {
+            $href = route($menu->route);
+        } catch (Exception $e) {
+        }
+    }
+@endphp
+
+<div
+    x-data="{
+        open: @js($isOpen),
+        menuId: {{ $menu->id }},
+        hovering: false,
+        collapsed: @js($collapsed),
+        init() {
+            this.$watch('$wire.openMenus', (value) => {
+                const menus = Array.isArray(value)
+                    ? value
+                    : Object.values(value || {})
+                this.open = menus.includes(this.menuId)
+            })
+            this.$watch('collapsed', (newVal, oldVal) => {
+                if (newVal !== oldVal) {
+                    this.hovering = false
+                    if (newVal) {
+                        this.open = false
+                    }
+                }
+            })
+        },
+    }"
+    x-init="
+        $watch('$wire.collapsed', (value) => {
+            collapsed = value
+        })
+    "
+    wire:key="menu-item-{{ $menu->id }}-{{ $collapsed ? "collapsed" : "expanded" }}"
+    class="relative">
+    {{--
+        ══════════════════════════════════════════════════════════════
+        COLAPSADO — Solo icono centrado (aplica solo a nivel 0)
+        ══════════════════════════════════════════════════════════════════
+    --}}
+    @if ($collapsed && $level === 0)
+        @if ($hasChildren)
+            <button
+                x-ref="menuButton"
+                @click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
+                @mouseenter="hovering = true"
+                @mouseleave="hovering = false"
+                class="group relative flex w-full items-center justify-center py-1.5 transition-all duration-200"
+                title="{{ $menu->title }}">
+                <span
+                    :class="open
+                        ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]'
+                        : 'text-blue-600 group-hover:text-blue-500 group-hover:drop-shadow-[0_0_5px_rgba(59,130,246,0.6)] dark:text-blue-400 dark:group-hover:text-blue-300'"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-125">
+                    <x-menu.heroicon name="{{ $menu->icon }}" class="h-6 w-6 shrink-0" />
+                </span>
+                <div
+                    class="pointer-events-none absolute left-full z-50 ml-4 whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white opacity-0 shadow-xl transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100">
+                    {{ $menu->title }}
+                </div>
+            </button>
+
+            {{-- Flyout --}}
+            <div
+                x-show="hovering"
+                x-transition:enter="transition duration-200 ease-out"
+                x-transition:enter-start="translate-x-4 scale-95 opacity-0"
+                x-transition:enter-end="translate-x-0 scale-100 opacity-100"
+                x-transition:leave="transition duration-150 ease-in"
+                x-transition:leave-end="translate-x-4 scale-95 opacity-0"
+                @mouseenter="hovering = true"
+                @mouseleave="hovering = false"
+                class="fixed z-[9999] w-64 overflow-hidden rounded-2xl border border-blue-100 bg-white/95 shadow-2xl backdrop-blur-sm dark:border-blue-900/50 dark:bg-slate-900/95"
+                style="display: none"
+                x-bind:style="`left: 5.5rem; top: ${$refs.menuButton ? $refs.menuButton.getBoundingClientRect().top - 10 : 0}px;`">
+                <div
+                    class="flex items-center gap-3 border-b border-blue-50 bg-blue-50/50 px-5 py-4 dark:border-blue-900/30 dark:bg-blue-950/40">
+                    <span
+                        class="flex h-8 w-8 items-center justify-center text-blue-500 transition-all duration-300 group-hover:scale-110 group-hover:text-blue-600 dark:text-blue-400">
+                        <x-menu.heroicon name="{{ $menu->icon }}" class="h-6 w-6" />
+                    </span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-blue-50">
+                        {{ $menu->title }}
+                    </span>
+                </div>
+                <div class="max-h-80 overflow-y-auto py-2">
+                    @foreach ($children as $child)
+                        @php
+                            $flyChildHasChildren = ($child->childrenRecursive ?? collect())->count() > 0;
+                            $flyHref = "#";
+                            if (! $flyChildHasChildren && $child->route && \Illuminate\Support\Facades\Route::has($child->route)) {
+                                try {
+                                    $flyHref = route($child->route);
+                                } catch (Exception $e) {
+                                }
+                            }
+                        @endphp
+
+                        @if ($flyChildHasChildren)
+                            <div x-data="{ expanded: false }" class="px-2">
+                                <button
+                                    @click="expanded = !expanded"
+                                    class="group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs text-slate-600 transition-all duration-300 hover:bg-blue-50/60 hover:text-blue-700 dark:text-slate-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-300">
+                                    {{-- Indicador vertical --}}
+                                    <div
+                                        class="absolute left-0 h-0 w-1 rounded-r-full bg-blue-500 transition-all duration-300 group-hover:h-3/5"></div>
+
+                                    <x-menu.heroicon
+                                        name="{{ $child->icon }}"
+                                        class="h-5 w-5 flex-shrink-0 text-blue-500 transition-all duration-300 group-hover:scale-110 group-hover:text-blue-600 dark:text-blue-400" />
+                                    <span class="flex-1 text-left font-semibold">{{ $child->title }}</span>
+                                    <svg
+                                        :class="expanded ? 'rotate-180 text-blue-500' : 'text-slate-400 group-hover:text-blue-500'"
+                                        class="h-3.5 w-3.5 transition-all duration-300"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2.5"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="expanded" x-collapse class="mt-1 space-y-1">
+                                    @foreach ($child->childrenRecursive as $subChild)
+                                        @php
+                                            $subHref = "#";
+                                            if ($subChild->route && \Illuminate\Support\Facades\Route::has($subChild->route)) {
+                                                try {
+                                                    $subHref = route($subChild->route);
+                                                } catch (Exception $e) {
+                                                }
+                                            }
+                                        @endphp
+
+                                        <a
+                                            href="{{ $subHref }}"
+                                            @if ($subHref !== "#")
+                                                wire:navigate
+                                                @click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }"
+                                            @endif
+                                            class="group relative flex items-center gap-3 rounded-lg py-2 pl-10 pr-3 text-[11px] font-medium text-slate-500 transition-all duration-300 hover:bg-blue-50/40 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-blue-900/10 dark:hover:text-blue-400">
+                                            {{-- Indicador vertical subopción --}}
+                                            <div
+                                                class="absolute left-6 h-0 w-0.5 rounded-r-full bg-blue-400 transition-all duration-300 group-hover:h-3/5"></div>
+
+                                            <div
+                                                class="h-1.5 w-1.5 rounded-full bg-slate-300 transition-all duration-300 group-hover:scale-125 group-hover:bg-blue-400"></div>
+                                            <span>{{ $subChild->title }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            <div class="px-2">
+                                <a
+                                    href="{{ $flyHref }}"
+                                    @if ($flyHref !== "#")
+                                        wire:navigate
+                                        @click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }"
+                                    @endif
+                                    class="group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs text-slate-600 transition-all duration-300 hover:bg-blue-50/60 hover:text-blue-700 dark:text-slate-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-300">
+                                    {{-- Indicador vertical --}}
+                                    <div
+                                        class="absolute left-0 h-0 w-1 rounded-r-full bg-blue-500 transition-all duration-300 group-hover:h-3/5"></div>
+
+                                    <x-menu.heroicon
+                                        name="{{ $child->icon }}"
+                                        class="h-5 w-5 flex-shrink-0 text-blue-500 transition-all duration-300 group-hover:scale-110 group-hover:text-blue-600 dark:text-blue-400" />
+                                    <span class="font-semibold">{{ $child->title }}</span>
+                                </a>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <a
+                href="{{ $href }}"
+                @if ($href !== "#")
+                    wire:navigate
+                    @click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }"
+                @endif
+                @mouseenter="hovering = true"
+                @mouseleave="hovering = false"
+                class="group relative flex w-full items-center justify-center py-2 transition-all duration-300"
+                title="{{ $menu->title }}">
+                <span
+                    @class([
+                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-125",
+                        "text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" => $isActive,
+                        "text-blue-600 group-hover:text-blue-500 group-hover:drop-shadow-[0_0_5px_rgba(59,130,246,0.6)] dark:text-blue-400 dark:group-hover:text-blue-300" => ! $isActive,
+                    ])>
+                    <x-menu.heroicon name="{{ $menu->icon }}" class="h-6 w-6 shrink-0" />
+                </span>
+                <div
+                    class="pointer-events-none absolute left-full z-50 ml-4 whitespace-nowrap rounded-lg bg-slate-900 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white opacity-0 shadow-xl transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100">
+                    {{ $menu->title }}
+                </div>
+            </a>
+        @endif
+
+        {{--
+            ══════════════════════════════════════════════════════════════
+            NIVEL 0 EXPANDIDO — Pill grande + icon-box
+            ══════════════════════════════════════════════════════════════════
+        --}}
+    @elseif ($level === 0)
+        @if ($hasChildren)
+            <button
+                @click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
+                class="group relative mx-4 flex w-[calc(100%-2rem)] items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-all duration-300"
+                :class="open
+                ? 'bg-blue-100/70 text-blue-800 shadow-sm shadow-blue-200/50 dark:bg-blue-900/40 dark:text-blue-200 dark:shadow-none'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 hover:text-blue-600 dark:hover:text-blue-300'">
+                <span
+                    class="flex h-9 w-9 flex-shrink-0 items-center justify-center transition-all duration-300"
+                    :class="open
+                    ? 'text-blue-600 drop-shadow-[0_0_5px_rgba(37,99,235,0.4)]'
+                    : 'text-blue-600 group-hover:text-blue-500 group-hover:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)] dark:text-blue-400 dark:group-hover:text-blue-300'">
+                    <x-menu.heroicon name="{{ $menu->icon }}" class="h-5 w-5" />
+                </span>
+                <span class="flex-1 text-left uppercase tracking-wide">{{ $menu->title }}</span>
+                <svg
+                    :class="open ? 'rotate-180 text-blue-500' : 'text-slate-400 group-hover:text-blue-500'"
+                    class="h-4 w-4 flex-shrink-0 transition-all duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="open" x-collapse>
+                <div class="mt-1 space-y-1 py-1">
+                    @foreach ($children as $child)
+                        <x-menu.menu-item
+                            :menu="$child"
+                            :open-menus="$openMenus"
+                            :level="1"
+                            :collapsed="$collapsed" />
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <a
+                href="{{ $href }}"
+                @if ($href !== "#")
+                    wire:navigate
+                    @click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }"
+                @endif
+                @class([
+                    "group relative mx-4 flex w-[calc(100%-2rem)] items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-all duration-300",
+                    "bg-blue-500 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/30" => $isActive,
+                    "text-slate-600 hover:bg-blue-50/50 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-blue-900/10 dark:hover:text-blue-300" => ! $isActive,
+                ])>
+                <span
+                    @class([
+                        "flex h-9 w-9 flex-shrink-0 items-center justify-center transition-all duration-300",
+                        "text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]" => $isActive,
+                        "text-blue-600 group-hover:text-blue-500 group-hover:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)] dark:text-blue-400 dark:group-hover:text-blue-300" => ! $isActive,
+                    ])>
+                    <x-menu.heroicon name="{{ $menu->icon }}" class="h-5 w-5" />
+                </span>
+                <span class="flex-1 uppercase tracking-wide">{{ $menu->title }}</span>
+            </a>
+        @endif
+
+        {{--
+            ══════════════════════════════════════════════════════════════
+            NIVEL 1+ EXPANDIDO
+            ══════════════════════════════════════════════════════════════════
+        --}}
+    @else
+        @if ($hasChildren)
+            <button
+                @click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
+                @class([
+                    "group relative mx-4 flex w-[calc(100%-2rem)] items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-300",
+                    "bg-blue-100/50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200" => $isOpen,
+                    "text-slate-500 hover:bg-blue-50/30 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-blue-900/5 dark:hover:text-blue-400" => ! $isOpen,
+                ])>
+                {{-- Indicador vertical --}}
+                <div
+                    class="absolute left-0 h-0 w-1 rounded-r-full bg-blue-500 transition-all duration-300 group-hover:h-3/5"></div>
+
+                <div
+                    class="flex h-7 w-7 items-center justify-center text-blue-500 transition-all duration-300 group-hover:scale-110 group-hover:text-blue-600 dark:text-blue-400 dark:group-hover:text-blue-300">
+                    <x-menu.heroicon name="{{ $menu->icon }}" class="h-4 w-4" />
+                </div>
+                <span class="flex-1 text-left">{{ $menu->title }}</span>
+                <svg
+                    :class="open ? 'rotate-180 text-blue-500' : 'text-slate-400 group-hover:text-blue-500'"
+                    class="h-3.5 w-3.5 flex-shrink-0 transition-all duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            <div x-show="open" x-collapse>
+                <div class="mt-1 space-y-1 py-1">
+                    @foreach ($children as $child)
+                        <x-menu.menu-item
+                            :menu="$child"
+                            :open-menus="$openMenus"
+                            :level="$level + 1"
+                            :collapsed="$collapsed" />
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <a
+                href="{{ $href }}"
+                @if ($href !== "#")
+                    wire:navigate
+                    @click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }"
+                @endif
+                @class([
+                    "group relative mx-4 flex w-[calc(100%-2rem)] items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-300",
+                    "bg-blue-100/60 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200" => $isActive,
+                    "text-slate-500 hover:bg-blue-50/30 hover:text-blue-600 dark:text-slate-500 dark:hover:bg-blue-900/5 dark:hover:text-blue-400" => ! $isActive,
+                ])>
+                {{-- Indicador vertical --}}
+                <div
+                    class="absolute left-0 h-0 w-1 rounded-r-full bg-blue-500 transition-all duration-300 group-hover:h-3/5"></div>
+
+                <div
+                    @class([
+                        "flex h-7 w-7 items-center justify-center transition-all duration-300 group-hover:scale-110",
+                        "text-blue-600 drop-shadow-[0_0_3px_rgba(59,130,246,0.4)]" => $isActive,
+                        "text-blue-500 group-hover:text-blue-600 dark:text-blue-400 dark:group-hover:text-blue-300" => ! $isActive,
+                    ])>
+                    <x-menu.heroicon name="{{ $menu->icon }}" class="h-4 w-4" />
+                </div>
+                <span>{{ $menu->title }}</span>
+            </a>
+        @endif
+    @endif
+</div>

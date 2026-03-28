@@ -1,0 +1,164 @@
+<?php
+
+use App\Models\Menu;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Locked;
+use Livewire\Component;
+
+new class extends Component {
+    public bool $collapsed = false;
+
+    #[Locked]
+    public array $openMenus = [];
+
+    public function mount(): void
+    {
+        $this->collapsed = session("sidebar_collapsed", false);
+    }
+
+    public function toggleSidebar(): void
+    {
+        $this->collapsed = ! $this->collapsed;
+        session(["sidebar_collapsed" => $this->collapsed]);
+    }
+
+    public function toggleMenu(int $menuId): void
+    {
+        if (in_array($menuId, $this->openMenus)) {
+            $this->openMenus = array_values(array_diff($this->openMenus, [$menuId]));
+        } else {
+            $menu = Menu::find($menuId);
+            if ($menu && is_null($menu->parent_id)) {
+                $rootIds = Menu::whereNull("parent_id")
+                    ->pluck("id")
+                    ->toArray();
+                $this->openMenus = array_values(array_diff($this->openMenus, $rootIds));
+            }
+            $this->openMenus[] = $menuId;
+        }
+    }
+
+    public function resetOpenMenus(): void
+    {
+        $this->openMenus = [];
+    }
+
+    public function render(): Illuminate\View\View
+    {
+        $menus = Cache::remember("sidebar_menus", now()->addHours(24), function () {
+            return Menu::active()
+                ->whereNull("parent_id")
+                ->with("childrenRecursive")
+                ->orderBy("order")
+                ->get();
+        });
+
+        return $this->view(["menus" => $menus]);
+    }
+};
+?>
+
+<div
+    wire:key="sidebar-component"
+    x-data="{
+        sidebarCollapsed: @entangle("collapsed").live,
+        _wasMobile: null,
+        checkMobile() {
+            const mobile = window.innerWidth < 768
+            if (mobile === this._wasMobile) return
+            this._wasMobile = mobile
+            this.sidebarCollapsed = mobile
+            this.$wire.resetOpenMenus()
+        },
+    }"
+    x-init="
+        checkMobile()
+        window.addEventListener('resize', () => checkMobile())
+    "
+    @toggle-menu.window="$wire.toggleMenu($event.detail)"
+    :class="sidebarCollapsed ? 'w-20' : 'w-72'"
+    class="flex h-screen flex-col border-r border-emerald-100 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.03)] transition-all duration-300 ease-in-out dark:border-emerald-900/30 dark:bg-[#0f172a] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]"
+    id="app-sidebar">
+    <!-- ── Header ─────────────────────────────────────────── -->
+    <div class="flex h-16 flex-shrink-0 items-center gap-3 border-b border-emerald-50 px-4 dark:border-emerald-900/20">
+        <!-- Medical cross logo — clickable to expand when collapsed -->
+        <div
+            class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900/20"
+            :class="sidebarCollapsed ? 'cursor-pointer mx-auto' : ''"
+            @click="if(sidebarCollapsed) $wire.toggleSidebar()">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+            </svg>
+        </div>
+
+        <!-- Brand text — visible when expanded -->
+        <div :class="sidebarCollapsed ? 'hidden' : 'flex'" class="min-w-0 flex-1 flex-col overflow-hidden">
+            <p
+                class="truncate text-base font-extrabold leading-none tracking-tight text-slate-800 dark:text-emerald-50">
+                {{ config("app.name") }}
+            </p>
+            <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-emerald-500 dark:text-emerald-400">
+                Medical Ecosystem
+            </p>
+        </div>
+
+        <!-- Collapse/Expand button — desktop only -->
+        <button
+            @click="$wire.toggleSidebar()"
+            class="hidden h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50/50 text-emerald-600 shadow-sm transition-all duration-300 hover:border-emerald-300 hover:bg-emerald-100 hover:text-emerald-700 md:flex dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:border-emerald-700 dark:hover:bg-emerald-900/40 dark:hover:text-emerald-300"
+            :class="sidebarCollapsed ? 'absolute -right-4 top-4 z-50 rounded-full border-emerald-200 bg-white shadow-md' : ''"
+            :title="sidebarCollapsed ? 'Expandir menú' : 'Colapsar menú'">
+            <div class="relative h-4 w-4">
+                <!-- Icono << (Colapsar) -->
+                <svg
+                    class="absolute inset-0 h-4 w-4 transform transition-all duration-500"
+                    :class="sidebarCollapsed ? 'opacity-0 scale-50 rotate-180' : 'opacity-100 scale-100 rotate-0'"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+                <!-- Icono >> (Expandir) -->
+                <svg
+                    class="absolute inset-0 h-4 w-4 transform transition-all duration-500"
+                    :class="sidebarCollapsed ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-180'"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </div>
+        </button>
+    </div>
+
+    <!-- ── Navigation ─────────────────────────────────────── -->
+    <nav class="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden py-2">
+        @foreach ($menus as $menu)
+            <x-menu.menu-item :menu="$menu" :open-menus="$openMenus" :collapsed="$collapsed" />
+        @endforeach
+    </nav>
+
+    <!-- ── Footer ─────────────────────────────────────────── -->
+    <div
+        class="flex-shrink-0 border-t border-emerald-50 bg-emerald-50/20 px-4 py-3 dark:border-emerald-900/10 dark:bg-emerald-950/10">
+        <!-- Expanded: copyright -->
+        <div
+            :class="sidebarCollapsed ? 'hidden' : 'block'"
+            class="text-center text-[10px] font-bold uppercase tracking-wider text-emerald-600/60 dark:text-emerald-500/50">
+            &copy; {{ date("Y") }} &bull; {{ config("app.name") }}
+        </div>
+        <!-- Collapsed: online indicator dot -->
+        <div :class="!sidebarCollapsed ? 'hidden' : 'flex'" class="justify-center">
+            <span
+                class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)] dark:bg-emerald-400"></span>
+        </div>
+    </div>
+</div>

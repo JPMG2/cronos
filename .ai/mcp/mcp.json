@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "/usr/bin/docker",
+      "args": [
+        "exec",
+        "--interactive",
+        "cronos_app",
+        "sh",
+        "-lc",
+        "cd /var/www/html && php artisan boost:mcp"
+      ]
+    }
+  }
+}

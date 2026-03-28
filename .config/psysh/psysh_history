@@ -1,0 +1,19 @@
+$precio = \Money\Money::USD(50000); // 500.00 US
+echo $precio->format(); // Debería mostrar algo como 500.00
+// 1. Creamos el dinero ($500.00)
+$precio = \Money\Money::USD(50000); 
+
+// 2. Para ver el valor simple (50000)
+echo $precio->getAmount(); 
+
+// 3. Para verlo "bonito" con formato decimal
+$currencies = new \Money\Currencies\ISOCurrencies();
+$formatter = new \Money\Formatter\DecimalMoneyFormatter($currencies);
+
+echo $formatter->format($precio); // Debería imprimir: 500.00
+$precio = \Money\Money::USD(50000);
+echo $precio->getAmount();
+$currencies = new \Money\Currencies\ISOCurrencies();
+$formatter = new \Money\Formatter\DecimalMoneyFormatter($currencies);
+echo $formatter->format($precio); // Debería imprimir: 500.00
+exit

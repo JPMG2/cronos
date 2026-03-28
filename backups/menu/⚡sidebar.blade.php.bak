@@ -1,0 +1,152 @@
+<?php
+
+use App\Models\Menu;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Locked;
+use Livewire\Component;
+
+new class extends Component {
+    public bool $collapsed = false;
+
+    #[Locked]
+    public array $openMenus = [];
+
+    public function mount(): void
+    {
+        $this->collapsed = session("sidebar_collapsed", false);
+    }
+
+    public function toggleSidebar(): void
+    {
+        $this->collapsed = ! $this->collapsed;
+        session(["sidebar_collapsed" => $this->collapsed]);
+    }
+
+    public function toggleMenu(int $menuId): void
+    {
+        if (in_array($menuId, $this->openMenus)) {
+            $this->openMenus = array_values(array_diff($this->openMenus, [$menuId]));
+        } else {
+            $menu = Menu::find($menuId);
+            if ($menu && is_null($menu->parent_id)) {
+                $rootIds = Menu::whereNull('parent_id')->pluck('id')->toArray();
+                $this->openMenus = array_values(array_diff($this->openMenus, $rootIds));
+            }
+            $this->openMenus[] = $menuId;
+        }
+    }
+
+    public function resetOpenMenus(): void
+    {
+        $this->openMenus = [];
+    }
+
+    public function render(): Illuminate\View\View
+    {
+        $menus = Cache::remember("sidebar_menus", now()->addHours(24), function () {
+            return Menu::active()
+                ->whereNull("parent_id")
+                ->with("childrenRecursive")
+                ->orderBy("order")
+                ->get();
+        });
+
+        return $this->view(["menus" => $menus]);
+    }
+};
+?>
+
+<div
+    wire:key="sidebar-component"
+    x-data="{
+        sidebarCollapsed: @entangle('collapsed').live,
+        _wasMobile: null,
+        checkMobile() {
+            const mobile = window.innerWidth < 768
+            if (mobile === this._wasMobile) return
+            this._wasMobile = mobile
+            this.sidebarCollapsed = mobile
+            this.$wire.resetOpenMenus()
+        },
+    }"
+    x-init="
+        checkMobile()
+        window.addEventListener('resize', () => checkMobile())
+    "
+    @toggle-menu.window="$wire.toggleMenu($event.detail)"
+    :class="sidebarCollapsed ? 'w-16' : 'w-64'"
+    class="flex h-screen flex-col border-r border-slate-200 bg-white shadow-[1px_0_20px_rgba(0,0,0,0.06)] transition-all duration-300 ease-in-out dark:border-slate-700/60 dark:bg-slate-900 dark:shadow-[1px_0_20px_rgba(0,0,0,0.25)]"
+    id="app-sidebar">
+    <!-- ── Header ─────────────────────────────────────────── -->
+    <div class="flex h-14 flex-shrink-0 items-center gap-2.5 border-b border-slate-200 px-3 dark:border-slate-700/60">
+        <!-- Medical cross logo — clickable to expand when collapsed -->
+
+        <!-- Brand text — visible when expanded -->
+        <div :class="sidebarCollapsed ? 'hidden' : 'flex'" class="min-w-0 flex-1 flex-col overflow-hidden">
+            <p class="truncate text-sm font-bold leading-none tracking-tight text-slate-800 dark:text-white">
+                {{ config("app.name") }}
+            </p>
+            <p class="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-sky-500 dark:text-sky-400">
+                Sistema Médico
+            </p>
+        </div>
+
+        <!-- Collapse/Expand button — desktop only -->
+        <button
+            @click="$wire.toggleSidebar()"
+            class="hidden h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500 shadow-sm ring-sky-100 transition-all duration-300 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-600 hover:ring-2 md:flex dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:ring-sky-900/30 dark:hover:border-sky-500 dark:hover:bg-slate-700 dark:hover:text-sky-400"
+            :class="sidebarCollapsed ? 'mx-auto' : ''"
+            :title="sidebarCollapsed ? 'Expandir menú' : 'Colapsar menú'">
+            <div class="relative h-4 w-4">
+                <!-- Icono << (Colapsar) -->
+                <svg
+                    class="absolute inset-0 h-4 w-4 transform transition-all duration-500"
+                    :class="sidebarCollapsed ? 'opacity-0 scale-50 rotate-180' : 'opacity-100 scale-100 rotate-0'"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+                <!-- Icono >> (Expandir) -->
+                <svg
+                    class="absolute inset-0 h-4 w-4 transform transition-all duration-500"
+                    :class="sidebarCollapsed ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-180'"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </div>
+        </button>
+    </div>
+
+    <!-- ── Navigation ─────────────────────────────────────── -->
+    <nav class="flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden py-2">
+        @foreach ($menus as $menu)
+            <x-menu.menu-item :menu="$menu" :open-menus="$openMenus" :collapsed="$collapsed" />
+        @endforeach
+    </nav>
+
+    <!-- ── Footer ─────────────────────────────────────────── -->
+    <div class="flex-shrink-0 border-t border-slate-200 px-3 py-2.5 dark:border-slate-700/60">
+        <!-- Expanded: copyright -->
+        <div
+            :class="sidebarCollapsed ? 'hidden' : 'block'"
+            class="text-center text-[10px] font-medium tabular-nums text-slate-400 dark:text-slate-500">
+            &copy; {{ date("Y") }} &bull; {{ config("app.name") }}
+        </div>
+        <!-- Collapsed: online indicator dot -->
+        <div :class="!sidebarCollapsed ? 'hidden' : 'flex'" class="justify-center">
+            <span
+                class="inline-flex h-2 w-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-300/80 dark:shadow-emerald-900/50"></span>
+        </div>
+    </div>
+</div>
