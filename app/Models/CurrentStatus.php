@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable(['name'])]
-class CurrentStatus extends Model
+final class CurrentStatus extends Model
 {
     /** @use HasFactory<CurrentStatusFactory> */
     use HasFactory;

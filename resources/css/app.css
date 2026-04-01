@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+      .input-text-base {
+          @apply block w-full rounded-xl border bg-white
+                 text-sm text-slate-700 placeholder-slate-400
+                 shadow-sm transition-all duration-200
+                 focus:outline-none focus:ring-2
+                 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500;
+      }
+      .input-border-normal {
+          @apply border-indigo-200/80 focus:border-indigo-400 focus:ring-indigo-400/25
+                 dark:border-gray-700 dark:focus:border-sky-600/60 dark:focus:ring-sky-500/20;
+      }
+
+      .input-border-error {
+          @apply border-rose-400 focus:border-rose-500 focus:ring-rose-400/25
+                 dark:border-rose-500/60 dark:focus:ring-rose-500/20;
+      }
+  }
