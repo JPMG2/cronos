@@ -95,7 +95,7 @@ final class BloodTypeSeeder extends Seeder
 
         ];
         foreach ($bloodTypes as $type) {
-            BloodType::create($type);
+            BloodType::query()->create($type);
         }
     }
 }

@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('document_types', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
+            $table->string('name')->unique();
+            $table->string('short_name')->nullable();
             $table->timestamps();
         });
     }

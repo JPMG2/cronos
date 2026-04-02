@@ -27,7 +27,7 @@ final class CurrentStatusSeeder extends Seeder
         ];
 
         foreach ($current_status as $status) {
-            CurrentStatus::create($status);
+            CurrentStatus::query()->create($status);
         }
     }
 }
