@@ -368,105 +368,13 @@ final class MenuSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // Submódulo: Usuarios y Seguridad
-        $usuariosSeguridad = Menu::create([
-            'parent_id' => $configuracion->id,
-            'title' => 'Usuarios y Seguridad',
-            'icon' => 'shield-check',
-            'route' => null,
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $usuariosSeguridad->id,
-            'title' => 'Usuarios',
-            'icon' => 'users',
-            'route' => 'usuarios.index',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $usuariosSeguridad->id,
-            'title' => 'Roles y Permisos',
-            'icon' => 'key',
-            'route' => 'roles.index',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $usuariosSeguridad->id,
-            'title' => 'Logs de Auditoría',
-            'icon' => 'document-magnifying-glass',
-            'route' => 'logs.index',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $usuariosSeguridad->id,
-            'title' => 'Sesiones Activas',
-            'icon' => 'computer-desktop',
-            'route' => 'sesiones.index',
-            'order' => 4,
-            'is_active' => true,
-        ]);
-
-        // Submódulo: Integraciones
-        $integraciones = Menu::create([
-            'parent_id' => $configuracion->id,
-            'title' => 'Integraciones',
-            'icon' => 'link',
-            'route' => null,
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Configuración SAP',
-            'icon' => 'server',
-            'route' => 'integraciones.sap',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Configuración WhatsApp',
-            'icon' => 'chat-bubble-left-right',
-            'route' => 'integraciones.whatsapp',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Configuración n8n',
-            'icon' => 'arrows-right-left',
-            'route' => 'integraciones.n8n',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Estado de APIs',
-            'icon' => 'signal',
-            'route' => 'integraciones.status',
-            'order' => 4,
-            'is_active' => true,
-        ]);
-
         // Submódulo: Empresa
         $empresa = Menu::create([
             'parent_id' => $configuracion->id,
             'title' => 'Empresa',
             'icon' => 'building-office',
             'route' => null,
-            'order' => 3,
+            'order' => 1,
             'is_active' => true,
         ]);
 
@@ -523,5 +431,98 @@ final class MenuSeeder extends Seeder
             'order' => 6,
             'is_active' => true,
         ]);
+
+        // Submódulo: Usuarios y Seguridad
+        $usuariosSeguridad = Menu::create([
+            'parent_id' => $configuracion->id,
+            'title' => 'Usuarios y Seguridad',
+            'icon' => 'shield-check',
+            'route' => null,
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $usuariosSeguridad->id,
+            'title' => 'Usuarios',
+            'icon' => 'users',
+            'route' => 'usuarios.index',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $usuariosSeguridad->id,
+            'title' => 'Roles y Permisos',
+            'icon' => 'key',
+            'route' => 'roles.index',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $usuariosSeguridad->id,
+            'title' => 'Logs de Auditoría',
+            'icon' => 'document-magnifying-glass',
+            'route' => 'logs.index',
+            'order' => 3,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $usuariosSeguridad->id,
+            'title' => 'Sesiones Activas',
+            'icon' => 'computer-desktop',
+            'route' => 'sesiones.index',
+            'order' => 4,
+            'is_active' => true,
+        ]);
+
+        // Submódulo: Integraciones
+        $integraciones = Menu::create([
+            'parent_id' => $configuracion->id,
+            'title' => 'Integraciones',
+            'icon' => 'link',
+            'route' => null,
+            'order' => 3,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $integraciones->id,
+            'title' => 'Configuración SAP',
+            'icon' => 'server',
+            'route' => 'integraciones.sap',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $integraciones->id,
+            'title' => 'Configuración WhatsApp',
+            'icon' => 'chat-bubble-left-right',
+            'route' => 'integraciones.whatsapp',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $integraciones->id,
+            'title' => 'Configuración n8n',
+            'icon' => 'arrows-right-left',
+            'route' => 'integraciones.n8n',
+            'order' => 3,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $integraciones->id,
+            'title' => 'Estado de APIs',
+            'icon' => 'signal',
+            'route' => 'integraciones.status',
+            'order' => 4,
+            'is_active' => true,
+        ]);
+
     }
 }

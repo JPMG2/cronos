@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer components {
+      /* ── Inputs ─────────────────────────────────────────── */
       .input-text-base {
           @apply block w-full rounded-xl border bg-white
                  text-sm text-slate-700 placeholder-slate-400
@@ -14,9 +15,21 @@
           @apply border-indigo-200/80 focus:border-indigo-400 focus:ring-indigo-400/25
                  dark:border-gray-700 dark:focus:border-sky-600/60 dark:focus:ring-sky-500/20;
       }
-
       .input-border-error {
           @apply border-rose-400 focus:border-rose-500 focus:ring-rose-400/25
                  dark:border-rose-500/60 dark:focus:ring-rose-500/20;
+      }
+
+      /* ── Contenedor principal de página ─────────────────── */
+      /*
+       * Light : bg-white + shadow-sm + border slate sutil → "card" flotante sobre el fondo blanco
+       * Dark  : bg-gray-900 + border-gray-800 → contrasta claramente con el fondo gray-950 del main
+       * El crecimiento horizontal es automático: el <main> usa flex-1,
+       * por lo que este div (w-full) expande/contrae junto con el sidebar sin JS adicional.
+       */
+      .main-div-container {
+          @apply w-full rounded-2xl border border-indigo-200 bg-white
+                 shadow-md shadow-slate-200/80
+                 dark:border-indigo-900 dark:bg-gray-900 dark:shadow-lg dark:shadow-black/30;
       }
   }

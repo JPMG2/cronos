@@ -17,13 +17,13 @@
     <body class="font-sans antialiased">
         {{-- Light: contenido bg-white, nav bg-indigo-50 --}}
         {{-- Dark:  contenido bg-gray-950, nav bg-gray-900 --}}
-        <div class="flex h-screen bg-white dark:bg-gray-950">
+        <div class="flex h-screen bg-slate-50 dark:bg-gray-950">
             <div class="flex-shrink-0">
                 @livewire("menu.sidebar", [], key("sidebar-static"))
             </div>
             <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
                 @livewire("menu.header")
-                <main class="flex-1 overflow-y-auto bg-white p-6 dark:bg-gray-950" wire:key="main-content-{{ request()->path() }}">
+                <main class="flex-1 overflow-y-auto bg-slate-50 px-4 pt-4 pb-6 dark:bg-gray-950" wire:key="main-content-{{ request()->path() }}">
                     {{ $slot }}
                 </main>
             </div>
