@@ -13,11 +13,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('credentials', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('code')->unique();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('credentials');
+        Schema::dropIfExists('branches');
     }
 };
