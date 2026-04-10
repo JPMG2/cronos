@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Company extends Model
 {
-    /** @use HasFactory<\Database\Factories\CompanyFactory> */
+    /** @use HasFactory<CompanyFactory> */
     use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'current_status_id',

@@ -28,7 +28,7 @@
     │    Nivel 0 activo   → bg-indigo-600  text-white     (fuerte)     │
     │    Nivel 0 abierto  → bg-indigo-100  text-slate-700 (medio)      │
     │    Nivel 0 inactivo → text-slate-500 hover:bg-indigo-100         │
-    │    Nivel 1 activo   → text-indigo-600 font-semibold  (acento)    │
+    │    Nivel 1 activo   → bg-indigo-50/80 text-indigo-600 font-semi  │
     │    Nivel 1 inactivo → text-slate-500 hover:text-slate-700        │
     │    Nivel 2+         → text-slate-400 hover:text-slate-600        │
     │    Árbol            → bg-indigo-200/50                           │
@@ -37,7 +37,7 @@
     │    Nivel 0 activo   → bg-sky-500/20  text-sky-300   (acento)     │
     │    Nivel 0 abierto  → bg-gray-800    text-gray-200  (prominente) │
     │    Nivel 0 inactivo → text-gray-500  hover:bg-gray-800           │
-    │    Nivel 1 activo   → text-sky-400                               │
+    │    Nivel 1 activo   → bg-indigo-500/10 text-sky-400              │
     │    Nivel 1 inactivo → text-gray-500  hover:text-gray-300         │
     │    Nivel 2+         → text-gray-600  hover:text-gray-400         │
     │    Árbol            → bg-gray-700/50                             │
@@ -72,7 +72,7 @@
             collapsed = value
         })
     "
-    wire:key="menu-item-{{ $menu->id }}-{{ $collapsed ? "collapsed" : "expanded" }}"
+    wire:key="menu-item-{{ $menu->id }}-{{ $collapsed ? 'collapsed' : 'expanded' }}"
     class="relative">
 
     {{-- ══════════════════════════════════════════════════════════════
@@ -85,8 +85,9 @@
                 x-on:click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
                 x-on:mouseenter="hovering = true"
                 x-on:mouseleave="hovering = false"
-                class="group relative flex w-full items-center justify-center py-1.5 transition-all duration-200"
-                title="{{ $menu->title }}">
+                :aria-expanded="open"
+                aria-label="{{ $menu->title }}"
+                class="group relative flex w-full items-center justify-center py-1.5 transition-all duration-200">
                 <span
                     :class="open
                         ? 'bg-indigo-100 text-indigo-700 dark:bg-gray-800 dark:text-sky-400'
@@ -126,44 +127,47 @@
                             if (! $flyChildHasChildren && $child->route && \Illuminate\Support\Facades\Route::has($child->route)) {
                                 try { $flyHref = route($child->route); } catch (Exception $e) {}
                             }
+                            $flyIsActive = ! $flyChildHasChildren && $child->route && request()->routeIs($child->route);
                         @endphp
 
                         @if ($flyChildHasChildren)
                             <div x-data="{ expanded: false }" class="px-1.5">
                                 <button
                                     x-on:click="expanded = !expanded"
+                                    :aria-expanded="expanded"
                                     :class="expanded
                                         ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200'"
                                     class="group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200">
                                     <x-menu.heroicon name="{{ $child->icon }}" class="h-4 w-4 flex-shrink-0 text-slate-400 group-hover:text-indigo-500 dark:text-gray-600 dark:group-hover:text-indigo-400" />
                                     <span class="flex-1 text-left">{{ $child->title }}</span>
-                                    <svg :class="expanded ? 'rotate-180 text-indigo-500' : 'text-slate-400'"
-                                        class="h-3 w-3 flex-shrink-0 transition-all duration-300"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                                    </svg>
+                                    <span :class="expanded ? 'rotate-180 text-indigo-500' : 'text-slate-400'" class="inline-flex h-3 w-3 flex-shrink-0 transition-all duration-300">
+                                        <x-menu.heroicon name="chevron-down" class="h-3 w-3" />
+                                    </span>
                                 </button>
                                 <div x-show="expanded" x-collapse class="mt-0.5 space-y-0.5 pb-1">
                                     @foreach ($child->childrenRecursive as $subChild)
                                         @php
                                             $subHref = "#";
+                                            $subIsActive = false;
                                             if ($subChild->route && \Illuminate\Support\Facades\Route::has($subChild->route)) {
                                                 try { $subHref = route($subChild->route); } catch (Exception $e) {}
+                                                $subIsActive = request()->routeIs($subChild->route);
                                             }
                                         @endphp
                                         <a href="{{ $subHref }}"
-                                            @if ($subHref !== "#") wire:navigate x-on:click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }" @endif
+                                            @if ($subHref !== "#") wire:navigate x-on:click="$dispatch('close-mobile-sidebar')" @endif
+                                            @if ($subIsActive) aria-current="page" @endif
                                             @class([
                                                 "group flex items-center gap-2.5 rounded-lg py-1.5 pl-9 pr-3 text-[11px] font-medium transition-all duration-200",
-                                                "bg-indigo-600 text-white" => request()->url() === $subHref,
-                                                "text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-gray-500 dark:hover:bg-gray-700/60 dark:hover:text-gray-300" => request()->url() !== $subHref,
+                                                "bg-indigo-600 text-white" => $subIsActive,
+                                                "text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-gray-500 dark:hover:bg-gray-700/60 dark:hover:text-gray-300" => ! $subIsActive,
                                             ])>
                                             <span class="flex-1">{{ $subChild->title }}</span>
                                             <div @class([
                                                 "h-1.5 w-1.5 rounded-full bg-emerald-400 transition-all duration-200",
-                                                "opacity-100" => request()->url() === $subHref,
-                                                "opacity-0 group-hover:opacity-60" => request()->url() !== $subHref,
+                                                "opacity-100" => $subIsActive,
+                                                "opacity-0 group-hover:opacity-60" => ! $subIsActive,
                                             ])></div>
                                         </a>
                                     @endforeach
@@ -172,23 +176,24 @@
                         @else
                             <div class="px-1.5">
                                 <a href="{{ $flyHref }}"
-                                    @if ($flyHref !== "#") wire:navigate x-on:click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }" @endif
+                                    @if ($flyHref !== "#") wire:navigate x-on:click="$dispatch('close-mobile-sidebar')" @endif
+                                    @if ($flyIsActive) aria-current="page" @endif
                                     @class([
                                         "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200",
-                                        "bg-indigo-600 text-white shadow-sm" => request()->url() === $flyHref,
-                                        "text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200" => request()->url() !== $flyHref,
+                                        "bg-indigo-600 text-white shadow-sm" => $flyIsActive,
+                                        "text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200" => ! $flyIsActive,
                                     ])>
                                     <x-menu.heroicon name="{{ $child->icon }}"
                                         @class([
                                             "h-4 w-4 flex-shrink-0 transition-all duration-200",
-                                            "text-white" => request()->url() === $flyHref,
-                                            "text-slate-400 group-hover:text-indigo-500 dark:text-gray-600 dark:group-hover:text-indigo-400" => request()->url() !== $flyHref,
+                                            "text-white" => $flyIsActive,
+                                            "text-slate-400 group-hover:text-indigo-500 dark:text-gray-600 dark:group-hover:text-indigo-400" => ! $flyIsActive,
                                         ]) />
                                     <span class="flex-1">{{ $child->title }}</span>
                                     <div @class([
                                         "h-1.5 w-1.5 rounded-full bg-emerald-400 transition-all duration-200",
-                                        "opacity-100" => request()->url() === $flyHref,
-                                        "opacity-0 group-hover:opacity-60" => request()->url() !== $flyHref,
+                                        "opacity-100" => $flyIsActive,
+                                        "opacity-0 group-hover:opacity-60" => ! $flyIsActive,
                                     ])></div>
                                 </a>
                             </div>
@@ -200,11 +205,12 @@
         @else
             {{-- Colapsado — leaf sin hijos --}}
             <a href="{{ $href }}"
-                @if ($href !== "#") wire:navigate x-on:click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }" @endif
+                @if ($href !== "#") wire:navigate x-on:click="$dispatch('close-mobile-sidebar')" @endif
                 x-on:mouseenter="hovering = true"
                 x-on:mouseleave="hovering = false"
-                class="group relative flex w-full items-center justify-center py-1.5 transition-all duration-200"
-                title="{{ $menu->title }}">
+                aria-label="{{ $menu->title }}"
+                @if ($isActive) aria-current="page" @endif
+                class="group relative flex w-full items-center justify-center py-1.5 transition-all duration-200">
                 <span @class([
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-200",
                     "bg-indigo-600 text-white shadow-md shadow-indigo-200 dark:bg-sky-500/20 dark:text-sky-300 dark:shadow-none" => $isActive,
@@ -225,6 +231,7 @@
         @if ($hasChildren)
             <button
                 x-on:click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
+                :aria-expanded="open"
                 class="group relative mx-2 flex w-[calc(100%-1rem)] items-center gap-2.5 rounded-xl px-3 py-2 text-[11px] font-semibold uppercase tracking-wide transition-all duration-200"
                 :class="open
                     ? 'bg-indigo-200/80 text-indigo-800 dark:bg-gray-800 dark:text-gray-200'
@@ -237,14 +244,11 @@
                     <x-menu.heroicon name="{{ $menu->icon }}" class="h-4 w-4" />
                 </span>
                 <span class="flex-1 text-left">{{ $menu->title }}</span>
-                <svg
-                    :class="open
-                        ? 'rotate-180 text-indigo-400 dark:text-gray-500'
-                        : 'text-slate-400 group-hover:text-indigo-500 dark:text-gray-700 dark:group-hover:text-gray-500'"
-                    class="h-3 w-3 flex-shrink-0 transition-all duration-300"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
+                <span
+                    :class="open ? 'rotate-180 text-indigo-400 dark:text-gray-500' : 'text-slate-400 group-hover:text-indigo-500 dark:text-gray-700 dark:group-hover:text-gray-500'"
+                    class="inline-flex h-3 w-3 flex-shrink-0 transition-all duration-300">
+                    <x-menu.heroicon name="chevron-down" class="h-3 w-3" />
+                </span>
             </button>
 
             <div x-show="open" x-collapse>
@@ -258,7 +262,8 @@
 
         @else
             <a href="{{ $href }}"
-                @if ($href !== "#") wire:navigate x-on:click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }" @endif
+                @if ($href !== "#") wire:navigate x-on:click="$dispatch('close-mobile-sidebar')" @endif
+                @if ($isActive) aria-current="page" @endif
                 @class([
                     "group relative mx-2 flex w-[calc(100%-1rem)] items-center gap-2.5 rounded-xl px-3 py-2 text-[11px] font-semibold uppercase tracking-wide transition-all duration-200",
                     "bg-indigo-600 text-white shadow-md shadow-indigo-200 dark:bg-sky-500/20 dark:text-sky-300 dark:shadow-none" => $isActive,
@@ -285,6 +290,7 @@
         @if ($hasChildren)
             <button
                 x-on:click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
+                :aria-expanded="open"
                 @php
                     $marginLeft = "mx-2";
                     if ($level === 1) { $marginLeft = "ml-7 mr-2"; }
@@ -302,14 +308,11 @@
                     <x-menu.heroicon name="{{ $menu->icon }}" class="h-3.5 w-3.5" />
                 </div>
                 <span class="flex-1 text-left">{{ $menu->title }}</span>
-                <svg
-                    :class="open
-                        ? 'rotate-180 text-indigo-600 dark:text-gray-500'
-                        : 'text-slate-400 group-hover:text-indigo-500 dark:text-gray-700 dark:group-hover:text-gray-600'"
-                    class="h-3 w-3 flex-shrink-0 transition-all duration-300"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
+                <span
+                    :class="open ? 'rotate-180 text-indigo-600 dark:text-gray-500' : 'text-slate-400 group-hover:text-indigo-500 dark:text-gray-700 dark:group-hover:text-gray-600'"
+                    class="inline-flex h-3 w-3 flex-shrink-0 transition-all duration-300">
+                    <x-menu.heroicon name="chevron-down" class="h-3 w-3" />
+                </span>
             </button>
 
             <div x-show="open" x-collapse>
@@ -323,7 +326,8 @@
 
         @else
             <a href="{{ $href }}"
-                @if ($href !== "#") wire:navigate x-on:click="if (window.innerWidth < 768) { $dispatch('close-mobile-sidebar') }" @endif
+                @if ($href !== "#") wire:navigate x-on:click="$dispatch('close-mobile-sidebar')" @endif
+                @if ($isActive) aria-current="page" @endif
                 @php
                     $marginLeft = "mx-2";
                     if ($level === 1) { $marginLeft = "ml-7 mr-2"; }
@@ -334,7 +338,7 @@
                     "w-[calc(100%-1rem)]" => $level === 0,
                     "w-[calc(100%-2.25rem)]" => $level === 1,
                     "w-[calc(100%-3.25rem)]" => $level > 1,
-                    "text-indigo-600 font-semibold dark:text-sky-400" => $isActive,
+                    "bg-indigo-50/80 text-indigo-600 font-semibold dark:bg-indigo-500/10 dark:text-sky-400" => $isActive,
                     "text-slate-600 hover:bg-indigo-100/70 hover:text-indigo-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300" => ! $isActive,
                 ])>
                 <div @class([
