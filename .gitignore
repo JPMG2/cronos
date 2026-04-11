@@ -23,3 +23,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /pw-browsers
+/.npm-cache
+.npm-cache
