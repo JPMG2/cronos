@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,9 +25,49 @@ final class Menu extends Model
         'is_active',
     ];
 
+    /**
+     * Construye el trail completo de breadcrumbs para una ruta nombrada.
+     *
+     * @return array<int, array{title: string, route: string|null}>
+     */
+    public static function breadcrumbTrail(string $routeName): array
+    {
+        if ($routeName === '') {
+            return [];
+        }
+
+        $item = self::query()
+            ->active()
+            ->forRoute($routeName)
+            ->with('parentRecursive')
+            ->first();
+
+        if (! $item) {
+            return [];
+        }
+
+        $trail = [];
+        $node = $item;
+
+        do {
+            array_unshift($trail, [
+                'title' => $node->title,
+                'route' => $node->route,
+            ]);
+            $node = $node->parentRecursive;
+        } while ($node instanceof self);
+
+        return $trail;
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function parentRecursive(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id')->with('parentRecursive');
     }
 
     public function children(): HasMany
@@ -40,14 +82,22 @@ final class Menu extends Model
             ->with('childrenRecursive');
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active(Builder $query): void
     {
-        return $query->where('is_active', true);
+        $query->where('is_active', true);
     }
 
-    public function scopeRootMenus($query)
+    #[Scope]
+    protected function rootMenus(Builder $query): void
     {
-        return $query->whereNull('parent_id')->orderBy('order');
+        $query->whereNull('parent_id')->orderBy('order');
+    }
+
+    #[Scope]
+    protected function forRoute(Builder $query, string $routeName): void
+    {
+        $query->where('route', $routeName);
     }
 
     protected function casts(): array
