@@ -16,6 +16,8 @@ final class Menu extends Model
     /** @use HasFactory<\Database\Factories\MenuFactory> */
     use HasFactory;
 
+    private const PARENT_KEY = 'parent_id';
+
     protected $fillable = [
         'parent_id',
         'title',
@@ -42,44 +44,50 @@ final class Menu extends Model
             ->with('parentRecursive')
             ->first();
 
-        if (! $item) {
+        if (! $item instanceof self) {
             return [];
         }
 
         $trail = [];
-        $node = $item;
 
-        do {
+        for ($node = $item; $node instanceof self; $node = $node->parentRecursive) {
             array_unshift($trail, [
                 'title' => $node->title,
                 'route' => $node->route,
             ]);
-            $node = $node->parentRecursive;
-        } while ($node instanceof self);
+        }
 
         return $trail;
     }
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(self::class, 'parent_id');
+        return $this->belongsTo(self::class, self::PARENT_KEY);
     }
 
     public function parentRecursive(): BelongsTo
     {
-        return $this->belongsTo(self::class, 'parent_id')->with('parentRecursive');
+        return $this->belongsTo(self::class, self::PARENT_KEY)->with('parentRecursive');
     }
 
     public function children(): HasMany
     {
-        return $this->hasMany(self::class, 'parent_id')->orderBy('order');
+        return $this->hasMany(self::class, self::PARENT_KEY)->orderBy('order');
     }
 
     public function childrenRecursive(): HasMany
     {
-        return $this->hasMany(self::class, 'parent_id')
+        return $this->hasMany(self::class, self::PARENT_KEY)
             ->orderBy('order')
             ->with('childrenRecursive');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'order' => 'integer',
+        ];
     }
 
     #[Scope]
@@ -91,20 +99,12 @@ final class Menu extends Model
     #[Scope]
     protected function rootMenus(Builder $query): void
     {
-        $query->whereNull('parent_id')->orderBy('order');
+        $query->whereNull(self::PARENT_KEY)->orderBy('order');
     }
 
     #[Scope]
     protected function forRoute(Builder $query, string $routeName): void
     {
         $query->where('route', $routeName);
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-            'order' => 'integer',
-        ];
     }
 }
