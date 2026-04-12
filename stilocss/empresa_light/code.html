@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crear Empresa - Ethereal Medical</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#cdb5ff",
+                        "on-secondary": "#f8f8ff",
+                        "inverse-surface": "#0b0f11",
+                        "on-primary": "#fdf7ff",
+                        "primary-dim": "#661ada",
+                        "on-tertiary-fixed-variant": "#36377f",
+                        "on-tertiary-fixed": "#15145f",
+                        "on-tertiary-container": "#2d2d75",
+                        "on-primary-container": "#4c00ad",
+                        "on-tertiary": "#fbf7ff",
+                        "tertiary-fixed-dim": "#a3a4f4",
+                        "on-primary-fixed": "#330079",
+                        "surface-container-low": "#f1f4f7",
+                        "background": "#f7f9fc",
+                        "on-secondary-fixed-variant": "#005da7",
+                        "secondary": "#0060ad",
+                        "tertiary-fixed": "#b1b2ff",
+                        "error-dim": "#770326",
+                        "outline-variant": "#acb3b8",
+                        "on-background": "#2d3338",
+                        "on-primary-fixed-variant": "#5700c4",
+                        "tertiary": "#5657a1",
+                        "secondary-container": "#d4e3ff",
+                        "on-secondary-container": "#005396",
+                        "surface": "#f7f9fc",
+                        "tertiary-dim": "#4a4b94",
+                        "on-surface-variant": "#596065",
+                        "on-surface": "#2d3338",
+                        "error-container": "#f76a80",
+                        "primary-fixed-dim": "#c1a4ff",
+                        "surface-container-highest": "#dde3e9",
+                        "primary-container": "#cdb5ff",
+                        "surface-variant": "#dde3e9",
+                        "on-secondary-fixed": "#004076",
+                        "on-error-container": "#68001f",
+                        "tertiary-container": "#b1b2ff",
+                        "surface-bright": "#f7f9fc",
+                        "surface-tint": "#7330e6",
+                        "surface-dim": "#d3dbe1",
+                        "surface-container-high": "#e3e9ee",
+                        "surface-container": "#eaeef3",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#9a9da0",
+                        "error": "#ac3149",
+                        "outline": "#757c81",
+                        "secondary-fixed-dim": "#bcd6ff",
+                        "primary": "#7330e6",
+                        "on-error": "#fff7f7",
+                        "secondary-dim": "#005498",
+                        "secondary-fixed": "#d4e3ff",
+                        "inverse-primary": "#a277ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #7330e6 0%, #661ada 100%);
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-screen w-64 bg-slate-50 p-4 gap-2 z-50">
+<div class="flex items-center gap-3 px-2 py-4 mb-4">
+<div class="w-10 h-10 rounded-xl signature-gradient flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white" data-icon="medical_services">medical_services</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-violet-700 leading-none">Sanctuary Health</h2>
+<p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-1">Enterprise Admin</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-violet-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-violet-100 text-violet-800 rounded-xl font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="font-bold text-sm">Entities</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-violet-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+<span class="font-medium text-sm">Clinical Records</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-violet-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium text-sm">Staff Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-violet-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-medium text-sm">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 pt-4 border-t border-slate-200/50">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-violet-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="font-medium text-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-violet-500 hover:bg-slate-200/50 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-medium text-sm">Sign Out</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-h-screen overflow-y-auto relative">
+<!-- TopNavBar -->
+<header class="glass-header sticky top-0 z-40 w-full px-6 py-3 flex justify-between items-center shadow-[0px_12px_32px_rgba(115,48,230,0.08)]">
+<div class="flex items-center gap-8">
+<h1 class="text-xl font-bold tracking-tight text-violet-700">Ethereal Medical</h1>
+<div class="hidden lg:flex items-center bg-surface-container-low rounded-full px-4 py-1.5 gap-2 w-80">
+<span class="material-symbols-outlined text-slate-400 text-lg" data-icon="search">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 w-full text-on-surface" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1">
+<button class="p-2 text-slate-500 hover:bg-violet-50 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-violet-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-violet-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-slate-200 mx-1"></div>
+<div class="flex items-center gap-3 pl-2">
+<img alt="Medical Administrator Profile" class="w-10 h-10 rounded-full object-cover border-2 border-violet-100" data-alt="portrait of a professional male doctor in a white coat with a friendly expression in a bright medical office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-T2LwI0I5j8FBfBXcFFawwi6I3I0_3luDIIrdR87Ze0mEyGTDjbLlrN2j7b9Q9aTFvL6fw7T81fnC8FgnQJikNtrttf0rvh-IFChfvlCcGL04Mi670PrtCp7PKfjRIURLon-p-7bNiPrPfHV8C0v1E96gosVr7xxTfQjaK4VokJbOdSENlv0iU2WSVVfrKyM6SoGD_9ZPxOXNAPC5ogSyZYdJ6V1iCoO5kXWMHl5IxIVCWj72jIqGp8xI1ZZkRmh988J3TtP5_0m5"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<section class="p-8 max-w-5xl mx-auto w-full">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">
+<span>Entities</span>
+<span class="material-symbols-outlined text-xs" data-icon="chevron_right">chevron_right</span>
+<span class="text-violet-600">Crear Empresa</span>
+</div>
+<!-- Page Header -->
+<div class="mb-10">
+<h2 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">Crear Nueva Empresa</h2>
+<p class="text-on-surface-variant text-lg">Configure los detalles de la organización para integrar sus servicios clínicos.</p>
+</div>
+<!-- Form Card -->
+<div class="bg-surface-container-lowest rounded-2xl p-10 shadow-[0px_20px_40px_rgba(0,0,0,0.03)] relative overflow-hidden">
+<!-- Decorative background elements -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-secondary/5 rounded-full blur-3xl"></div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+<!-- Column 1 -->
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">Nombre de la Empresa</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="business">business</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface placeholder:text-slate-400 font-medium" placeholder="Ej: Clínica Santa María" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">NIT/ID Fiscal</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="fingerprint">fingerprint</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface placeholder:text-slate-400 font-medium" placeholder="900.123.456-7" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">Correo Electrónico Corporativo</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="alternate_email">alternate_email</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface placeholder:text-slate-400 font-medium" placeholder="contacto@empresa.com" type="email"/>
+</div>
+</div>
+</div>
+<!-- Column 2 -->
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">Dirección Principal</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="location_on">location_on</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface placeholder:text-slate-400 font-medium" placeholder="Av. Principal #123-45" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">Teléfono de Contacto</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="call">call</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface placeholder:text-slate-400 font-medium" placeholder="+57 300 123 4567" type="tel"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">Tipo de Entidad</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="category">category</span>
+<select class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface font-medium appearance-none">
+<option>Clínica Privada</option>
+<option>Centro Médico</option>
+<option>Laboratorio</option>
+<option>Consultorio Independiente</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Full Width Area -->
+<div class="md:col-span-2 space-y-6 pt-4">
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface ml-1 block">Descripción o Notas Adicionales</label>
+<textarea class="w-full p-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/30 transition-all text-on-surface placeholder:text-slate-400 font-medium" placeholder="Breve descripción de la actividad comercial o notas de facturación..." rows="4"></textarea>
+</div>
+<!-- Action Bar -->
+<div class="flex items-center justify-end gap-4 mt-8">
+<button class="px-8 py-4 text-sm font-bold text-slate-500 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-all" type="button">
+                                Cancelar
+                            </button>
+<button class="signature-gradient px-12 py-4 rounded-xl text-white font-bold text-sm shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-lg" data-icon="save">save</span>
+                                Guardar Empresa
+                            </button>
+</div>
+</div>
+</form>
+</div>
+<!-- Secondary Info (Editorial Layout) -->
+<div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-secondary-container/30 p-8 rounded-2xl flex gap-6 items-start border border-secondary-container/50">
+<div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+</div>
+<div>
+<h4 class="text-lg font-bold text-on-secondary-container mb-1">Verificación de Identidad</h4>
+<p class="text-on-secondary-container/80 text-sm leading-relaxed">
+                            Al crear una nueva empresa, nuestro sistema realizará una verificación automática del NIT con las bases de datos gubernamentales. Asegúrese de que los datos coincidan exactamente con el Registro Único Tributario (RUT).
+                        </p>
+</div>
+</div>
+<div class="bg-surface-container p-8 rounded-2xl">
+<h4 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="history">history</span>
+                        Actividad Reciente
+                    </h4>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<p class="text-xs text-on-surface-variant font-medium">Nueva sede añadida en Bogotá</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-300"></div>
+<p class="text-xs text-on-surface-variant font-medium">Actualización de ID Fiscal Médicos</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Subtle Footer Signature -->
+<footer class="p-8 mt-auto flex justify-between items-center text-xs text-slate-400 font-semibold tracking-widest uppercase">
+<span>© 2024 Ethereal Medical System</span>
+<div class="flex gap-6">
+<a class="hover:text-violet-500 transition-colors" href="#">Privacidad</a>
+<a class="hover:text-violet-500 transition-colors" href="#">Términos</a>
+</div>
+</footer>
+</main>
+<!-- Floating Action Background Blur -->
+<div class="fixed top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+<div class="fixed bottom-0 left-0 w-96 h-96 bg-secondary/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+</body></html>

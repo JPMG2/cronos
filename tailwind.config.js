@@ -14,6 +14,9 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                headline: ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
+                body: ['Manrope', ...defaultTheme.fontFamily.sans],
+                label: ['Manrope', ...defaultTheme.fontFamily.sans],
             },
         },
     },

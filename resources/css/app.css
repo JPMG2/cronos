@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    /* ── Google Fonts — cargadas en los layouts, registradas aquí ─── */
+    /* Plus Jakarta Sans → font-headline | Manrope → font-body / font-label */
+
+    /* ── Forzar eliminación de flecha nativa del plugin @tailwindcss/forms ── */
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: none !important;
+    }
+}
+
 @layer components {
       /* ── Inputs ─────────────────────────────────────────── */
       .input-text-base {
@@ -32,4 +45,40 @@
                  shadow-md shadow-slate-200/80
                  dark:border-indigo-900 dark:bg-gray-900 dark:shadow-lg dark:shadow-black/30;
       }
+
+      /* ── Signature Gradient — botones CTA y paneles destacados ─── */
+      /* Light: indigo-600 → indigo-800  |  Dark: sky-500 → indigo-600 */
+      .signature-gradient {
+          background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      }
+      .dark .signature-gradient {
+          background: linear-gradient(135deg, #0ea5e9 0%, #4f46e5 100%);
+      }
+
+      /* ── Glass panel — navs flotantes y modales ─────────────────── */
+      .glass-panel {
+          background: rgba(255, 255, 255, 0.80);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+      }
+      .dark .glass-panel {
+          background: rgba(17, 24, 39, 0.80);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+      }
+
+      /* ── Ambient shadow primario (tintado indigo) ────────────────── */
+      .shadow-ambient {
+          box-shadow: 0px 12px 32px rgba(79, 70, 229, 0.08);
+      }
+      .shadow-ambient-hover {
+          box-shadow: 0px 16px 40px rgba(79, 70, 229, 0.20);
+      }
+
+      /* ── Card base reutilizable ──────────────────────────────────── */
+      .card-surface {
+          @apply bg-white rounded-2xl shadow-ambient
+                 dark:bg-gray-900 dark:shadow-black/30;
+      }
+
   }
