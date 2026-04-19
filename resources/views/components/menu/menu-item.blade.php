@@ -287,23 +287,38 @@
          NIVEL 1+ EXPANDIDO
          ══════════════════════════════════════════════════════════════ --}}
     @else
+        @php
+            // Indentación incremental por nivel — igual que DaisyUI tree view
+            // nivel 1 → 28px | nivel 2 → 44px | nivel 3+ → 60px
+            if ($level === 1) {
+                $itemStyle = "margin-left:1.75rem;margin-right:0.5rem;width:calc(100% - 2.25rem);";
+                $connectorStyle = "left:-0.4rem;width:0.4rem";
+                $bracketStyle = "left:2.25rem;width:1.5px";  // bracket para hijos nivel 2
+            } elseif ($level === 2) {
+                $itemStyle = "margin-left:2.75rem;margin-right:0.5rem;width:calc(100% - 3.25rem);";
+                $connectorStyle = "left:-0.5rem;width:0.5rem";
+                $bracketStyle = "left:3.25rem;width:1.5px";  // bracket para hijos nivel 3
+            } else {
+                $itemStyle = "margin-left:3.75rem;margin-right:0.5rem;width:calc(100% - 4.25rem);";
+                $connectorStyle = "left:-0.5rem;width:0.5rem";
+                $bracketStyle = "left:3.25rem;width:1.5px";
+            }
+        @endphp
+
         @if ($hasChildren)
             <button
                 x-on:click="open = !open; $dispatch('toggle-menu', {{ $menu->id }})"
                 :aria-expanded="open"
-                @php
-                    $marginLeft = "mx-2";
-                    if ($level === 1) { $marginLeft = "ml-7 mr-2"; }
-                    elseif ($level > 1) { $marginLeft = "ml-11 mr-2"; }
-                @endphp
+                style="{{ $itemStyle }}"
                 @class([
-                    "group relative $marginLeft flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-all duration-200",
-                    "w-[calc(100%-1rem)]" => $level === 0,
-                    "w-[calc(100%-2.25rem)]" => $level === 1,
-                    "w-[calc(100%-3.25rem)]" => $level > 1,
+                    "group relative flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-all duration-200",
                     "bg-indigo-100/80 text-indigo-700 dark:bg-gray-800 dark:text-gray-300" => $isOpen,
                     "text-slate-600 hover:bg-indigo-100/70 hover:text-indigo-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300" => ! $isOpen,
                 ])>
+                <span
+                    class="pointer-events-none absolute top-1/2 h-px -translate-y-1/2 bg-indigo-300/70 dark:bg-gray-700/60"
+                    style="{{ $connectorStyle }}"
+                    aria-hidden="true"></span>
                 <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center text-indigo-400 transition-all duration-200 group-hover:text-indigo-600 dark:text-gray-600 dark:group-hover:text-gray-400">
                     <x-menu.heroicon name="{{ $menu->icon }}" class="h-3.5 w-3.5" />
                 </div>
@@ -316,8 +331,11 @@
             </button>
 
             <div x-show="open" x-collapse>
-                <div class="relative mt-0.5 space-y-0.5 pb-1 pt-0.5">
-                    <span class="pointer-events-none absolute inset-y-1 left-10 w-px bg-indigo-300/60 dark:bg-gray-700/50" aria-hidden="true"></span>
+                <div class="relative space-y-0.5 pb-1 pt-0.5">
+                    <span
+                        class="pointer-events-none absolute inset-y-1 bg-indigo-200/70 dark:bg-gray-700"
+                        style="{{ $bracketStyle }}"
+                        aria-hidden="true"></span>
                     @foreach ($children as $child)
                         <x-menu.menu-item :menu="$child" :open-menus="$openMenus" :level="$level + 1" :collapsed="$collapsed" />
                     @endforeach
@@ -328,19 +346,16 @@
             <a href="{{ $href }}"
                 @if ($href !== "#") wire:navigate x-on:click="$dispatch('close-mobile-sidebar')" @endif
                 @if ($isActive) aria-current="page" @endif
-                @php
-                    $marginLeft = "mx-2";
-                    if ($level === 1) { $marginLeft = "ml-7 mr-2"; }
-                    elseif ($level > 1) { $marginLeft = "ml-11 mr-2"; }
-                @endphp
+                style="{{ $itemStyle }}"
                 @class([
-                    "group relative $marginLeft flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-all duration-200",
-                    "w-[calc(100%-1rem)]" => $level === 0,
-                    "w-[calc(100%-2.25rem)]" => $level === 1,
-                    "w-[calc(100%-3.25rem)]" => $level > 1,
+                    "group relative flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-all duration-200",
                     "bg-indigo-50/80 text-indigo-600 font-semibold dark:bg-indigo-500/10 dark:text-sky-400" => $isActive,
                     "text-slate-600 hover:bg-indigo-100/70 hover:text-indigo-700 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300" => ! $isActive,
                 ])>
+                <span
+                    class="pointer-events-none absolute top-1/2 h-px -translate-y-1/2 bg-indigo-300/70 dark:bg-gray-700/60"
+                    style="{{ $connectorStyle }}"
+                    aria-hidden="true"></span>
                 <div @class([
                     "flex h-5 w-5 flex-shrink-0 items-center justify-center transition-all duration-200",
                     "text-indigo-500 dark:text-sky-400" => $isActive,

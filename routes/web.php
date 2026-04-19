@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
     /**Configuracion/Empresa**/
     Route::livewire('/configuracion/empresa', 'configuracion.empresa.create-empresa')->name('empresa.datos');
+    Route::livewire('/configuracion/regional', 'configuracion.regional.create-region')->name('empresa.parametroregional');
 
 });
 

@@ -29,9 +29,7 @@
                        hover:-translate-y-0.5 hover:shadow-[0px_12px_32px_rgba(79,70,229,0.30)]
                        active:scale-[0.98] dark:shadow-[0px_8px_24px_rgba(14,165,233,0.15)]
                        focus:outline-none focus:ring-2 focus:ring-indigo-400/40 dark:focus:ring-sky-400/40">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
+                <x-menu.heroicon name="plus" class="h-4 w-4" />
                 Nueva cita
             </button>
         </section>
@@ -40,12 +38,10 @@
         <section class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
             {{-- Card 1: Pacientes activos --}}
-            <div class="card-surface flex flex-col justify-between p-6 h-40">
+            <div class="card-surface flex flex-col justify-between p-6 h-40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-default">
                 <div class="flex items-center justify-between">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                        <x-menu.heroicon name="users" class="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <span class="rounded-full bg-emerald-50 px-2.5 py-1 font-label text-xs font-bold text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400">
                         +12%
@@ -60,12 +56,10 @@
             </div>
 
             {{-- Card 2: Citas hoy --}}
-            <div class="card-surface flex flex-col justify-between p-6 h-40">
+            <div class="card-surface flex flex-col justify-between p-6 h-40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-default">
                 <div class="flex items-center justify-between">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 dark:bg-sky-900/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-sky-600 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <x-menu.heroicon name="calendar" class="h-5 w-5 text-sky-600 dark:text-sky-400" />
                     </div>
                     <span class="rounded-full bg-sky-50 px-2.5 py-1 font-label text-xs font-bold text-sky-600 dark:bg-sky-400/10 dark:text-sky-400">
                         Hoy
@@ -80,12 +74,10 @@
             </div>
 
             {{-- Card 3: Tasa de éxito --}}
-            <div class="card-surface flex flex-col justify-between p-6 h-40">
+            <div class="card-surface flex flex-col justify-between p-6 h-40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-default">
                 <div class="flex items-center justify-between">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        <x-menu.heroicon name="check-circle" class="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <span class="rounded-full bg-slate-100 px-2.5 py-1 font-label text-xs font-bold text-slate-500 dark:bg-gray-800 dark:text-gray-400">
                         Estable
@@ -134,12 +126,12 @@
 
                 <div class="card-surface overflow-hidden">
                     {{-- Header tabla — sin línea divisoria, shift de fondo --}}
-                    <div class="grid grid-cols-4 bg-slate-50 px-6 py-4 dark:bg-gray-800/60">
+                    <div class="grid grid-cols-3 sm:grid-cols-4 bg-slate-50 px-6 py-4 dark:bg-gray-800/60">
                         <div class="col-span-2 font-label text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">
                             Paciente / Procedimiento
                         </div>
                         <div class="font-label text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Estado</div>
-                        <div class="text-right font-label text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Fecha</div>
+                        <div class="hidden sm:block text-right font-label text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">Fecha</div>
                     </div>
 
                     {{-- Filas — separadas por espacio vertical, sin dividers --}}
@@ -165,7 +157,7 @@
                                     default   => 'bg-slate-100 text-slate-500',
                                 };
                             @endphp
-                            <div class="grid grid-cols-4 items-center px-6 py-5 transition-colors hover:bg-slate-50/70 dark:hover:bg-gray-800/40">
+                            <div class="grid grid-cols-3 sm:grid-cols-4 items-center px-6 py-5 transition-colors hover:bg-slate-50/70 dark:hover:bg-gray-800/40">
                                 <div class="col-span-2 flex items-center gap-4">
                                     <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl {{ $avatarCls }} font-headline text-sm font-bold">
                                         {{ $row['initials'] }}
@@ -180,7 +172,7 @@
                                         {{ $row['status'] }}
                                     </span>
                                 </div>
-                                <div class="text-right">
+                                <div class="hidden sm:block text-right">
                                     <p class="text-xs font-semibold text-slate-500 dark:text-gray-400">{{ $row['date'] }}</p>
                                 </div>
                             </div>

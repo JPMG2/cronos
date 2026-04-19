@@ -378,12 +378,41 @@ final class MenuSeeder extends Seeder
             'is_active' => true,
         ]);
 
+        // ── Grupo: Configuración Global ──────────────────────────────
+        $configGlobal = Menu::create([
+            'parent_id' => $empresa->id,
+            'title' => 'Configuración Global',
+            'icon' => 'globe-alt',
+            'route' => null,
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $configGlobal->id,
+            'title' => 'Parámetros Regionales',
+            'icon' => 'map-pin',
+            'route' => 'empresa.parametroregional',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $configGlobal->id,
+            'title' => 'Moneda',
+            'icon' => 'currency-dollar',
+            'route' => 'empresa.moneda',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        // ── Ítems directos de Empresa ────────────────────────────────
         Menu::create([
             'parent_id' => $empresa->id,
             'title' => 'Datos de la Empresa',
             'icon' => 'identification',
             'route' => 'empresa.datos',
-            'order' => 1,
+            'order' => 2,
             'is_active' => true,
         ]);
 
@@ -392,7 +421,7 @@ final class MenuSeeder extends Seeder
             'title' => 'Departamentos',
             'icon' => 'building-library',
             'route' => 'empresa.departamentos',
-            'order' => 2,
+            'order' => 3,
             'is_active' => true,
         ]);
 
@@ -401,7 +430,7 @@ final class MenuSeeder extends Seeder
             'title' => 'Estructura Organizacional',
             'icon' => 'chart-bar-square',
             'route' => 'empresa.estructura',
-            'order' => 3,
+            'order' => 4,
             'is_active' => true,
         ]);
 
@@ -410,7 +439,7 @@ final class MenuSeeder extends Seeder
             'title' => 'Parámetros del Sistema',
             'icon' => 'adjustments-horizontal',
             'route' => 'empresa.parametros',
-            'order' => 4,
+            'order' => 5,
             'is_active' => true,
         ]);
 
@@ -419,15 +448,6 @@ final class MenuSeeder extends Seeder
             'title' => 'Configuración General',
             'icon' => 'wrench-screwdriver',
             'route' => 'empresa.configuracion',
-            'order' => 5,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $empresa->id,
-            'title' => 'Moneda y Regional',
-            'icon' => 'currency-dollar',
-            'route' => 'empresa.moneda',
             'order' => 6,
             'is_active' => true,
         ]);

@@ -149,9 +149,12 @@ final class RegionSeeder extends Seeder
 
                     if ($province) {
                         foreach ($locations as $locationName) {
+
+                            (bool) $isdefault = $locationName === 'Cipolletti';
                             Region::query()->updateOrCreate([
                                 'province_id' => $province->id,
                                 'name' => $locationName,
+                                'is_default' => $isdefault,
                             ]);
                         }
                     }

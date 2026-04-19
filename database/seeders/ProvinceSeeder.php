@@ -55,9 +55,12 @@ final class ProvinceSeeder extends Seeder
         foreach ($countryNames as $name) {
 
             $country = Country::query()->where('name', $name)->first();
-            (bool) $isdefault = $name === 'Argentina';
+
             if ($country && isset($citiesByCountry[$name])) {
                 foreach ($citiesByCountry[$name] as $cityName) {
+
+                    (bool) $isdefault = $cityName === 'Río Negro';
+
                     Province::query()->create([
                         'country_id' => $country->id,
                         'name' => $cityName,
