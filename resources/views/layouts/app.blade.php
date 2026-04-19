@@ -45,5 +45,6 @@
                 </main>
             </div>
         </div>
+        <x-feedback.toast />
     </body>
 </html>

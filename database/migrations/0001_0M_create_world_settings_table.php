@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Country;
+use App\Models\Currency;
 use App\Models\Province;
 use App\Models\Region;
 use Illuminate\Database\Migrations\Migration;
@@ -21,6 +22,12 @@ return new class extends Migration
             $table->foreignIdFor(Country::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(Province::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(Region::class)->nullable()->constrained()->nullOnDelete();
+            $table->foreignIdFor(Currency::class)->nullable()->constrained()->nullOnDelete();
+           // Auditoría y control de cambios.
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+                      
             $table->timestamps();
         });
     }

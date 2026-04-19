@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['country_id', 'name', 'is_default', 'is_active'])]
+#[Fillable(['country_id', 'name', 'is_active'])]
 final class Province extends Model
 {
     /** @use HasFactory<ProvinceFactory> */
@@ -28,7 +28,6 @@ final class Province extends Model
     {
         return [
             'country_id' => 'integer',
-            'is_default' => 'boolean',
             'is_active' => 'boolean',
         ];
     }

@@ -135,5 +135,11 @@
                  focus:ring-emerald-500/40
                  dark:shadow-none dark:hover:bg-emerald-500 dark:focus:ring-emerald-500/30;
       }
+      .btn-save {
+          @apply signature-gradient text-white shadow-indigo-200/60
+                 hover:opacity-90 hover:shadow-md hover:shadow-indigo-300/50
+                 focus:ring-indigo-500/40
+                 dark:shadow-none dark:focus:ring-sky-500/30;
+      }
 
   }

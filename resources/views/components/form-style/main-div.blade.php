@@ -12,9 +12,9 @@
     Width : w-full — crece/colapsa automáticamente con el sidebar vía el flex-1 del layout
 --}}
 
-<div {{ $attributes->merge(["class" => "main-div-container"]) }}>
+<div {{ $attributes->merge(["class" => "main-div-container relative"]) }}>
     <div
-        class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-indigo-600/5 blur-3xl dark:bg-indigo-400/5"></div>
-    <div class="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-sky-400/5 blur-3xl"></div>
+        class="pointer-events-none absolute right-0 top-0 h-48 w-48 rounded-full bg-indigo-600/5 blur-3xl dark:bg-indigo-400/5"></div>
+    <div class="pointer-events-none absolute bottom-0 left-0 h-48 w-48 rounded-full bg-sky-400/5 blur-3xl"></div>
     {{ $slot }}
 </div>

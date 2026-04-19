@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['province_id', 'name', 'is_default', 'is_active'])]
+#[Fillable(['province_id', 'name', 'is_active'])]
 final class Region extends Model
 {
     /** @use HasFactory<\Database\Factories\RegionFactory> */
@@ -19,7 +19,6 @@ final class Region extends Model
     {
         return [
             'province_id' => 'integer',
-            'is_default' => 'boolean',
             'is_active' => 'boolean',
         ];
     }

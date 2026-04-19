@@ -18,7 +18,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Province::class)->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->boolean('is_default')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

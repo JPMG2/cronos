@@ -15,7 +15,7 @@ final class CountrySeeder extends Seeder
     public function run(): void
     {
         $countries = [
-            ['name' => 'Argentina', 'code' => 'ARG', 'phone_code' => '54', 'is_default' => true],
+            ['name' => 'Argentina', 'code' => 'ARG', 'phone_code' => '54'],
             ['name' => 'Bolivia', 'code' => 'BOL', 'phone_code' => '591'],
             ['name' => 'Brasil', 'code' => 'BRA', 'phone_code' => '55'],
             ['name' => 'Canadá', 'code' => 'CAN', 'phone_code' => '1'],
