@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,6 +19,11 @@ final class Province extends Model
 {
     /** @use HasFactory<ProvinceFactory> */
     use HasFactory, SoftDeletes;
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
 
     public function regions(): HasMany
     {
@@ -28,13 +34,12 @@ final class Province extends Model
     {
         return [
             'country_id' => 'integer',
-            'is_active' => 'boolean',
         ];
     }
 
     #[Scope]
-    protected function defaultFirst(Builder $query): void
+    protected function defaultFirst(Builder $query, $regionId): void
     {
-        $query->orderByDesc('is_default')->orderByDesc('name');
+        $query->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$regionId]);
     }
 }

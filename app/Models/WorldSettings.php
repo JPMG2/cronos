@@ -26,6 +26,16 @@ final class WorldSettings extends Model
         'deleted_by',
     ];
 
+    public static function defaultCountry(): ?int
+    {
+        return self::query()->value('country_id');
+    }
+
+    public static function defaultProvince(): ?int
+    {
+        return self::query()->value('province_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
