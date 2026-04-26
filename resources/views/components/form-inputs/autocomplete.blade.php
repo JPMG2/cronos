@@ -1,16 +1,17 @@
 @props([
-    'label'       => null,
-    'name'        => '',
-    'description' => null,
-    'placeholder' => 'Buscar…',
-    'options'     => [],
-    'value'       => null,
-    'icon'        => null,
-    'size'        => 'md',
-    'required'    => false,
-    'disabled'    => false,
+    'label'         => null,
+    'name'          => '',
+    'description'   => null,
+    'placeholder'   => 'Buscar…',
+    'options'       => [],
+    'value'         => null,
+    'icon'          => null,
+    'size'          => 'md',
+    'required'      => false,
+    'disabled'      => false,
     'loading'       => false,
     'loadingTarget' => null,
+    'alpineError'   => null,
 ])
 
 @php
@@ -240,5 +241,13 @@
             {{ $message }}
         </p>
     @enderror
+
+    @if ($alpineError)
+        <p
+            x-show="errors.{{ $alpineError }}"
+            x-text="errors.{{ $alpineError }}"
+            x-transition
+            class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+    @endif
 
 </div>

@@ -12,26 +12,26 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-new #[Title("Parametros Regionales")] class extends Component {
+new #[Title('Parametros Regionales')] class extends Component {
     use HasNotifications;
 
-    #[Validate("required|integer|exists:countries,id")]
+    #[Validate('required|integer|exists:countries,id')]
     public null|int $country_id = null;
-    #[Validate("required|integer|exists:provinces,id")]
+    #[Validate('required|integer|exists:provinces,id')]
     public null|int $province_id = null;
-    #[Validate("required|integer|exists:regions,id")]
+    #[Validate('required|integer|exists:regions,id')]
     public null|int $region_id = null;
-    #[Validate("required|integer|exists:currencies,id")]
+    #[Validate('required|integer|exists:currencies,id')]
     public null|int $currency_id = null;
-    public string $currency_symbol = "";
-    public string $currency_code = "";
+    public string $currency_symbol = '';
+    public string $currency_code = '';
     public int $decimal_places = 2;
 
     public function updatedCurrencyId(?int $value): void
     {
         if (! $value) {
-            $this->currency_symbol = "";
-            $this->currency_code = "";
+            $this->currency_symbol = '';
+            $this->currency_code = '';
             $this->decimal_places = 2;
             return;
         }
@@ -49,7 +49,7 @@ new #[Title("Parametros Regionales")] class extends Component {
     public function countries(): Collection
     {
         return Country::query()
-            ->orderBy("name", "asc")
+            ->orderBy('name', 'asc')
             ->get();
     }
 
@@ -59,7 +59,7 @@ new #[Title("Parametros Regionales")] class extends Component {
         return $this->country_id > 0
             ? Country::find($this->country_id)
                     ?->provinces()
-                    ->orderBy("name", "asc")
+                    ->orderBy('name', 'asc')
                     ->get() ?? collect()
             : collect();
     }
@@ -101,7 +101,7 @@ new #[Title("Parametros Regionales")] class extends Component {
             $this->createUpdate();
             $this->loadSettings();
             $this->notifySuccess("¡Configuración regional guardada exitosamente!");
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->notifyError("Error al guardar la configuración regional: " . $e->getMessage());
         }
     }
@@ -147,9 +147,9 @@ new #[Title("Parametros Regionales")] class extends Component {
             $this->decimal_places  = $currency->decimal_places;
         }
     }
-};
-?>
+}
 
+?>
 <x-form-style.border-style>
     <x-form-style.main-div>
         <x-form-style.header-form
@@ -157,27 +157,7 @@ new #[Title("Parametros Regionales")] class extends Component {
             description="Define las preferencias de localización y ajustes monetarios para el sistema médico."
             sign="Parametrización" />
 
-        <div
-            x-data="{
-                errors: {},
-                submit() {
-                    this.errors = validate(
-                        {
-                            country_id: $wire.country_id,
-                            province_id: $wire.province_id,
-                            region_id: $wire.region_id,
-                            currency_id: $wire.currency_id,
-                        },
-                        {
-                            country_id: ['required'],
-                            province_id: ['required'],
-                            region_id: ['required'],
-                            currency_id: ['required'],
-                        },
-                    )
-                    if (Object.keys(this.errors).length === 0) $wire.saveRegion()
-                },
-            }">
+        <div x-data="regionForm">
             <div class="relative z-10 space-y-5 px-6 py-4">
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-x-8">
                     {{-- ── Sección Localización ── --}}
@@ -200,12 +180,8 @@ new #[Title("Parametros Regionales")] class extends Component {
                                 :options="$this->countries->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
                                 :value="$country_id"
                                 wire:model.live="country_id"
+                                alpine-error="country_id"
                                 required />
-                            <p
-                                x-show="errors.country_id"
-                                x-text="errors.country_id"
-                                x-transition
-                                class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
                         </div>
 
                         <div wire:key="province-{{ $country_id }}-{{ $province_id }}">
@@ -219,12 +195,8 @@ new #[Title("Parametros Regionales")] class extends Component {
                                 wire:model.live="province_id"
                                 :loading="true"
                                 loading-target="country_id"
+                                alpine-error="province_id"
                                 required />
-                            <p
-                                x-show="errors.province_id"
-                                x-text="errors.province_id"
-                                x-transition
-                                class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
                         </div>
 
                         <div wire:key="region-{{ $province_id }}-{{ $region_id }}">
@@ -238,12 +210,8 @@ new #[Title("Parametros Regionales")] class extends Component {
                                 wire:model.live="region_id"
                                 :loading="true"
                                 loading-target="province_id"
+                                alpine-error="region_id"
                                 required />
-                            <p
-                                x-show="errors.region_id"
-                                x-text="errors.region_id"
-                                x-transition
-                                class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
                         </div>
                     </div>
 
@@ -267,12 +235,8 @@ new #[Title("Parametros Regionales")] class extends Component {
                                 :options="$this->currencies->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
                                 :value="$currency_id"
                                 wire:model.live="currency_id"
+                                alpine-error="currency_id"
                                 required />
-                            <p
-                                x-show="errors.currency_id"
-                                x-text="errors.currency_id"
-                                x-transition
-                                class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -315,7 +279,7 @@ new #[Title("Parametros Regionales")] class extends Component {
                                         class="h-4 w-4 shrink-0 text-indigo-400 dark:text-indigo-500" />
                                     <p
                                         class="font-headline text-base font-extrabold tabular-nums text-slate-800 dark:text-gray-100">
-                                        {{ $currency_symbol }} 1.250,{{ str_repeat("0", $decimal_places) ?: "—" }}
+                                        {{ $currency_symbol }} 1.250,{{ str_repeat('0', $decimal_places) ?: '—' }}
                                     </p>
                                 </div>
                             </div>
@@ -331,3 +295,27 @@ new #[Title("Parametros Regionales")] class extends Component {
         {{-- cierre x-data wrapper --}}
     </x-form-style.main-div>
 </x-form-style.border-style>
+@script
+    <script>
+        Alpine.data('regionForm', () => ({
+            errors: {},
+            submit() {
+                this.errors = validate(
+                    {
+                        country_id: this.$wire.country_id,
+                        province_id: this.$wire.province_id,
+                        region_id: this.$wire.region_id,
+                        currency_id: this.$wire.currency_id,
+                    },
+                    {
+                        country_id: ['required'],
+                        province_id: ['required'],
+                        region_id: ['required'],
+                        currency_id: ['required'],
+                    },
+                )
+                if (Object.keys(this.errors).length === 0) this.$wire.saveRegion()
+            },
+        }))
+    </script>
+@endscript

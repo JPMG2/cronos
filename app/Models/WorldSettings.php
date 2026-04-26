@@ -36,6 +36,11 @@ final class WorldSettings extends Model
         return self::query()->value('province_id');
     }
 
+    public static function defaultRegion(): ?int
+    {
+        return self::query()->value('region_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

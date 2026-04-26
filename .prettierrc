@@ -19,7 +19,7 @@
             "options": {
                 "parser": "blade",
                 "printWidth": 120,
-                "singleQuote": false,
+                "singleQuote": true,
                 "tabWidth": 4,
                 "bracketSameLine": true
             }

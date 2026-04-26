@@ -13,6 +13,7 @@
     'readonly'     => false,
     'icon'         => null,
     'iconTrailing' => null,
+    'alpineError'  => null,
 ])
 
 @php
@@ -112,4 +113,12 @@
     @error($name)
         <p class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
     @enderror
+
+    @if ($alpineError)
+        <p
+            x-show="errors.{{ $alpineError }}"
+            x-text="errors.{{ $alpineError }}"
+            x-transition
+            class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+    @endif
 </div>
