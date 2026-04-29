@@ -18,6 +18,7 @@ final class CreateNewBranch
             'current_status_id' => $company->current_status_id,
             'region_id' => $company->region_id,
             'name' => $company->name,
+            'code' => '0000',
             'phone' => $company->phone,
             'email' => $company->email,
             'address' => $company->address,

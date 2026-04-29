@@ -8,6 +8,7 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        './app/**/*.php',
     ],
 
     theme: {
@@ -20,6 +21,10 @@ export default {
             },
         },
     },
+
+    safelist: [
+        { pattern: /^avatar-[0-5]$/ },
+    ],
 
     plugins: [forms],
 };

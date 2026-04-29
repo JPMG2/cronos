@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['province_id', 'name', 'is_active'])]
@@ -17,6 +18,11 @@ final class Region extends Model
 {
     /** @use HasFactory<RegionFactory> */
     use HasFactory, SoftDeletes;
+
+    public function province(): BelongsTo
+    {
+        return $this->belongsTo(Province::class);
+    }
 
     protected function casts(): array
     {

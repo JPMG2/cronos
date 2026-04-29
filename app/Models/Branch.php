@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\BranchFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,5 +63,12 @@ final class Branch extends Model
             'updated_by' => 'integer',
             'deleted_by' => 'integer',
         ];
+    }
+
+    #[Scope]
+    protected function listBranches(Builder $query): void
+    {
+        $query->with('currentStatus', 'region')
+            ->orderBy('name');
     }
 }

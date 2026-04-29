@@ -38,8 +38,8 @@ final class Province extends Model
     }
 
     #[Scope]
-    protected function defaultFirst(Builder $query, $regionId): void
+    protected function defaultFirst(Builder $query, $modelId): void
     {
-        $query->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$regionId]);
+        $query->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$modelId]);
     }
 }

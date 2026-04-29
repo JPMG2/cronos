@@ -16,6 +16,7 @@ final class CreateBranchAction
             'current_status_id' => $data['current_status_id'],
             'region_id' => $data['region_id'],
             'name' => $data['name'],
+            'code' => $data['code'],
             'phone' => $data['phone'],
             'email' => $data['email'],
             'address' => $data['address'],

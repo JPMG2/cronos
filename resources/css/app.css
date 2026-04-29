@@ -142,4 +142,12 @@
                  dark:shadow-none dark:focus:ring-sky-500/30;
       }
 
+      /* Avatar de entidades — cicla 6 colores del sistema Cronos */
+      .avatar-0 { @apply bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400; }
+      .avatar-1 { @apply bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-400; }
+      .avatar-2 { @apply bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400; }
+      .avatar-3 { @apply bg-teal-100 text-teal-700 dark:bg-teal-500/15 dark:text-teal-400; }
+      .avatar-4 { @apply bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400; }
+      .avatar-5 { @apply bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400; }
+
   }
