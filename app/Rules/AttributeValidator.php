@@ -2,13 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Validation;
-
-use App\Enums\ServiceType;
-use App\Rules\ArraySchedule;
-use App\Rules\IdRelation;
-use App\Rules\MedicalCredential;
-use App\Rules\TypeGroupServices;
+namespace App\Rules;
 use Illuminate\Validation\Rules\Enum;
 
 /**
@@ -34,7 +28,7 @@ final class AttributeValidator
      * @param  int|null  $id  Optional ID to exclude from the unique check, typically for updates.
      * @return array Array of validation rules to be applied on the input.
      */
-    public static function uniqueEmail(string $model, string $uniqueField, $id = null): array
+    public static function uniqueEmail(string $model, string $uniqueField, int $id = null): array
     {
         if ($id) {
             return ['required', 'email:rfc,dns', 'unique:' . $model . ',' . $uniqueField . ',' . $id, 'regex:' . self::XSS_PREVENTION_PATTERN, 'max:' . self::MAX_STRING_LENGTH];
@@ -64,7 +58,7 @@ final class AttributeValidator
     public static function emailValid(string $model, string $uniqueField, $id = null): array
     {
         return $id ?
-            ['sometimes', 'unique:' . $model . ',' . $uniqueField . ',' . $id, 'email:rfc', 'regex:' . self::XSS_PREVENTION_PATTERN, 'max:' . self::MAX_STRING_LENGTH] :
+           ['sometimes', 'unique:' . $model . ',' . $uniqueField . ',' . $id, 'email:rfc', 'regex:' . self::XSS_PREVENTION_PATTERN, 'max:' . self::MAX_STRING_LENGTH] :
            ['sometimes', 'unique:' . $model . ',' . $uniqueField, 'email:rfc', 'regex:' . self::XSS_PREVENTION_PATTERN, 'max:' . self::MAX_STRING_LENGTH];
     }
 
@@ -101,11 +95,6 @@ final class AttributeValidator
         return 'gt:0';
     }
 
-    public static function medicalCredential(int $idcredential, $credentialNumber, $id = null)
-    {
-
-        return new MedicalCredential($idcredential, $credentialNumber, $id);
-    }
 
     public static function dateValid($required): array
     {
@@ -117,29 +106,6 @@ final class AttributeValidator
     public static function hasTobeArray(string $length): string
     {
         return 'array|min:' . $length;
-    }
-
-    public static function scheduleArray(array $schedule): ArraySchedule
-    {
-        return new ArraySchedule($schedule);
-    }
-
-    public static function idRelationUnique($model, ?int $relationId, ?int $id, $columnValidation, $relationColumn, $errorName = null): array
-    {
-        return [
-            'bail',
-            'required',
-            'max:' . self::MAX_STRING_LENGTH,
-            'regex:' . self::XSS_PREVENTION_PATTERN,
-            new IdRelation(
-                model: $model,
-                relationId: $relationId,
-                id: $id,
-                validColumn: $columnValidation,
-                relation: $relationColumn,
-                errorName: $errorName,
-            ),
-        ];
     }
 
     public static function requireAndExists(string $model, string $uniqueField, string $column, $require = null): array
@@ -161,10 +127,6 @@ final class AttributeValidator
             ['sometimes', 'date_format:d-m-Y', 'after:' . $date];
     }
 
-    public static function servicesType(?int $id): array
-    {
-        return ['required', new Enum(ServiceType::class), new TypeGroupServices($id)];
-    }
 
     public static function numericDecimal($required): array
     {

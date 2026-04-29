@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Attribute;
 use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Company extends Model
@@ -33,6 +35,11 @@ final class Company extends Model
         'deleted_by',
     ];
 
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
+
     protected function casts(): array
     {
         return [
@@ -43,5 +50,12 @@ final class Company extends Model
             'updated_by' => 'integer',
             'deleted_by' => 'integer',
         ];
+    }
+
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => mb_strtolower(mb_trim($value)),
+        );
     }
 }

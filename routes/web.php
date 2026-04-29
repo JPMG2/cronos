@@ -19,7 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /**Configuracion/Empresa**/
-    Route::livewire('/configuracion/empresa', 'configuracion.empresa.create-empresa')->name('empresa.datos');
+    Route::livewire('/configuracion/company', 'configuracion.empresa.create-company')->name('empresa.datos');
+    Route::livewire('/configuracion/branch', 'configuracion.empresa.create-branch')->name('empresa.sucursal');
     Route::livewire('/configuracion/regional', 'configuracion.regional.create-region')->name('empresa.parametroregional');
 
 });

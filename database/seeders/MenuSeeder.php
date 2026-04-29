@@ -378,40 +378,20 @@ final class MenuSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // ── Grupo: Configuración Global ──────────────────────────────
-        $configGlobal = Menu::create([
-            'parent_id' => $empresa->id,
-            'title' => 'Configuración Global',
-            'icon' => 'globe-alt',
-            'route' => null,
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $configGlobal->id,
-            'title' => 'Parámetros Regionales',
-            'icon' => 'map-pin',
-            'route' => 'empresa.parametroregional',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $configGlobal->id,
-            'title' => 'Moneda',
-            'icon' => 'currency-dollar',
-            'route' => 'empresa.moneda',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        // ── Ítems directos de Empresa ────────────────────────────────
         Menu::create([
             'parent_id' => $empresa->id,
             'title' => 'Datos de la Empresa',
             'icon' => 'identification',
             'route' => 'empresa.datos',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $empresa->id,
+            'title' => 'Datos Sucursal',
+            'icon' => 'building-storefront',
+            'route' => 'empresa.sucursal',
             'order' => 2,
             'is_active' => true,
         ]);
@@ -431,24 +411,6 @@ final class MenuSeeder extends Seeder
             'icon' => 'chart-bar-square',
             'route' => 'empresa.estructura',
             'order' => 4,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $empresa->id,
-            'title' => 'Parámetros del Sistema',
-            'icon' => 'adjustments-horizontal',
-            'route' => 'empresa.parametros',
-            'order' => 5,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $empresa->id,
-            'title' => 'Configuración General',
-            'icon' => 'wrench-screwdriver',
-            'route' => 'empresa.configuracion',
-            'order' => 6,
             'is_active' => true,
         ]);
 
@@ -542,6 +504,52 @@ final class MenuSeeder extends Seeder
             'route' => 'integraciones.status',
             'order' => 4,
             'is_active' => true,
+        ]);
+
+        // Submódulo: Parámetros
+        $parametros = Menu::create([
+            'parent_id' => $configuracion->id,
+            'title' => 'Parámetros',
+            'icon' => 'adjustments-horizontal',
+            'route' => null,
+            'order' => 4,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $parametros->id,
+            'title' => 'Parámetros Regionales',
+            'icon' => 'map-pin',
+            'route' => 'empresa.parametroregional',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $parametros->id,
+            'title' => 'Parámetros del Sistema',
+            'icon' => 'wrench-screwdriver',
+            'route' => 'empresa.parametros',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $parametros->id,
+            'title' => 'Configuración General',
+            'icon' => 'cog-6-tooth',
+            'route' => 'empresa.configuracion',
+            'order' => 3,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $parametros->id,
+            'title' => 'Secuencias de Código',
+            'icon' => 'hashtag',
+            'route' => 'parametros.secuencias',
+            'order' => 4,
+            'is_active' => false,
         ]);
 
     }

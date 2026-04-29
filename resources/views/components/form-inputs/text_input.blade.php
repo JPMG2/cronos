@@ -71,7 +71,7 @@
 
         {{-- Input --}}
         <input
-            {{ $attributes->merge(['class' => implode(' ', array_filter([$inputBase, $sizeClass, $paddingLeft, $paddingRight, $borderClass, $disabledClass]))]) }}
+            {{ $attributes->merge(['class' => implode(' ', array_filter([$inputBase, $sizeClass, $paddingLeft, $paddingRight, $borderClass, $disabledClass,]))]) }}
             @if ($isPassword)
                 :type="showPwd ? 'text' : 'password'"
             @else
