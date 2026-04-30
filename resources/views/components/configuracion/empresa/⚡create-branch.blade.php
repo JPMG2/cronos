@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Dto\Style\ModalConfig;
 use App\Enums\Styles\StatusColors;
 use App\Livewire\Forms\Configuracion\Empresa\BranchForm;
 use App\Models\Branch;
@@ -13,6 +14,7 @@ use App\Models\WorldSettings;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -65,11 +67,6 @@ class extends Component {
         return Branch::query()->listBranches()->get();
     }
 
-    public function mount(): void
-    {
-        $this->form->companyName = $this->companyData->name ?? 'Empresa';
-    }
-
     public function selectBranch(int $branchId): void
     {
         $this->form->fillFromBranch($branchId);
@@ -77,10 +74,34 @@ class extends Component {
 
     public function newBranch(): void
     {
-        $this->resetValidation();
-        $this->form->reset();
-        $this->mount();
+         $this->resetValidation();
+         $this->form->reset();
+         
     }
+
+    public function adviceBranch(): void
+    {
+        $config = new ModalConfig(
+            title: 'Confirmar registro',
+            message: 'Confirmá en crear la sucursal con los datos ingresados. El campo código no podrá ser modificado luego de ser creado.',
+            type: 'info',
+            buttons: [
+                [
+                    'label' => 'Aceptar',
+                    'action' => 'storeBranch',
+                    'class' => 'save',
+                    'params' => [],
+                ]
+            ]);
+        $this->dispatch('openModal', config: (array) $config);
+    }
+
+    #[On('storeBranch')]
+    public function storeBranch(?array $params): void
+    {
+        dd('Eres demasiado bueno a comer!!');
+    }
+
 };
 ?>
 
@@ -98,7 +119,7 @@ class extends Component {
                     </h2>
                     <p class="mt-1 text-sm text-slate-500 dark:text-gray-400"
                        x-text="mode === 'edit'
-                           ? 'Modificá los datos de operación. Los cambios impactan a partir del guardado.'
+                           ? 'Modificá los datos de operación.Los cambios impactan a partir del guardado.'
                            : 'Configure los datos de la sucursal para integrar sus servicios clínicos.'">
                     </p>
                 </div>
@@ -166,8 +187,9 @@ class extends Component {
                                     aria-haspopup="listbox"
                                     class="w-full rounded-xl border border-indigo-200/80 bg-white py-2.5 pl-10 pr-10 text-sm placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-sky-500 dark:focus:ring-sky-400/25"/>
                             <span class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 transition-transform duration-200"
-                                  :class="dropOpen ? 'rotate-180' : ''">
-                                <x-menu.heroicon name="chevron-up-down" class="h-4 w-4 text-slate-400 dark:text-gray-500"/>
+                                  :class="dropOpen ? 'rotate - 180' : ''">
+                                <x-menu.heroicon name="chevron-up-down"
+                                                 class="h-4 w-4 text-slate-400 dark:text-gray-500"/>
                             </span>
                         </div>
 
@@ -185,15 +207,15 @@ class extends Component {
 
                             @forelse($this->branches as $branch)
                                 @php
-                                    $initials   = $branch->name ? strtoupper(substr($branch->name, 0, 2)) : '??';
-                                    $statusEnum = StatusColors::tryFrom(mb_strtolower($branch->currentStatus?->name ?? ''));
+                                    $initials   = $branch->name ? strtoupper(substr($branch->name, 0, 2)) : ' ?? ';
+                                    $statusEnum = StatusColors::tryFrom($branch->currentStatus?->name ?? '');
                                 @endphp
 
                                 <button
                                         type="button"
                                         x-show="dropSearch === ''
                                             || '{{ strtolower($branch->name) }}'.includes(dropSearch.toLowerCase())
-                                            || '{{ strtolower($branch->code) }}'.includes(dropSearch.toLowerCase())"
+|| '{{ strtolower($branch->code) }}'.includes(dropSearch.toLowerCase())"
                                         @click="selectBranch({{ $branch->id }},'{{ $branch->code }}'); selectedLabel = '{{ addslashes(mb_strtoupper($branch->name)) }}'; dropOpen = false; dropSearch = ''"
                                         class="group flex w-full items-center gap-3 border-b border-slate-100/80 px-4 py-3 text-left transition-colors duration-150 last:border-b-0 hover:bg-indigo-50/80 dark:border-gray-800 dark:hover:bg-gray-800/60"
                                         :class="editingCode === '{{ $branch->code }}' ? 'bg-indigo-50/60 dark:bg-indigo-500/10' : ''"
@@ -216,13 +238,16 @@ class extends Component {
                                             @endif
                                         </p>
                                         <p class="mt-0.5 text-[11px] text-slate-400 dark:text-gray-500">
-                                            @if($branch->region?->name){{ $branch->region->name }} · @endif#{{ mb_strtoupper($branch->code) }}
+                                            @if($branch->region?->name)
+                                                {{ $branch->region->name }} ·
+                                            @endif#{{ mb_strtoupper($branch->code) }}
                                         </p>
                                     </div>
 
                                     {{-- Status badge --}}
                                     @if($statusEnum)
-                                        <x-form-style.badge x-cloak class="{{ $statusEnum->dotClass() }}">{{ $statusEnum->label() }}</x-form-style.badge>
+                                        <x-form-style.badge x-cloak
+                                                            class="{{ $statusEnum->dotClass() }}">{{ $statusEnum->label() }}</x-form-style.badge>
                                     @endif
 
                                     {{-- Check activo --}}
@@ -235,10 +260,13 @@ class extends Component {
                             @empty
                                 <div class="flex flex-col items-center justify-center px-4 py-8 text-center">
                                     <div class="mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-500/10">
-                                        <x-menu.heroicon name="building-office" class="h-5 w-5 text-indigo-400 dark:text-indigo-500"/>
+                                        <x-menu.heroicon name="building-office"
+                                                         class="h-5 w-5 text-indigo-400 dark:text-indigo-500"/>
                                     </div>
-                                    <p class="text-sm font-semibold text-slate-600 dark:text-gray-400">Sin sucursales aún</p>
-                                    <p class="mt-0.5 text-xs text-slate-400 dark:text-gray-600">Creá la primera con el botón.</p>
+                                    <p class="text-sm font-semibold text-slate-600 dark:text-gray-400">Sin sucursales
+                                        aún</p>
+                                    <p class="mt-0.5 text-xs text-slate-400 dark:text-gray-600">Creá la primera con el
+                                        botón.</p>
                                 </div>
                             @endforelse
                         </div>
@@ -280,6 +308,7 @@ class extends Component {
                                         maxlength="200"
                                         size="lg"
                                         wire:model="form.name"
+                                        alpine-error="name"
                                         class="uppercase"
                                         required/>
                             </div>
@@ -288,9 +317,9 @@ class extends Component {
                                         label="Empresa"
                                         name="companyName"
                                         icon="building-office-2"
-                                        wire:model="form.companyName"
                                         size="lg"
                                         class="uppercase"
+                                        :value="$this->companyData->name"
                                         :readonly="true"/>
                             </div>
                             <div class="w-full lg:w-36 lg:shrink-0">
@@ -330,6 +359,7 @@ class extends Component {
                                             placeholder="Seleccionar provincia…"
                                             :options="$this->provinces->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
                                             wire:model.live="form.province_id"
+                                            alpine-error="province_id"
                                             :value="$form->province_id"
                                             required/>
                                 </div>
@@ -341,6 +371,7 @@ class extends Component {
                                             :options="$this->regions->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
                                             wire:model="form.region_id"
                                             :value="$form->region_id"
+                                            alpine-error="region_id"
                                             required/>
                                 </div>
                                 <x-form-inputs.text_input
@@ -350,6 +381,7 @@ class extends Component {
                                         placeholder="8300"
                                         maxlength="6"
                                         wire:model="form.postal_code"
+                                        alpine-error="postal_code"
                                         required/>
                                 <x-form-inputs.text_input
                                         label="Dirección"
@@ -358,6 +390,8 @@ class extends Component {
                                         placeholder="Calle, Altura"
                                         maxlength="200"
                                         wire:model="form.address"
+                                        alpine-error="address"
+                                        class="uppercase"
                                         required/>
                             </div>
                         </div>
@@ -380,6 +414,7 @@ class extends Component {
                                         inputmode="numeric"
                                         wire:model="form.phone"
                                         x-mask="999999999999999"
+                                        alpine-error="phone"
                                         required/>
                                 <x-form-inputs.text_input
                                         label="Correo Electrónico"
@@ -390,6 +425,7 @@ class extends Component {
                                         maxlength="200"
                                         autocomplete="email"
                                         wire:model="form.email"
+                                        alpine-error="email"
                                         class="lowercase"
                                         required/>
                                 <x-form-inputs.text_input
@@ -461,8 +497,11 @@ class extends Component {
                                                 wire:loading
                                                 wire:target="form.logo"
                                                 class="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/80 dark:bg-gray-900/80">
-                                            <svg class="h-5 w-5 animate-spin text-indigo-500 dark:text-sky-400" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                            <svg class="h-5 w-5 animate-spin text-indigo-500 dark:text-sky-400"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4"/>
                                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                                             </svg>
                                         </div>
@@ -484,7 +523,7 @@ class extends Component {
                                             accept="image/png,image/jpeg,image/svg+xml,image/webp"
                                             class="sr-only"/>
                                     @error('form.logo')
-                                        <p class="text-center text-[10px] font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
+                                    <p class="text-center text-[10px] font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
@@ -495,6 +534,7 @@ class extends Component {
                                             name="current_status_id"
                                             icon="check-circle"
                                             wire:model="form.current_status_id"
+                                            alpine-error="current_status_id"
                                             required>
                                         <option value="">Estado…</option>
                                         @foreach ($this->statuses as $status)
@@ -525,24 +565,65 @@ class extends Component {
                 </div>{{-- /grid principal --}}
 
                 {{-- ── Footer ──────────────────────────────────────────────────────── --}}
-                <div class="mt-4 border-t border-slate-100 pt-3 dark:border-gray-800">
-                    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                        <div class="flex gap-1">
-                            <x-feedback.alerts
-                                    type="warning"
-                                    size="sm"
-                                    message="El código interno no podrá ser modificado una vez guardado. Verificá antes de continuar."/>
-                        </div>
-                        <div class="flex w-full items-center gap-2 sm:w-auto">
+                 <x-form-style.footer-button>
                             <x-btn.cancel label="Descartar" wire:click="cancel"/>
                             <x-btn.save
                                     label="Guardar Sucursal"
                                     @click="submit()"
-                                    wire-target="saveBranch"/>
-                        </div>
-                    </div>
-                </div>
+                                    wire-target="adviceBranch"/>
+
+                 </x-form-style.footer-button>
             </div>
         </div>
     </x-form-style.main-div>
 </x-form-style.border-style>
+
+@script
+<script>
+    Alpine.data('branchManager', () => ({
+        mode: 'create',
+        editingCode: '',
+        errors: {},
+
+        newBranch() {
+            this.mode = 'create';
+            this.editingCode = '';
+            this.errors = {};
+            this.$wire.newBranch();
+        },
+
+        selectBranch(id, code) {
+            this.mode = 'edit';
+            this.editingCode = code;
+            this.errors = {};
+            this.$wire.selectBranch(id);
+        },
+
+        submit() {
+            this.errors = validate(
+                {
+                    name: this.$wire.form.name,
+                    phone: this.$wire.form.phone,
+                    email: this.$wire.form.email,
+                    province_id: this.$wire.form.province_id,
+                    region_id: this.$wire.form.region_id,
+                    address: this.$wire.form.address,
+                    postal_code: this.$wire.form.postal_code,
+                    currentStatusId: this.$wire.form.current_status_id,
+                },
+                {
+                    name: ['required', ['minLength', 3]],
+                    phone: ['required', ['minLength', 10]],
+                    email: ['required', ['email']],
+                    province_id: ['required'],
+                    region_id: ['required'],
+                    address: ['required', ['minLength', 6]],
+                    postal_code: ['required', ['minLength', 3]],
+                    currentStatusId: ['required'],
+                }
+            );
+            if (Object.keys(this.errors).length === 0) this.$wire.adviceBranch();
+        },
+    }));
+</script>
+@endscript

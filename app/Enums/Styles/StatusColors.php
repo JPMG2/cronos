@@ -6,18 +6,18 @@ namespace App\Enums\Styles;
 
 enum StatusColors: string
 {
-    case Activo = 'activo';
-    case Bloqueado = 'bloqueado';
-    case Cancelado = 'cancelado';
-    case Archivado = 'archivado';
-    case Eliminado = 'eliminado';
-    case Inactivo = 'inactivo';
-    case Pendiente = 'pendiente';
-    case Rechazado = 'rechazado';
-    case Suspendido = 'suspendido';
-    case Pausado = 'pausado';
-    case EnProceso = 'en proceso';
-    case Finalizado = 'finalizado';
+    case Activo = 'Activo';
+    case Bloqueado = 'Bloqueado';
+    case Cancelado = 'Cancelado';
+    case Archivado = 'Archivado';
+    case Eliminado = 'Eliminado';
+    case Inactivo = 'Inactivo';
+    case Pendiente = 'Pendiente';
+    case Rechazado = 'Rechazado';
+    case Suspendido = 'Suspendido';
+    case Pausado = 'Pausado';
+    case EnProceso = 'En proceso';
+    case Finalizado = 'Finalizado';
 
     public function label(): string
     {

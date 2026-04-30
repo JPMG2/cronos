@@ -42,6 +42,7 @@
                         @livewire("form-style.breadcrumb", key("breadcrumb-" . request()->path()))
                     </div>
                     {{ $slot }}
+                    @livewire("advice-window", key("advice-window"))
                 </main>
             </div>
         </div>
