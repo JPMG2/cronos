@@ -1,4 +1,5 @@
 <?php
+// @formatter:off
 
 use App\Models\Country;
 use App\Models\Currency;
@@ -12,7 +13,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-new #[Title('Parametros Regionales')] class extends Component {
+new #[Title('Parámetros Regionales')] class extends Component {
     use HasNotifications;
 
     #[Validate('required|integer|exists:countries,id')]
@@ -26,6 +27,17 @@ new #[Title('Parametros Regionales')] class extends Component {
     public string $currency_symbol = '';
     public string $currency_code = '';
     public int $decimal_places = 2;
+
+    public function updatedCountryId(): void
+    {
+        $this->province_id = null;
+        $this->region_id   = null;
+    }
+
+    public function updatedProvinceId(): void
+    {
+        $this->region_id = null;
+    }
 
     public function updatedCurrencyId(?int $value): void
     {
@@ -70,7 +82,8 @@ new #[Title('Parametros Regionales')] class extends Component {
         return $this->province_id > 0
             ? Province::find($this->province_id)
                     ?->regions()
-                    ->orderBy("name", "asc")
+                    ->where('province_id', $this->province_id)
+                   ->orderBy('name', 'asc')
                     ->get() ?? collect()
             : collect();
     }
@@ -79,7 +92,7 @@ new #[Title('Parametros Regionales')] class extends Component {
     public function currencies(): Collection
     {
         return Currency::query()
-            ->orderBy("name", "asc")
+            ->orderBy('name', 'asc')
             ->get();
     }
 
@@ -94,26 +107,37 @@ new #[Title('Parametros Regionales')] class extends Component {
         $this->loadSettings();
     }
 
-    public function saveRegion(): void
+    public function cleanRegionData(): void
     {
         $this->validate();
+
         try {
-            $this->createUpdate();
+            $model = $this->createUpdateRegion();
             $this->loadSettings();
-            $this->notifySuccess("¡Configuración regional guardada exitosamente!");
+            if($model['settings']->wasRecentlyCreated) {
+                $this->getTypeMessage('Configuración regional creada correctamente', 'notifySuccess');
+            }
+            if($model['settings']->wasChanged() || $model['currency_updated']->wasChanged()) {
+               $this->getTypeMessage('Configuración regional actualizada correctamente', 'notifySuccess');
+            }else{
+                $this->getTypeMessage('No se realizaron cambios en la configuración regional', 'notifyInfo');
+            }
         } catch (Exception $e) {
-            $this->notifyError("Error al guardar la configuración regional: " . $e->getMessage());
+            $this->getTypeMessage('Error al guardar la configuración regional: ' . $e->getMessage(), 'notifyError');
         }
     }
 
-    public function createUpdate(): WorldSettings
+    
+    public function createUpdateRegion(): array
     {
         return DB::transaction(function () {
-            Currency::query()
-                ->where('id', $this->currency_id)
-                ->update(['decimal_places' => $this->decimal_places]);
 
-            return WorldSettings::query()->updateOrCreate(
+            $currencyChanged = Currency::query()->updateOrCreate(
+                ['id' => $this->currency_id],
+                ['decimal_places' => $this->decimal_places]
+            );
+
+            $settings = WorldSettings::query()->updateOrCreate(
                 ['id' => 1],
                 [
                     'country_id'  => $this->country_id,
@@ -123,6 +147,10 @@ new #[Title('Parametros Regionales')] class extends Component {
                     'updated_by'  => auth()->id(),
                 ],
             );
+            return [
+                'settings' => $settings,
+                'currency_updated' => $currencyChanged,
+            ];
         });
     }
 
@@ -150,6 +178,8 @@ new #[Title('Parametros Regionales')] class extends Component {
 }
 
 ?>
+
+{{-- @formatter:off --}}
 <x-form-style.border-style>
     <x-form-style.main-div>
         <x-form-style.header-form
@@ -279,7 +309,7 @@ new #[Title('Parametros Regionales')] class extends Component {
                                         class="h-4 w-4 shrink-0 text-indigo-400 dark:text-indigo-500" />
                                     <p
                                         class="font-headline text-base font-extrabold tabular-nums text-slate-800 dark:text-gray-100">
-                                        {{ $currency_symbol }} 1.250,{{ str_repeat('0', $decimal_places) ?: '—' }}
+                                        {{ $currency_symbol ?: '$' }} 1.250,{{ str_repeat('0', $decimal_places) ?: '—' }}
                                     </p>
                                 </div>
                             </div>
@@ -289,7 +319,7 @@ new #[Title('Parametros Regionales')] class extends Component {
             </div>
             <x-form-style.footer-button>
                 <x-btn.cancel label="Descartar" wire:click="cancel" />
-                <x-btn.save label="Guardar Configuración" @click="submit()" wire-target="saveRegion" />
+                <x-btn.save label="Guardar Configuración" @click="submit()" wire-target="cleanRegionData" />
             </x-form-style.footer-button>
         </div>
         {{-- cierre x-data wrapper --}}
@@ -299,6 +329,7 @@ new #[Title('Parametros Regionales')] class extends Component {
     <script>
         Alpine.data('regionForm', () => ({
             errors: {},
+
             submit() {
                 this.errors = validate(
                     {
@@ -314,7 +345,7 @@ new #[Title('Parametros Regionales')] class extends Component {
                         currency_id: ['required'],
                     },
                 )
-                if (Object.keys(this.errors).length === 0) this.$wire.saveRegion()
+                if (Object.keys(this.errors).length === 0) this.$wire.cleanRegionData()
             },
         }))
     </script>

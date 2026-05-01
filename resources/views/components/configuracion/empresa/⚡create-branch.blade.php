@@ -27,7 +27,7 @@ class extends Component {
     public BranchForm $form;
 
     #[Computed]
-    public function companyData(): Company
+    public function companyData(): ?Company
     {
         return Company::query()->first();
     }
@@ -81,6 +81,10 @@ class extends Component {
 
     public function adviceBranch(): void
     {
+        $this->form->validateBranchData();
+
+        if(is_null($this->form->branch_id)){
+
         $config = new ModalConfig(
             title: 'Confirmar registro',
             message: 'Confirmá en crear la sucursal con los datos ingresados. El campo código no podrá ser modificado luego de ser creado.',
@@ -93,13 +97,22 @@ class extends Component {
                     'params' => [],
                 ]
             ]);
-        $this->dispatch('openModal', config: (array) $config);
+            $this->dispatch('openModal', config: (array) $config);
+        }
+        $this->update();
     }
 
     #[On('storeBranch')]
-    public function storeBranch(?array $params): void
+    public function create(?array $params): void
     {
-        dd('Eres demasiado bueno a comer!!');
+      [$message, $type] = $this->form->createBranch();
+      $this->getTypeMessage($message, $type);
+    }
+
+    public function update(): void
+    {
+      [$message, $type] =  $this->form->updateBranch();
+      $this->getTypeMessage($message, $type);
     }
 
 };
@@ -215,7 +228,7 @@ class extends Component {
                                         type="button"
                                         x-show="dropSearch === ''
                                             || '{{ strtolower($branch->name) }}'.includes(dropSearch.toLowerCase())
-|| '{{ strtolower($branch->code) }}'.includes(dropSearch.toLowerCase())"
+                                            || '{{ strtolower($branch->code) }}'.includes(dropSearch.toLowerCase())"
                                         @click="selectBranch({{ $branch->id }},'{{ $branch->code }}'); selectedLabel = '{{ addslashes(mb_strtoupper($branch->name)) }}'; dropOpen = false; dropSearch = ''"
                                         class="group flex w-full items-center gap-3 border-b border-slate-100/80 px-4 py-3 text-left transition-colors duration-150 last:border-b-0 hover:bg-indigo-50/80 dark:border-gray-800 dark:hover:bg-gray-800/60"
                                         :class="editingCode === '{{ $branch->code }}' ? 'bg-indigo-50/60 dark:bg-indigo-500/10' : ''"
@@ -223,9 +236,10 @@ class extends Component {
                                         :aria-selected="editingCode === '{{ $branch->code }}'">
 
                                     {{-- Avatar --}}
-                                    <div class="avatar-{{ $loop->index % 6 }} flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold">
+                                    <x-form-style.avatar
+                                        :colorInt="$loop->index">
                                         {{ $initials }}
-                                    </div>
+                                   </x-form-style.avatar>
 
                                     {{-- Info --}}
                                     <div class="min-w-0 flex-1">
@@ -290,14 +304,8 @@ class extends Component {
 
                     {{-- Card 01: Identificación — full width ─────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <div class="mb-3 flex items-center gap-2.5">
-                            <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">01</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Identificación</span>
-                        </div>
 
-                        {{-- Los 3 campos en una sola fila:
-                             Sucursal y Empresa con flex-[3] (iguales y grandes),
-                             Código con w-36 fijo: pl-11 (icono) + 6 chars text-base + pr-4 = ~128px mínimo --}}
+                       <x-form-style.number-tag number="01" label="Identificación" />
                         <div class="flex flex-col gap-3 lg:flex-row lg:items-start">
                             <div class="flex-[3]">
                                 <x-form-inputs.text_input
@@ -319,7 +327,7 @@ class extends Component {
                                         icon="building-office-2"
                                         size="lg"
                                         class="uppercase"
-                                        :value="$this->companyData->name"
+                                        :value="$this->companyData->name ?? ''"
                                         :readonly="true"/>
                             </div>
                             <div class="w-full lg:w-36 lg:shrink-0">
@@ -343,14 +351,12 @@ class extends Component {
                     </div>
 
                     {{-- Cards 02, 03, 04 — tres columnas ──────────────────────────── --}}
-                    <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
+                    <div class="grid grid-cols-1 gap-3 lg:grid-cols-8">
 
                         {{-- Card 02: Ubicación ─────────────────────────────────────── --}}
-                        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                            <div class="mb-3 flex items-center gap-2.5">
-                                <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">02</span>
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Ubicación</span>
-                            </div>
+                        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-3">
+                            <x-form-style.number-tag number="02" label="Ubicación" />
+
                             <div class="space-y-3">
                                 <div wire:key="province-{{ $this->form->province_id }}">
                                     <x-form-inputs.autocomplete
@@ -391,17 +397,15 @@ class extends Component {
                                         maxlength="200"
                                         wire:model="form.address"
                                         alpine-error="address"
-                                        class="uppercase"
+                                        class="capitalize"
                                         required/>
                             </div>
                         </div>
 
                         {{-- Card 03: Contacto ──────────────────────────────────────── --}}
-                        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                            <div class="mb-3 flex items-center gap-2.5">
-                                <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">03</span>
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Contacto</span>
-                            </div>
+                        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-3">
+                            <x-form-style.number-tag number="03" label="Contacto" />
+
                             <div class="space-y-3">
                                 <x-form-inputs.text_input
                                         label="Teléfono"
@@ -440,18 +444,15 @@ class extends Component {
                             </div>
                         </div>
 
-                        {{-- Card 04: Identidad y Operación ─────────────────────────── --}}
-                        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                        {{-- Card 04: Logo y Estatus ─────────────────────────── --}}
+                        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 lg:col-span-2"
                              x-data="{ dragging: false }">
-                            <div class="mb-3 flex items-center gap-2.5">
-                                <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">04</span>
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Identidad y Operación</span>
-                            </div>
+                            <x-form-style.number-tag number="04" label="Logo y Estatus" />
 
                             <div class="space-y-3">
 
                                 {{-- Logo --}}
-                                <div class="flex flex-col items-start gap-2">
+                                <div class="flex flex-col items-center gap-2">
                                     <span class="text-sm font-semibold text-slate-700 dark:text-gray-300">Logo</span>
                                     <div
                                             x-on:dragover.prevent="dragging = true"
@@ -571,7 +572,6 @@ class extends Component {
                                     label="Guardar Sucursal"
                                     @click="submit()"
                                     wire-target="adviceBranch"/>
-
                  </x-form-style.footer-button>
             </div>
         </div>

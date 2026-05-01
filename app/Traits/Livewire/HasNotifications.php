@@ -6,6 +6,17 @@ namespace App\Traits\Livewire;
 
 trait HasNotifications
 {
+    public function getTypeMessage(string $message, string $type)
+    {
+        match ($type) {
+            'notifySuccess' => $this->notifySuccess($message),
+            'notifyError' => $this->notifyError($message),
+            'notifyWarning' => $this->notifyWarning($message),
+
+            default => $this->notifyInfo($message),
+        };
+    }
+
     public function notifySuccess(string $message): void
     {
         $this->dispatch('notify', type: 'success', message: $message);

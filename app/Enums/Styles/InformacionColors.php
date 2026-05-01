@@ -41,4 +41,34 @@ enum InformacionColors: string
             self::Error => 'x-circle',
         };
     }
+
+    public function alertWrapperClass(): string
+    {
+        return match ($this) {
+            self::Warning => 'border border-amber-200/70 bg-amber-50/80 dark:border-amber-500/25 dark:bg-amber-500/10',
+            self::Info => 'border border-indigo-200/70 bg-indigo-50/80 dark:border-indigo-500/25 dark:bg-indigo-500/10',
+            self::Success => 'border border-emerald-200/70 bg-emerald-50/80 dark:border-emerald-500/25 dark:bg-emerald-500/10',
+            self::Error => 'border border-rose-200/70 bg-rose-50/80 dark:border-rose-500/25 dark:bg-rose-500/10',
+        };
+    }
+
+    public function alertAccentClass(): string
+    {
+        return match ($this) {
+            self::Warning => 'bg-amber-500 dark:bg-amber-400',
+            self::Info => 'bg-indigo-500 dark:bg-sky-400',
+            self::Success => 'bg-emerald-500 dark:bg-emerald-400',
+            self::Error => 'bg-rose-500 dark:bg-rose-400',
+        };
+    }
+
+    public function alertLabelClass(): string
+    {
+        return match ($this) {
+            self::Warning => 'text-amber-700 dark:text-amber-300',
+            self::Info => 'text-indigo-700 dark:text-indigo-300',
+            self::Success => 'text-emerald-700 dark:text-emerald-300',
+            self::Error => 'text-rose-700 dark:text-rose-300',
+        };
+    }
 }

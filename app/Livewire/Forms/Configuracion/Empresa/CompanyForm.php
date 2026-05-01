@@ -6,14 +6,13 @@ namespace App\Livewire\Forms\Configuracion\Empresa;
 
 use App\Actions\Configuracion\CompanyAction\SaveCompanyAction;
 use App\Events\NewBranch;
+use App\Livewire\Forms\BaseForm;
 use App\Models\Company;
 use App\Rules\AttributeValidator;
 use Exception;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Locked;
-use Livewire\Form;
 
-final class EmpresaForm extends Form
+final class CompanyForm extends BaseForm
 {
     public string $name = '';
 
@@ -40,6 +39,36 @@ final class EmpresaForm extends Form
 
     public mixed $logo = null;
 
+    public array $dataCompany = [];
+
+    public function validateCompany(): void
+    {
+        $this->dataCompany =  $this->validateServiceData($this->companyId);
+    }
+
+    public function checkCompany(): array
+    {
+        try {
+            $model = app(SaveCompanyAction::class)->handle($this->dataCompany);
+
+            if ($model->wasRecentlyCreated) {
+                $this->loadCompanyData($model);
+
+                NewBranch::dispatch($model);
+
+                return ['Empresa creada correctamente.', 'notifySuccess'];
+            }
+
+            if ($model->wasChanged()) {
+                return ['Empresa actualizada correctamente.', 'notifySuccess'];
+            }
+        } catch (Exception $e) {
+            return ['Error al guardar la empresa: ' . $e->getMessage(), 'notifyError'];
+        }
+
+        return ['No se realizaron cambios en la empresa.', 'notifyInfo'];
+    }
+
     public function loadCompanyData(Company $company): void
     {
         $this->companyId = $company->id;
@@ -53,41 +82,6 @@ final class EmpresaForm extends Form
         $this->phone = $company->phone;
         $this->email = $company->email;
         $this->website = $company->website ?? '';
-    }
-
-    public function checkCompany(): array
-    {
-        $data = $this->validateServiceData($this->companyId);
-
-        try {
-            $model = app(SaveCompanyAction::class)->handle($data);
-
-            if ($model->wasChanged()) {
-
-                return ['Empresa actualizada correctamente.', 'notifySuccess'];
-            }
-
-            if ($model->wasRecentlyCreated) {
-
-                NewBranch::dispatch($model);
-
-                return ['Empresa creada correctamente.', 'notifySuccess'];
-            }
-        } catch (Exception $e) {
-            return ['Error al guardar la empresa: ' . $e->getMessage(), 'notifyError'];
-        }
-
-        return ['No se realizaron cambios en la empresa.', 'notifyInfo'];
-    }
-
-    protected function validateServiceData(?int $excludeId = null): array
-    {
-        return Validator::make(
-            $this->transformServiceData(),
-            $this->getValidationRules($excludeId),
-            [],
-            $this->getValidationAttributes(),
-        )->validate();
     }
 
     protected function transformServiceData(): array

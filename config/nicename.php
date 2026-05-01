@@ -7,10 +7,13 @@ return [
     'fiscal_number' => 'número fiscal',
     'tax_condition_id' => 'condición fiscal',
     'current_status_id' => 'estado',
+    'province_id' => 'provincia',
     'region_id' => 'región',
     'address' => 'dirección',
     'postal_code' => 'código postal',
     'phone' => 'teléfono',
     'email' => 'correo',
     'website' => 'web',
+    'code' => 'código',
+    'company' => 'compañia',
 ];

@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Forms\Configuracion\Empresa\EmpresaForm;
+use App\Dto\Style\ModalConfig;
+use App\Livewire\Forms\Configuracion\Empresa\CompanyForm;
 use App\Models\Company;
 use App\Models\CurrentStatus;
 use App\Models\Region;
@@ -11,6 +12,7 @@ use App\Models\WorldSettings;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -20,7 +22,7 @@ class extends Component {
     use HasNotifications;
     use WithFileUploads;
 
-    public EmpresaForm $form;
+    public CompanyForm $form;
     public bool $isExisting = false;
 
 
@@ -81,14 +83,36 @@ class extends Component {
         return Company::query()->first();
     }
 
-    public function saveCompany(): void
+    public function adviceCompany(): void
+    {
+        $this->form->validateCompany();
+
+        if (!$this->resolveCompany()) {
+
+            $config = new ModalConfig(
+                title: 'Confirmar registro',
+                message: 'Confirmá en crear la compañia con los datos ingresados. Los datos fiscales Nombre y CUIT no podrán ser editados.',
+                type: 'info',
+                buttons: [
+                    [
+                        'label' => 'Aceptar',
+                        'action' => 'storeCompany',
+                        'class' => 'save',
+                        'params' => [],
+                    ]
+                ]);
+            $this->dispatch('openModal', config: (array) $config);
+        } else {
+            $this->create(null);
+        }
+    }
+
+    #[On('storeCompany')]
+    public function create(?array $params): void
     {
         [$message, $type] = $this->form->checkCompany();
-        match ($type) {
-            'notifySuccess' => $this->notifySuccess($message),
-            'notifyError' => $this->notifyError($message),
-            default => $this->notifyInfo($message),
-        };
+        $this->isExisting  = $this->form->companyId !== null;
+        $this->getTypeMessage($message, $type);
     }
 }
 ?>
@@ -106,10 +130,8 @@ class extends Component {
 
                     {{-- Card 01: Datos Fiscales ──────────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <div class="mb-4 flex items-center gap-2.5">
-                            <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">01</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Datos Fiscales</span>
-                        </div>
+                        <x-form-style.number-tag number="01" label="Datos Fiscales"/>
+
                         <div class="space-y-4">
                             <x-form-inputs.text_input
                                     label="Nombre de la Empresa"
@@ -156,10 +178,8 @@ class extends Component {
 
                     {{-- Card 03: Contacto ─────────────────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <div class="mb-4 flex items-center gap-2.5">
-                            <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">03</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Contacto</span>
-                        </div>
+                        <x-form-style.number-tag number="03" label="Contacto"/>
+
                         <div class="space-y-4">
                             <div class="grid grid-cols-5 gap-4">
                                 <div class="col-span-2">
@@ -201,10 +221,8 @@ class extends Component {
 
                     {{-- Card 02: Ubicación ────────────────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <div class="mb-4 flex items-center gap-2.5">
-                            <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">02</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Ubicación</span>
-                        </div>
+                        <x-form-style.number-tag number="02" label="Ubicación"/>
+
                         <div class="space-y-4">
                             <div class="grid grid-cols-3 gap-4">
                                 <div class="col-span-2">
@@ -245,10 +263,8 @@ class extends Component {
                     {{-- Card 04: Identidad de Marca ──────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900"
                          x-data="{ dragging: false }">
-                        <div class="mb-4 flex items-center gap-2.5">
-                            <span class="inline-flex h-5 items-center rounded-md bg-indigo-100 px-2 text-xs font-bold text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">04</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Identidad de Marca</span>
-                        </div>
+                        <x-form-style.number-tag number="04" label="Logo y Estatus"/>
+
                         <div class="flex gap-5">
                             {{-- Logo uploader ─────────────────────────────── --}}
                             <div class="flex shrink-0 flex-col items-center gap-2">
@@ -348,22 +364,14 @@ class extends Component {
                     </div>
                 </div>
 
-                {{-- ── Footer: advertencia + acciones ──────────────────────────── --}}
-                <div class="mt-5 space-y-6 border-t border-slate-100 pt-4 dark:border-gray-800">
-                    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                        <div class="flex gap-1">
-                            <x-feedback.alerts
-                                    type="warning"
-                                    size="sm"
-                                    message="Los datos fiscales Nombre y CUIT no podrán ser editados posteriormente. Por favor, verifique los datos !"/>
-                        </div>
+                {{-- ── Footer ──────────────────────────────────────────────────────── --}}
+                <x-form-style.footer-button>
 
                         <div class="flex w-full items-center gap-2 sm:w-auto">
                             <x-btn.cancel label="Descartar" wire:click="cancel"/>
-                            <x-btn.save label=" Guardar Empresa" @click="submit()" wire-target="saveCompany"/>
+                            <x-btn.save label=" Guardar Empresa" @click="submit()" wire-target="adviceCompany"/>
                         </div>
-                    </div>
-                </div>
+                </x-form-style.footer-button>
             </div>
         </div>
     </x-form-style.main-div>
@@ -397,7 +405,7 @@ class extends Component {
                     currentStatusId: ['required'],
                 }
             );
-            if (Object.keys(this.errors).length === 0) this.$wire.saveCompany();
+            if (Object.keys(this.errors).length === 0) this.$wire.adviceCompany();
         },
     }));
 </script>

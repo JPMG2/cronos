@@ -20,9 +20,14 @@ Route::middleware('auth')->group(function () {
 
     /**Configuracion/Empresa**/
     Route::livewire('/configuracion/company', 'configuracion.empresa.create-company')->name('empresa.datos');
-    Route::livewire('/configuracion/branch', 'configuracion.empresa.create-branch')->name('empresa.sucursal');
+    Route::livewire('/configuracion/branch', 'configuracion.empresa.create-branch')
+        ->name('empresa.sucursal')
+        ->middleware('company.exists');
+
     Route::livewire('/configuracion/regional', 'configuracion.regional.create-region')->name('empresa.parametroregional');
 
+    /**Configuracion/Parámetros**/
+    Route::livewire('/configuracion/codesequence', 'configuracion.parametros.code-sequence')->name('parametros.secuencias');
 });
 
 require __DIR__ . '/auth.php';

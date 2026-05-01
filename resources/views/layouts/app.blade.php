@@ -41,6 +41,7 @@
                     <div class="mb-3 flex justify-end">
                         @livewire("form-style.breadcrumb", key("breadcrumb-" . request()->path()))
                     </div>
+                    <x-feedback.flash />
                     {{ $slot }}
                     @livewire("advice-window", key("advice-window"))
                 </main>

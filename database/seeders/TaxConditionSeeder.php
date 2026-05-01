@@ -16,17 +16,17 @@ final class TaxConditionSeeder extends Seeder
     {
         $taxConditions = [
             [
-                'name' => 'IVA Responsable Inscripto',
+                'name' => 'Responsable Inscripto',
                 'code' => 'RI',
                 'discriminate_tax' => true,
             ],
             [
-                'name' => 'IVA Sujeto Exento',
+                'name' => 'IVA Exento',
                 'code' => 'EX',
                 'discriminate_tax' => false,
             ],
             [
-                'name' => 'Responsable Monotributo',
+                'name' => 'Monotributista',
                 'code' => 'MT',
                 'discriminate_tax' => false,
             ],
