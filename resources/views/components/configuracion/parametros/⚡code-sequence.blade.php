@@ -1,18 +1,50 @@
 <?php
 
+use App\Dto\Style\ModalConfig;
+use App\Livewire\Forms\Configuracion\Parametros\SequenceForm;
 use App\Models\Sequence;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
 new #[Title('Secuencias de Código')]
 class extends Component {
 
+    public SequenceForm $form;
+
     #[Computed]
     public function sequences(): Collection
     {
         return Sequence::query()->orderBy('entity')->get();
+    }
+
+    public function adviceSequence(): void
+    {
+        $this->form->validateSequence();
+        if (is_null($this->form->sequenceId)) {
+            $config = new ModalConfig(
+                title: 'Confirmar registro',
+                message: 'Confirmá la creación de la nueva secuencia. Los campos entidad y código no podrán editarse una vez generado el primer registro.',
+                type: 'info',
+                buttons: [
+                    [
+                        'label' => 'Aceptar',
+                        'action' => 'storeSequence',
+                        'class' => 'save',
+                        'params' => [],
+                    ]
+                ]);
+            $this->dispatch('openModal', config: (array) $config);
+        }
+
+    }
+
+    #[On('storeSequence')]
+    public function create()
+    {
+     dd('s');
     }
 };
 ?>
@@ -146,94 +178,96 @@ class extends Component {
 
             {{-- ══ FORM BODY ═══════════════════════════════════════════════════════ --}}
             <div class="relative z-10 px-8 py-5">
-                <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-12">
 
-                    {{-- ── Card 01: Entidad ─────────────────────────────────────── --}}
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <x-form-style.number-tag number="01" label="Entidad"/>
-                        <div class="space-y-3">
-                            <x-form-inputs.text_input
-                                    label="Nombre de entidad"
-                                    name="entity_name"
-                                    icon="identification"
-                                    placeholder="Ej: Pacientes"
-                                    required/>
-                            <x-form-inputs.text_input
-                                    label="Código interno"
-                                    name="entity"
-                                    icon="hashtag"
-                                    placeholder="Ej: PAC"
-                                    description="Único en el sistema · máx. 6 caracteres"
-                                    class="uppercase"
-                                    required/>
-                        </div>
+                    {{-- Fila 1: Identificación --}}
+                    <div class="sm:col-span-4">
+                        <x-form-inputs.text_input
+                                label="Entidad"
+                                name="entity"
+                                icon="identification"
+                                placeholder="Ej: Factura"
+                                class="uppercase"
+                                maxlength="40"
+                                wire:model="form.entity"
+                                alpine-error="entity"
+                                required/>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <x-form-inputs.text_input
+                                label="Código interno"
+                                name="prefix"
+                                icon="hashtag"
+                                placeholder="Ej: FAC"
+                                description="Único en el sistema · máx. 3 a 4 caracteres"
+                                class="uppercase"
+                                maxlength="4"
+                                wire:model="form.prefix"
+                                alpine-error="prefix"
+                                required/>
                     </div>
 
-                    {{-- ── Card 02: Formato del Código ──────────────────────────── --}}
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <x-form-style.number-tag number="02" label="Formato del Código"/>
-                        <div class="space-y-3">
-                            <x-form-inputs.text_input
-                                    label="Prefijo"
-                                    name="prefix"
-                                    icon="hashtag"
-                                    placeholder="Ej: PAC"
-                                    description="Se añade antes del número generado"/>
-                            <x-form-inputs.text_input
-                                    label="Separador"
-                                    name="separator"
-                                    icon="link"
-                                    placeholder="Ej: -"
-                                    description="Vacío para omitir · Ej: - / •"/>
-                            <x-form-inputs.select
-                                    label="Dígitos (padding)"
-                                    name="padding"
-                                    icon="adjustments-horizontal"
-                                    required>
-                                <option value="2">2 dígitos → 01</option>
-                                <option value="3">3 dígitos → 001</option>
-                                <option value="4" selected>4 dígitos → 0001</option>
-                                <option value="5">5 dígitos → 00001</option>
-                            </x-form-inputs.select>
-                        </div>
+
+                    {{-- Fila 2: Formato + Contador --}}
+                    <div class="sm:col-span-2">
+                        <x-form-inputs.text_input
+                                label="Separador"
+                                name="separator"
+                                icon="link"
+                                placeholder="Ej: -"
+                                description="Caracter separador entre la entidad y código"
+                                wire:model="form.separator"
+                                alpine-error="separator"
+                                maxlength="1"/>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <x-form-inputs.text_input
+                                label="Dígitos"
+                                name="padding"
+                                icon="adjustments-horizontal"
+                                placeholder="Ej: 4"
+                                description="Cantidad de dígitos (ej: 4 → 0042)"
+                                maxlength="1"
+                                x-mask="9"
+                                alpine-error="padding"
+                                wire:model="form.padding"
+                                required/>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <x-form-inputs.text_input
+                                label="Valor actual"
+                                name="current_value"
+                                icon="hashtag"
+                                placeholder="Ej: 1"
+                                description="Número desde el que continúa"
+                                maxlength="4"
+                                x-mask="9999"
+                                wire:model="form.current_value"
+                                alpine-error="current_value"
+                                required/>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <x-form-inputs.text_input
+                                label="Incremento"
+                                name="increment"
+                                icon="plus"
+                                placeholder="Ej: 1"
+                                description="Cuánto sube en cada asignación"
+                                maxlength="4"
+                                x-mask="9999"
+                                wire:model="form.increment"
+                                alpine-error="increment"
+                                required/>
                     </div>
 
-                    {{-- ── Card 03: Contador ────────────────────────────────────── --}}
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        {{-- Amber badge — dato operacional --}}
-                        <div class="mb-3 flex items-center gap-2.5">
-                            <span class="inline-flex h-5 items-center rounded-md bg-amber-100 px-2 text-xs font-bold text-amber-600 dark:bg-amber-500/15 dark:text-amber-400">03</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Contador</span>
-                        </div>
-                        <div class="space-y-3">
-                            <x-form-inputs.text_input
-                                    label="Valor actual"
-                                    name="current_value"
-                                    icon="hashtag"
-                                    type="number"
-                                    placeholder="0"
-                                    description="Número desde el que continúa la secuencia"/>
-                            <x-form-inputs.text_input
-                                    label="Incremento"
-                                    name="increment"
-                                    icon="plus"
-                                    type="number"
-                                    placeholder="1"
-                                    description="Cuánto sube en cada asignación"/>
-
-                            {{-- Próximo número — display read-only, no input --}}
-                            <div>
-                                <p class="mb-1.5 text-sm font-semibold text-slate-700 dark:text-gray-300">
-                                    Próximo número
-                                </p>
-                                <div class="flex items-center gap-3 rounded-xl border border-indigo-200/60 bg-indigo-50/60 px-4 py-2.5 dark:border-indigo-700/30 dark:bg-indigo-500/10">
-                                    <x-menu.heroicon name="arrow-right-on-rectangle"
-                                                     class="h-4 w-4 shrink-0 -rotate-180 text-indigo-400 dark:text-indigo-500"/>
-                                    <span class="font-headline text-xl font-extrabold text-indigo-600 dark:text-sky-400">42</span>
-                                    <span class="ml-auto font-label text-xs text-slate-400 dark:text-gray-600">calculado</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="sm:col-span-3">
+                        <x-form-inputs.text_input
+                                label="Proximo valor "
+                                name="current_value_db"
+                                icon="circle-stack"
+                                maxlength="4"
+                                x-mask="9999"
+                                readonly/>
                     </div>
 
                 </div>
@@ -284,7 +318,11 @@ class extends Component {
             {{-- ══ FOOTER ══════════════════════════════════════════════════════════ --}}
             <x-form-style.footer-button>
                 <x-btn.cancel label="Descartar"/>
-                <x-btn.save label="Guardar Secuencia"/>
+                <x-btn.save
+                        label="Guardar Secuencia"
+                        @click="submit()"
+                        wire-target="adviceSequence"/>
+
             </x-form-style.footer-button>
 
         </div>
@@ -300,6 +338,28 @@ class extends Component {
         selectSequence(code) {
             this.mode = 'edit';
             this.editingEntity = code;
+        },
+        submit() {
+            this.errors = validate(
+                {
+                    entity: this.$wire.form.entity,
+                    prefix: this.$wire.form.prefix,
+                    separator: this.$wire.form.separator,
+                    padding: this.$wire.form.padding,
+                    current_value: this.$wire.form.current_value,
+                    increment: this.$wire.form.increment,
+                },
+                {
+                    entity: ['required', ['minLength', 3]],
+                    prefix: ['required', ['minLength', 3], ['maxLength', 4]],
+                    separator: ['required', ['maxLength', 1]],
+                    padding: ['required', ['maxLength', 1]],
+                    current_value: ['required', ['maxLength', 4]],
+                    increment: ['required', ['maxLength', 1]],
+
+                }
+            );
+            if (Object.keys(this.errors).length === 0) this.$wire.adviceSequence();
         },
     }));
 </script>

@@ -339,13 +339,10 @@ class extends Component {
                                         maxlength="20"
                                         size="lg"
                                         wire:model="form.code"
+                                        description="Auto-generado."
                                         class="uppercase"
                                         :readonly="!($form->code === '')"
                                         required/>
-
-                                <p class="mt-1.5 text-[11px] leading-tight text-slate-400 dark:text-gray-600">
-                                    Auto-generado.
-                                </p>
                             </div>
                         </div>
                     </div>

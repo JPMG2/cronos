@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
         ->name('empresa.sucursal')
         ->middleware('company.exists');
 
-    Route::livewire('/configuracion/regional', 'configuracion.regional.create-region')->name('empresa.parametroregional');
+    Route::livewire('/configuracion/regional', 'configuracion.parametros.create-region')->name('empresa.parametroregional');
 
     /**Configuracion/Parámetros**/
     Route::livewire('/configuracion/codesequence', 'configuracion.parametros.code-sequence')->name('parametros.secuencias');

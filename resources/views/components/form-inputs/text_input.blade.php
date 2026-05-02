@@ -54,10 +54,6 @@
         </label>
     @endif
 
-    @if ($description)
-        <p class="mt-1 mb-1.5 text-xs text-slate-400 dark:text-gray-500">{{ $description }}</p>
-    @endif
-
     <div class="relative mt-1.5 group">
         {{-- Leading icon --}}
         @if ($icon)
@@ -120,5 +116,9 @@
             x-text="errors.{{ $alpineError }}"
             x-transition
             class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+    @endif
+
+    @if ($description && !$hasError)
+        <p class="mt-1 text-xs text-slate-400 dark:text-gray-500">{{ $description }}</p>
     @endif
 </div>

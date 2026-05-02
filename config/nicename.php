@@ -16,4 +16,8 @@ return [
     'website' => 'web',
     'code' => 'código',
     'company' => 'compañia',
+    'entity' => 'entidad',
+    'prefix' => 'entidad',
+    'padding' => 'digitos',
+    'separator' => 'separador',
 ];
