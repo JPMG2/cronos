@@ -6,10 +6,11 @@ namespace App\Livewire\Forms\Configuracion\Empresa;
 
 use App\Actions\Configuracion\BranchAction\CreateBranchAction;
 use App\Actions\Configuracion\BranchAction\UpdateBranchAction;
+use App\Actions\Configuracion\Parameters\GenerateSequenceCodeAction;
 use App\Livewire\Forms\BaseForm;
 use App\Models\Branch;
 use App\Rules\AttributeValidator;
-use Exception;
+use App\Services\NotificationService;
 use Livewire\Attributes\Locked;
 
 final class BranchForm extends BaseForm
@@ -24,6 +25,7 @@ final class BranchForm extends BaseForm
 
     public string $name = '';
 
+    #[Locked]
     public string $code = '';
 
     public ?int $province_id = null;
@@ -48,13 +50,11 @@ final class BranchForm extends BaseForm
 
     public array $dataBranch = [];
 
+    private ?NotificationService $notificationService = null;
+
     public function fillFromBranch(int $branchId): void
     {
-        $branch = Branch::query()->with('region')->find($branchId);
-
-        if (! $branch) {
-            return;
-        }
+        $branch = Branch::query()->with('region')->findOrFail($branchId);
 
         $this->branch_id = $branch->id;
         $this->company_id = $branch->company_id;
@@ -78,32 +78,29 @@ final class BranchForm extends BaseForm
 
     public function createBranch(): array
     {
-        try {
-            $model = app(CreateBranchAction::class)->handle($this->dataBranch);
-            if ($model->wasRecentlyCreated) {
-                return ['Sucursal creada correctamente', 'notifySuccess'];
-            }
-        } catch (Exception $e) {
-            return ['Error al guardar la sucursal: ' . $e->getMessage(), 'notifyError'];
-        }
 
-        return ['Sucursal no creada', 'notifyError'];
+        return $this->tryAction(function () {
+            $this->code = app(GenerateSequenceCodeAction::class)->handle('Sucursal');
+            $this->dataBranch['code'] = $this->code;
+            $model = app(CreateBranchAction::class)->handle($this->dataBranch);
+
+            return $this->notificationService()->sendNotificacion($model, 'create');
+
+        }, 'Error al guardar la sucursal: ');
+
     }
 
     public function updateBranch(): array
     {
-        $data = array_merge(['id' => $this->branch_id], $this->dataBranch);
-
-        try {
+        return $this->tryAction(function () {
+            $data = array_merge(['id' => $this->branch_id],
+                $this->dataBranch);
             $model = app(UpdateBranchAction::class)->handle($data);
-            if ($model->wasChanged()) {
-                return ['Sucursal actualizada correctamente', 'notifySuccess'];
-            }
-        } catch (Exception $e) {
-            return ['Error al actualizar la sucursal: ' . $e->getMessage(), 'notifyError'];
-        }
 
-        return ['No se realizaron cambios en la sucursal.', 'notifyInfo'];
+            return $this->notificationService()->sendNotificacion($model, 'update');
+
+        }, 'Error al actualizar la sucursal: ');
+
     }
 
     protected function transformServiceData(): array
@@ -111,7 +108,6 @@ final class BranchForm extends BaseForm
         return [
             'company_id' => $this->company_id,
             'name' => mb_trim($this->name),
-            'code' => mb_trim($this->code),
             'province_id' => $this->province_id,
             'region_id' => $this->region_id,
             'phone' => mb_trim($this->phone),
@@ -129,7 +125,6 @@ final class BranchForm extends BaseForm
     {
         return [
             'name' => AttributeValidator::uniqueIdNameLength('3', 'branches', 'name', $excludeId),
-            'code' => AttributeValidator::uniqueIdNameLength('3', 'branches', 'code', $excludeId),
             'province_id' => AttributeValidator::requireAndExists('provinces', 'id', 'province_id', true),
             'region_id' => AttributeValidator::requireAndExists('regions', 'id', 'region_id', true),
             'phone' => AttributeValidator::digitValid('10', true),
@@ -146,7 +141,6 @@ final class BranchForm extends BaseForm
     {
         return [
             'name' => config('nicename.name'),
-            'code' => config('nicename.code'),
             'province_id' => config('nicename.province_id'),
             'region_id' => config('nicename.region_id'),
             'phone' => config('nicename.phone'),
@@ -157,5 +151,10 @@ final class BranchForm extends BaseForm
             'current_status_id' => config('nicename.current_status_id'),
             'company_id' => config('nicename.company'),
         ];
+    }
+
+    private function notificationService(): NotificationService
+    {
+        return $this->notificationService ??= resolve(NotificationService::class);
     }
 }

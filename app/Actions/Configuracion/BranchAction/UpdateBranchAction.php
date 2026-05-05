@@ -16,12 +16,12 @@ final class UpdateBranchAction
             'current_status_id' => $data['current_status_id'],
             'region_id' => $data['region_id'],
             'name' => $data['name'],
-            'code' => $data['code'],
             'phone' => $data['phone'],
             'email' => $data['email'],
             'address' => $data['address'],
             'postal_code' => $data['postal_code'],
             'is_default' => $data['is_default'] ?? false,
+            'website' => $data['website'] ?? null,
             'logo' => $data['logo'] ?? null,
         ]);
 

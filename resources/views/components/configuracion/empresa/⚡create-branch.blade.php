@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\CurrentStatus;
 use App\Models\Province;
 use App\Models\Region;
+use App\Models\Sequence;
 use App\Models\WorldSettings;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
@@ -25,6 +26,14 @@ class extends Component {
     use WithFileUploads;
 
     public BranchForm $form;
+
+    #[Computed]
+    public function sequenceReady(): bool
+    {
+        $sequence = Sequence::query()->where('entity', 'Sucursal')->first();
+
+        return $sequence?->isConfigured() ?? false;
+    }
 
     #[Computed]
     public function companyData(): ?Company
@@ -76,30 +85,37 @@ class extends Component {
     {
          $this->resetValidation();
          $this->form->reset();
-         
+         $this->form->company_id = $this->companyData->id ?? null;
     }
 
     public function adviceBranch(): void
     {
+
         $this->form->validateBranchData();
 
         if(is_null($this->form->branch_id)){
+            $msgMessage = 'Confirmá en crear la sucursal con los datos ingresados. El campo código no podrá ser modificado luego de ser generado.';
+            $widowAction = 'storeBranch';
+        }else{
+            $msgMessage = 'Confrimá actualizar la sucursal. El campo código no podrá ser modificado luego de ser generado.';
+            $widowAction = 'updateBranch';
+        }
 
         $config = new ModalConfig(
             title: 'Confirmar registro',
-            message: 'Confirmá en crear la sucursal con los datos ingresados. El campo código no podrá ser modificado luego de ser creado.',
+            message: $msgMessage,
             type: 'info',
             buttons: [
                 [
                     'label' => 'Aceptar',
-                    'action' => 'storeBranch',
+                    'action' =>  $widowAction,
                     'class' => 'save',
                     'params' => [],
                 ]
             ]);
             $this->dispatch('openModal', config: (array) $config);
-        }
-        $this->update();
+
+
     }
 
     #[On('storeBranch')]
@@ -108,13 +124,17 @@ class extends Component {
       [$message, $type] = $this->form->createBranch();
       $this->getTypeMessage($message, $type);
     }
-
+    #[On('updateBranch')]
     public function update(): void
     {
       [$message, $type] =  $this->form->updateBranch();
       $this->getTypeMessage($message, $type);
     }
 
+    public function mount(): void
+    {
+      $this->form->company_id = $this->companyData->id ?? null;
+    }
 };
 ?>
 
@@ -155,13 +175,9 @@ class extends Component {
             </div>
 
             {{-- ══ Selector de sucursal ════════════════════════════════════════════ --}}
-            {{--
-                Patrón combobox: escala a cualquier cantidad de sucursales.
-                El dropdown filtra client-side sobre los items renderizados por Blade.
-                La tarjeta "Editando" muestra la sede seleccionada con todos sus datos.
-            --}}
+            
             <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 dark:border-gray-800 dark:bg-gray-900/30"
-                 x-data="{ dropOpen: false, dropSearch: '', selectedLabel: '' }"
+                 x-data="{ dropOpen: false, dropSearch: '', selectedLabel: '', get noMatch() { return this.dropSearch !== '' && !Alpine.store('branchItems').some(i => i.e.includes(this.dropSearch.toLowerCase()) || i.p.includes(this.dropSearch.toLowerCase())); } }"
                  @keydown.escape.window="dropOpen = false">
 
                 {{-- Subheader: ícono + título + contador --}}
@@ -215,7 +231,8 @@ class extends Component {
                                 x-transition:leave="transition ease-in duration-75"
                                 x-transition:leave-start="opacity-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 -translate-y-1"
-                                class="absolute z-30 mt-1.5 max-h-72 w-full overflow-y-auto rounded-xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/60 dark:border-gray-700 dark:bg-gray-900 dark:shadow-black/40"
+                                class="absolute z-30 mt-1.5 max-h-60 w-full overflow-y-auto rounded-xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/60 dark:border-gray-700 dark:bg-gray-900 dark:shadow-black/40"
+                                style="display: none"
                                 role="listbox">
 
                             @forelse($this->branches as $branch)
@@ -283,6 +300,12 @@ class extends Component {
                                         botón.</p>
                                 </div>
                             @endforelse
+
+                            <div x-show="noMatch" x-cloak
+                                 class="flex flex-col items-center justify-center px-4 py-8 text-center">
+                               <x-nomatch/>
+                            </div>
+
                         </div>
                     </div>
 
@@ -314,34 +337,34 @@ class extends Component {
                                         icon="building-office"
                                         placeholder="Ej: Cipolletti Centro Sur"
                                         maxlength="200"
-                                        size="lg"
+                                        size="md"
                                         wire:model="form.name"
                                         alpine-error="name"
                                         class="uppercase"
                                         required/>
                             </div>
-                            <div class="flex-[3]">
+                            <div class="flex-[2.5]">
                                 <x-form-inputs.text_input
                                         label="Empresa"
                                         name="companyName"
                                         icon="building-office-2"
-                                        size="lg"
+                                        size="md"
                                         class="uppercase"
                                         :value="$this->companyData->name ?? ''"
                                         :readonly="true"/>
                             </div>
-                            <div class="w-full lg:w-36 lg:shrink-0">
+                            <div class="w-full lg:w-48 lg:shrink-0">
                                 <x-form-inputs.text_input
                                         label="Código"
                                         name="code"
                                         icon="hashtag"
-                                        placeholder="CIP-01"
+                                        placeholder="XXX-XXX"
                                         maxlength="20"
-                                        size="lg"
+                                        size="md"
                                         wire:model="form.code"
                                         description="Auto-generado."
                                         class="uppercase"
-                                        :readonly="!($form->code === '')"
+                                        :readonly="true"
                                         required/>
                             </div>
                         </div>
@@ -562,13 +585,24 @@ class extends Component {
                     </div>{{-- /grid 3 columnas --}}
                 </div>{{-- /grid principal --}}
 
+                {{-- Alerta secuencia no configurada --}}
+                @if(!$this->sequenceReady)
+                    <div class="mt-3">
+                        <x-feedback.alerts type="warning" size="sm"
+                            message="La secuencia para Sucursales no está configurada o le faltan datos. Completá la configuración en Parámetros → Secuencias antes de crear registros."/>
+                    </div>
+                @endif
+
                 {{-- ── Footer ──────────────────────────────────────────────────────── --}}
                  <x-form-style.footer-button>
-                            <x-btn.cancel label="Descartar" wire:click="cancel"/>
+                            <x-btn.cancel label="Descartar"
+                                          x-on:click="cancel"
+                                          wire:click="newBranch"/>
                             <x-btn.save
                                     label="Guardar Sucursal"
                                     @click="submit()"
-                                    wire-target="adviceBranch"/>
+                                    wire-target="adviceBranch"
+                                    :disabled="!$this->sequenceReady"/>
                  </x-form-style.footer-button>
             </div>
         </div>
@@ -577,6 +611,8 @@ class extends Component {
 
 @script
 <script>
+    Alpine.store('branchItems', @json($this->branches->map(fn($b) => ['e' => strtolower($b->name), 'p' => strtolower($b->code)])->values()));
+
     Alpine.data('branchManager', () => ({
         mode: 'create',
         editingCode: '',
@@ -587,6 +623,11 @@ class extends Component {
             this.editingCode = '';
             this.errors = {};
             this.$wire.newBranch();
+        },
+        cancel() {
+            this.mode = 'create';
+            this.editingCode = '';
+            this.errors = {};
         },
 
         selectBranch(id, code) {
@@ -606,7 +647,7 @@ class extends Component {
                     region_id: this.$wire.form.region_id,
                     address: this.$wire.form.address,
                     postal_code: this.$wire.form.postal_code,
-                    currentStatusId: this.$wire.form.current_status_id,
+                    current_status_id: this.$wire.form.current_status_id,
                 },
                 {
                     name: ['required', ['minLength', 3]],
@@ -616,7 +657,7 @@ class extends Component {
                     region_id: ['required'],
                     address: ['required', ['minLength', 6]],
                     postal_code: ['required', ['minLength', 3]],
-                    currentStatusId: ['required'],
+                    current_status_id: ['required'],
                 }
             );
             if (Object.keys(this.errors).length === 0) this.$wire.adviceBranch();

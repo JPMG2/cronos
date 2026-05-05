@@ -110,8 +110,8 @@ class extends Component {
     #[On('storeCompany')]
     public function create(?array $params): void
     {
-        [$message, $type] = $this->form->checkCompany();
-        $this->isExisting  = $this->form->companyId !== null;
+        [$message, $type] = $this->form->handleCompanyCreation();
+        $this->isExisting = $this->form->companyId !== null;
         $this->getTypeMessage($message, $type);
     }
 }
@@ -367,10 +367,10 @@ class extends Component {
                 {{-- ── Footer ──────────────────────────────────────────────────────── --}}
                 <x-form-style.footer-button>
 
-                        <div class="flex w-full items-center gap-2 sm:w-auto">
-                            <x-btn.cancel label="Descartar" wire:click="cancel"/>
-                            <x-btn.save label=" Guardar Empresa" @click="submit()" wire-target="adviceCompany"/>
-                        </div>
+                    <div class="flex w-full items-center gap-2 sm:w-auto">
+                        <x-btn.cancel label="Descartar" wire:click="cancel"/>
+                        <x-btn.save label=" Guardar Empresa" @click="submit()" wire-target="adviceCompany"/>
+                    </div>
                 </x-form-style.footer-button>
             </div>
         </div>

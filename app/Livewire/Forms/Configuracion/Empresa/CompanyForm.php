@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms\Configuracion\Empresa;
 
-use App\Actions\Configuracion\CompanyAction\SaveCompanyAction;
+use App\Actions\Configuracion\CompanyAction\CreateCompanyAction;
 use App\Events\NewBranch;
 use App\Livewire\Forms\BaseForm;
 use App\Models\Company;
 use App\Rules\AttributeValidator;
-use Exception;
 use Livewire\Attributes\Locked;
 
 final class CompanyForm extends BaseForm
@@ -43,30 +42,29 @@ final class CompanyForm extends BaseForm
 
     public function validateCompany(): void
     {
-        $this->dataCompany =  $this->validateServiceData($this->companyId);
+        $this->dataCompany = $this->validateServiceData($this->companyId);
     }
 
-    public function checkCompany(): array
+    public function handleCompanyCreation(): array
     {
-        try {
-            $model = app(SaveCompanyAction::class)->handle($this->dataCompany);
+        return $this->tryAction(function () {
+
+            $model = app(CreateCompanyAction::class)->handle($this->dataCompany);
 
             if ($model->wasRecentlyCreated) {
-                $this->loadCompanyData($model);
-
                 NewBranch::dispatch($model);
 
-                return ['Empresa creada correctamente.', 'notifySuccess'];
+                return ['Empresa creada correctamente', 'notifySuccess'];
             }
 
             if ($model->wasChanged()) {
                 return ['Empresa actualizada correctamente.', 'notifySuccess'];
             }
-        } catch (Exception $e) {
-            return ['Error al guardar la empresa: ' . $e->getMessage(), 'notifyError'];
-        }
 
-        return ['No se realizaron cambios en la empresa.', 'notifyInfo'];
+            return ['No se realizaron cambios en la empresa.', 'notifyInfo'];
+
+        }, 'Error al crear la empresa: ');
+
     }
 
     public function loadCompanyData(Company $company): void

@@ -22,6 +22,7 @@ final class CreateBranchAction
             'address' => $data['address'],
             'postal_code' => $data['postal_code'],
             'is_default' => $data['is_default'] ?? false,
+            'website' => $data['website'] ?? null,
             'logo' => $data['logo'] ?? null,
         ]);
 

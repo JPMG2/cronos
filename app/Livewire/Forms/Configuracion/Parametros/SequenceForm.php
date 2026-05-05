@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms\Configuracion\Parametros;
 
+use App\Actions\Configuracion\Parameters\CreateSequenceAction;
+use App\Actions\Configuracion\Parameters\UpdateSequenceAction;
 use App\Livewire\Forms\BaseForm;
+use App\Models\Sequence;
 use App\Rules\AttributeValidator;
+use App\Services\NotificationService;
 use Livewire\Attributes\Locked;
 
 final class SequenceForm extends BaseForm
@@ -19,7 +23,7 @@ final class SequenceForm extends BaseForm
 
     public ?int $padding = null;
 
-    public string $separator = '';
+    public ?string $separator = '';
 
     public ?int $current_value = null;
 
@@ -27,9 +31,52 @@ final class SequenceForm extends BaseForm
 
     public array $dataSequence = [];
 
+    public bool $isUsed = false;
+
+    private ?NotificationService $notificationService = null;
+
     public function validateSequence(): void
     {
         $this->dataSequence = $this->validateServiceData($this->sequenceId);
+    }
+
+    public function createSequence(): array
+    {
+
+        return $this->tryAction(function () {
+
+            $model = app(CreateSequenceAction::class)->handle($this->dataSequence);
+
+            return $this->notificationService()->sendNotificacion($model, 'create');
+
+        }, 'Error al crear la sequencia: ');
+
+    }
+
+    public function updateSequence(): array
+    {
+        return $this->tryAction(function () {
+            $data = array_merge(['id' => $this->sequenceId], $this->dataSequence);
+            $model = app(UpdateSequenceAction::class)->handle($data);
+
+            return $this->notificationService()->sendNotificacion($model, 'update');
+
+        }, 'Error al actualizar la sequencia: ');
+
+    }
+
+    public function fillFromSequence(int $sequenceId): void
+    {
+        $data = Sequence::query()->findOrFail($sequenceId);
+
+        $this->sequenceId = $data->id;
+        $this->entity = $data->entity;
+        $this->prefix = $data->prefix;
+        $this->padding = $data->padding;
+        $this->separator = $data->separator;
+        $this->current_value = $data->current_value;
+        $this->increment = $data->increment;
+        $this->isUsed = $data->is_used;
     }
 
     protected function transformServiceData(): array
@@ -39,6 +86,8 @@ final class SequenceForm extends BaseForm
             'prefix' => mb_trim($this->prefix),
             'padding' => $this->padding,
             'separator' => mb_trim($this->separator),
+            'current_value' => $this->current_value,
+            'increment' => $this->increment,
         ];
     }
 
@@ -47,8 +96,10 @@ final class SequenceForm extends BaseForm
         return [
             'entity' => AttributeValidator::uniqueIdNameLength('3', 'sequences', 'entity', $excludeId),
             'prefix' => AttributeValidator::uniqueIdNameLength('3', 'sequences', 'prefix', $excludeId),
-            'padding' => AttributeValidator::numericInteger(true),
-            'separator' => AttributeValidator::stringValid(true, '1'),
+            'padding' => AttributeValidator::numericInteger(false, 3),
+            'separator' => AttributeValidator::stringValid(false, '1'),
+            'current_value' => AttributeValidator::numericInteger(true, 1),
+            'increment' => AttributeValidator::numericInteger(true, 1),
         ];
     }
 
@@ -59,6 +110,13 @@ final class SequenceForm extends BaseForm
             'prefix' => config('nicename.prefix'),
             'padding' => config('nicename.padding'),
             'separator' => config('nicename.separator'),
+            'current_value' => config('nicename.current_value'),
+            'increment' => config('nicename.increment'),
         ];
+    }
+
+    private function notificationService(): NotificationService
+    {
+        return $this->notificationService ??= resolve(NotificationService::class);
     }
 }

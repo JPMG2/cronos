@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\CurrentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,16 +14,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sequences', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('entity')->unique();
-            $table->string('prefix')->nullable();
-            $table->bigInteger('current_value')->default(0);
-            $table->integer('increment')->default(1);
-            $table->bigInteger('next_number')->storedAs('current_value + increment');
-            $table->unsignedSmallInteger('padding')->nullable();
-            $table->string('separator')->nullable();
-            $table->boolean('is_used')->default(false);
+            $table->foreignIdFor(CurrentStatus::class)->constrained()->cascadeOnDelete();
+            $table->string('name')->unique();
+            $table->string('code')->unique();
+            $table->text('description')->nullable();
             // Auditoría y control de cambios.
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
@@ -38,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sequences');
+        Schema::dropIfExists('departments');
     }
 };

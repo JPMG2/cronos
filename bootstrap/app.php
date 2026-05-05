@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'company.exists' => App\Http\Middleware\EnsureCompanyExists::class,
+            'branch.exists' => App\Http\Middleware\EnsureBranchExists::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

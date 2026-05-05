@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 namespace App\Rules;
-use Illuminate\Validation\Rules\Enum;
 
 /**
  * Utility class for building reusable Laravel validation rules.
@@ -28,7 +27,7 @@ final class AttributeValidator
      * @param  int|null  $id  Optional ID to exclude from the unique check, typically for updates.
      * @return array Array of validation rules to be applied on the input.
      */
-    public static function uniqueEmail(string $model, string $uniqueField, int $id = null): array
+    public static function uniqueEmail(string $model, string $uniqueField, ?int $id = null): array
     {
         if ($id) {
             return ['required', 'email:rfc,dns', 'unique:' . $model . ',' . $uniqueField . ',' . $id, 'regex:' . self::XSS_PREVENTION_PATTERN, 'max:' . self::MAX_STRING_LENGTH];
@@ -95,7 +94,6 @@ final class AttributeValidator
         return 'gt:0';
     }
 
-
     public static function dateValid($required): array
     {
         return $required
@@ -127,7 +125,6 @@ final class AttributeValidator
             ['sometimes', 'date_format:d-m-Y', 'after:' . $date];
     }
 
-
     public static function numericDecimal($required): array
     {
         $pattern = '/^\d{1,3}(,\d{3})*(\.\d+)?$|^\d+(\.\d+)?$/';
@@ -136,10 +133,10 @@ final class AttributeValidator
             ['sometimes', 'nullable', 'regex:' . $pattern, 'max:' . self::MAX_STRING_LENGTH];
     }
 
-    public static function numericInteger($required): array
+    public static function numericInteger($required, $min): array
     {
-        return $required ? ['required', 'integer:strict', 'max:' . self::MAX_STRING_LENGTH, 'regex:' . self::XSS_PREVENTION_PATTERN] :
-            ['sometimes', 'nullable', 'integer:strict', 'max:' . self::MAX_STRING_LENGTH, 'regex:' . self::XSS_PREVENTION_PATTERN];
+        return $required ? ['required', 'integer:strict', 'max:' . self::MAX_STRING_LENGTH, 'regex:' . self::XSS_PREVENTION_PATTERN, 'min:' . $min] :
+            ['sometimes', 'nullable', 'integer:strict', 'max:' . self::MAX_STRING_LENGTH, 'regex:' . self::XSS_PREVENTION_PATTERN, 'min:' . $min];
     }
 
     public static function moneyInteger($required): array

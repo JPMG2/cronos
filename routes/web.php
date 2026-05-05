@@ -23,6 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/configuracion/branch', 'configuracion.empresa.create-branch')
         ->name('empresa.sucursal')
         ->middleware('company.exists');
+    Route::livewire('/configuracion/department', 'configuracion.empresa.create-department')
+        ->name('empresa.departamentos')
+        ->middleware('company.exists')
+        ->middleware('branch.exists');
 
     Route::livewire('/configuracion/regional', 'configuracion.parametros.create-region')->name('empresa.parametroregional');
 

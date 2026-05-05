@@ -20,4 +20,7 @@ return [
     'prefix' => 'entidad',
     'padding' => 'digitos',
     'separator' => 'separador',
+    'current_value' => 'valor actual',
+    'increment' => 'incremento',
+    'description' => 'descripción',
 ];

@@ -7,7 +7,7 @@ namespace App\Actions\Configuracion\CompanyAction;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 
-final class SaveCompanyAction
+final class CreateCompanyAction
 {
     public function handle(array $data): Company
     {
