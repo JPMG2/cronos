@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     /**Configuracion/Parámetros**/
     Route::livewire('/configuracion/codesequence', 'configuracion.parametros.code-sequence')->name('parametros.secuencias');
+    Route::livewire('/configuracion/generalconf', 'configuracion.parametros.general-configuration')->name('empresa.configuracion');
 });
 
 require __DIR__ . '/auth.php';
