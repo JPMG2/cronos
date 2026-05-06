@@ -369,7 +369,7 @@ class extends Component {
 
                     <div class="flex w-full items-center gap-2 sm:w-auto">
                         <x-btn.cancel label="Descartar" wire:click="cancel"/>
-                        <x-btn.save label=" Guardar Empresa" @click="submit()" wire-target="adviceCompany"/>
+                        <x-btn.save label=" Guardar Empresa" @click="submit()" wire:target="adviceCompany"/>
                     </div>
                 </x-form-style.footer-button>
             </div>

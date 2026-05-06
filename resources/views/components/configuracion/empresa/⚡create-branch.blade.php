@@ -178,7 +178,8 @@ class extends Component {
             
             <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 dark:border-gray-800 dark:bg-gray-900/30"
                  x-data="{ dropOpen: false, dropSearch: '', selectedLabel: '', get noMatch() { return this.dropSearch !== '' && !Alpine.store('branchItems').some(i => i.e.includes(this.dropSearch.toLowerCase()) || i.p.includes(this.dropSearch.toLowerCase())); } }"
-                 @keydown.escape.window="dropOpen = false">
+                 @keydown.escape.window="dropOpen = false"
+                 @branch-reset.window="dropSearch = ''; selectedLabel = ''; dropOpen = false">
 
                 {{-- Subheader: ícono + título + contador --}}
                 <div class="mb-2 flex items-center gap-2.5">
@@ -310,12 +311,9 @@ class extends Component {
                     </div>
 
                     {{-- ── Botón nueva sucursal ────────────────────────────────────── --}}
-                    <button
-                            @click="newBranch(); selectedLabel = ''; dropOpen = false; dropSearch = ''"
-                            class="flex shrink-0 items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-600 shadow-sm transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow active:scale-[0.98] dark:border-gray-700 dark:bg-gray-800 dark:text-sky-400 dark:hover:border-gray-600 dark:hover:bg-gray-700/60">
-                        <x-menu.heroicon name="plus-circle" class="h-4 w-4"/>
-                        Nueva sucursal
-                    </button>
+                    <x-btn.new-record
+                         @click="newBranch(); selectedLabel = ''; dropOpen = false; dropSearch = ''"
+                         label="Nueva sucursal"/>
                 </div>
 
 
@@ -568,6 +566,7 @@ class extends Component {
                                 <div>
                                     <label for="isDefault"
                                            class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 p-3.5 transition-colors duration-150 hover:border-indigo-200 hover:bg-indigo-50/40 dark:border-gray-700/60 dark:bg-gray-800/40 dark:hover:border-indigo-700/40 dark:hover:bg-indigo-900/10">
+                                        {{-- escape hatch: no existe x-form_inputs para checkbox toggle con label inline --}}
                                         <input
                                                 id="isDefault"
                                                 type="checkbox"
@@ -628,6 +627,7 @@ class extends Component {
             this.mode = 'create';
             this.editingCode = '';
             this.errors = {};
+            this.$dispatch('branch-reset');
         },
 
         selectBranch(id, code) {

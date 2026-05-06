@@ -138,7 +138,7 @@ class extends Component {
                                                   :class="selectedId === {{ $catalog->id }}
                                                       ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-sky-400'
                                                       : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-500 dark:bg-gray-800 dark:text-gray-500'">
-                                                <x-menu.heroicon name="{{ $catalog->icon ?? 'squares-2x2' }}" class="h-3.5 w-3.5"/>
+                                                <x-menu.heroicon name="{{ $catalog->icon ?? 'squares-2x2' }}" class="h-5 w-5"/>
                                             </span>
 
                                             {{-- Título --}}

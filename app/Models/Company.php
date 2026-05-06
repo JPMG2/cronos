@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 final class Company extends Model
 {
     /** @use HasFactory<CompanyFactory> */
     use HasFactory;
 
+    use LogsActivity;
     use SoftDeletes;
 
     protected $fillable = [
@@ -34,6 +37,15 @@ final class Company extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'fiscal_identifier', 'phone', 'email', 'address', 'postal_code', 'website', 'current_status_id', 'tax_condition_id', 'region_id'])
+            ->logOnlyDirty()
+            ->useLogName('company')
+            ->dontLogEmptyChanges();
+    }
 
     public function branches(): HasMany
     {

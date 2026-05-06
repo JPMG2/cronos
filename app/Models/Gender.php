@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Database\Factories\GenderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,5 +21,12 @@ final class Gender extends Model
         return [
             'is_active' => 'boolean',
         ];
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => ucfirst(mb_strtolower($value)),
+        );
     }
 }

@@ -37,6 +37,7 @@ class extends Component {
 
     public function newDepartment(): void
     {
+
         $this->resetValidation();
         $this->form->reset();
     }
@@ -138,7 +139,9 @@ class extends Component {
             {{-- ══ Selector de departamento ════════════════════════════════════════ --}}
             <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-3 dark:border-gray-800 dark:bg-gray-900/30"
                  x-data="{ dropOpen: false, dropSearch: '', selectedLabel: '', get noMatch() { return this.dropSearch !== '' && !Alpine.store('departmentItems').some(i => i.e.includes(this.dropSearch.toLowerCase()) || i.p.includes(this.dropSearch.toLowerCase())); } }"
-                 @keydown.escape.window="dropOpen = false">
+                 @keydown.escape.window="dropOpen = false"
+                 @department-reset.window="dropSearch = ''; selectedLabel = ''; dropOpen = false">
+
 
                 <div class="mb-1.5 flex items-center gap-2.5">
                     <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">
@@ -256,12 +259,9 @@ class extends Component {
                     </div>
 
                     {{-- Botón nuevo departamento --}}
-                    <button
-                            @click="newDepartment(); selectedLabel = ''; dropOpen = false; dropSearch = ''"
-                            class="flex shrink-0 items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-600 shadow-sm transition-all duration-200 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow active:scale-[0.98] dark:border-gray-700 dark:bg-gray-800 dark:text-sky-400 dark:hover:border-gray-600 dark:hover:bg-gray-700/60">
-                        <x-menu.heroicon name="plus-circle" class="h-4 w-4"/>
-                        Nuevo departamento
-                    </button>
+                    <x-btn.new-record
+                        @click="newDepartment(); selectedLabel = ''; dropOpen = false; dropSearch = ''"
+                        label="Nuevo departamento" />
                 </div>
 
             </div>{{-- /selector --}}
@@ -345,9 +345,9 @@ class extends Component {
 
                 {{-- Footer --}}
                 <x-form-style.footer-button>
-                    <x-btn.cancel label="Descartar" x-on:click="cancel"/>
+                    <x-btn.cancel label="Descartar" x-on:click="newDepartment" wire:click="newDepartment"/>
                     <x-btn.save label="Guardar Departamento" @click="submit()"
-                                wire-taget="adviceDepartment"
+                                wire:target="adviceDepartment"
                                 :disabled="!$this->sequenceReady"/>
                 </x-form-style.footer-button>
 
@@ -370,12 +370,14 @@ class extends Component {
             this.editingCode = '';
             this.errors = {};
             this.$wire.newDepartment();
+            this.$dispatch('department-reset');
         },
 
         cancel() {
             this.mode = 'create';
             this.editingCode = '';
             this.errors = {};
+
         },
 
         selectDepartment(id, code) {

@@ -19,6 +19,6 @@
     type="button"
     @if ($wireClick) wire:click="{{ $wireClick }}" @endif
     {{ $attributes->class(['btn-base btn-cancel btn-sm w-full sm:w-auto']) }}>
-    <x-menu.heroicon name="x-mark" class="h-3.5 w-3.5" />
+    <x-menu.heroicon name="x-mark" class="h-4 w-4" />
     {{ $label }}
 </button>
