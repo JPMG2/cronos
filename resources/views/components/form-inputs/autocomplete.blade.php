@@ -28,7 +28,7 @@
     $initValue = (string) ($value ?? '');
     $initLabel = collect($opts)->firstWhere('value', $initValue)['label'] ?? '';
 
-    $padY    = match($size) { 'sm' => 'py-1.5 text-xs', 'lg' => 'py-3 text-base', default => 'py-2.5 text-sm' };
+    $padY    = match($size) { 'sm' => 'py-2 text-xs', 'lg' => 'py-3 text-base', default => 'py-2.5 text-sm' };
     $padLeft = $icon ? 'pl-10' : 'pl-4';
     $inputId = $name . '_ac';
 @endphp
@@ -242,12 +242,13 @@
         </p>
     @enderror
 
-    @if ($alpineError)
-        <p
-            x-show="errors.{{ $alpineError }}"
-            x-text="errors.{{ $alpineError }}"
-            x-transition
-            class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
-    @endif
 
 </div>
+
+@if ($alpineError)
+    <p
+        x-show="errors.{{ $alpineError }}"
+        x-text="errors.{{ $alpineError }}"
+        x-transition
+        class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+@endif

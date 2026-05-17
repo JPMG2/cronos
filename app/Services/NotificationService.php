@@ -17,6 +17,10 @@ final class NotificationService
             'branches' => ['name' => 'Sucursal', 'genero' => 'F'],
             'departments' => ['name' => 'Departamento', 'genero' => 'M'],
             'sequences' => ['name' => 'Secuencia', 'genero' => 'F'],
+            'countries' => ['name' => 'País', 'genero' => 'M'],
+            'provinces' => ['name' => 'Provincia', 'genero' => 'F'],
+            'regions' => ['name' => 'Región', 'genero' => 'F'],
+
         ][mb_strtolower($tableName)] ?? ['name' => 'Registro', 'genero' => 'M'];
     }
 

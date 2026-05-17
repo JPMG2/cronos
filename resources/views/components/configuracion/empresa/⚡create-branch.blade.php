@@ -123,12 +123,14 @@ class extends Component {
     {
       [$message, $type] = $this->form->createBranch();
       $this->getTypeMessage($message, $type);
+      unset($this->branches)
     }
     #[On('updateBranch')]
     public function update(): void
     {
       [$message, $type] =  $this->form->updateBranch();
       $this->getTypeMessage($message, $type);
+      unset($this->branches)
     }
 
     public function mount(): void

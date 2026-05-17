@@ -88,6 +88,7 @@ class extends Component {
     {
         [$message, $type] = $this->form->createDepartment();
         $this->getTypeMessage($message, $type);
+        unset($this->departments)
     }
 
     #[On('updateDepartment')]
@@ -95,6 +96,7 @@ class extends Component {
     {
         [$message, $type] = $this->form->updateDepartment();
         $this->getTypeMessage($message, $type);
+        unset($this->departments)
     }
 };
 ?>

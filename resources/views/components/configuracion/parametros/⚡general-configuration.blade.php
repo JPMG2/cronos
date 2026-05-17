@@ -39,7 +39,7 @@ class extends Component {
     public function selected(): ?CatalogForm
     {
         return $this->selectedId
-            ? CatalogForm::find($this->selectedId)
+            ? CatalogForm::query()->find($this->selectedId)
             : null;
     }
 };
@@ -233,7 +233,7 @@ class extends Component {
                              x-transition:enter-end="opacity-100 translate-y-0"
                              style="display: none"
                              class="flex h-full min-h-[300px] flex-col rounded-2xl border-2 border-slate-200 bg-slate-50/50 transition-opacity duration-150 dark:border-gray-700 dark:bg-gray-900/30">
-                            <livewire:dynamic-component :is="$form" :wire:key="$formId" />
+                            <livewire:dynamic-component :is="$form" :wire:key="$formId" lazy/>
                         </div>
                     </div>
                 @endif

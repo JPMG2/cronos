@@ -56,6 +56,7 @@ class extends Component {
         [$message, $type] = $this->form->createSequence();
         $this->getTypeMessage($message, $type);
         $this->resetFormValues();
+        unset($this->sequences)
     }
 
     #[On('updateSequence')]
@@ -64,6 +65,7 @@ class extends Component {
        [$message, $type] = $this->form->updateSequence();
         $this->getTypeMessage($message, $type);
         $this->resetFormValues();
+        unset($this->sequences)
     }
 
     public function selectSequence(int $id)

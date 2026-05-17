@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(jq -r '.tool_input.file_path // .tool_response.filePath'); if echo \"$FILE\" | grep -q '\\.blade\\.php$'; then VIOLATIONS=$(grep -nP '<(input|select|textarea)(\\s|>|/)' \"$FILE\" 2>/dev/null | grep -v 'x-form-inputs\\|x-form_inputs\\|@props\\|<!--' || true); if [ -n \"$VIOLATIONS\" ]; then echo \"⚠️  RAW HTML INPUT en $FILE — usar x-form-inputs.text_input / input / select / textarea:\"; echo \"$VIOLATIONS\"; fi; fi",
+            "statusMessage": "Verificando componentes de formulario…"
+          }
+        ]
+      }
+    ]
+  }
+}

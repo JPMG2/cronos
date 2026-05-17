@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-use Illuminate\Validation\Rule;
-use Livewire\Attributes\Validate;
 use App\Models\Gender;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
-new class extends Component {
+new class extends Component
+{
     use HasNotifications;
 
     public string $name = '';
-    public ?int $editingId = null;
 
+    public ?int $editingId = null;
 
     #[Computed]
     public function genders(): Collection
@@ -25,9 +25,16 @@ new class extends Component {
 
     public function create(): void
     {
-        $this->validate(['name' => ['required', 'min:3', 'max:100', 'unique:genders,name']],
-            [],
-            ['name' => 'género']);
+        $this->name = ucfirst(mb_strtolower(mb_trim($this->name)));
+
+        $validated = $this->validate([
+            'name' => [
+                'required',
+                'min:3',
+                'max:100',
+                Rule::unique('genders', 'name'),
+            ],
+        ], [], ['name' => 'género']);
         Gender::query()->create(['name' => $this->name, 'is_active' => true]);
         $this->resetState();
         unset($this->genders);
@@ -45,13 +52,16 @@ new class extends Component {
 
     public function update(): void
     {
+        $this->name = ucfirst(mb_strtolower(mb_trim($this->name)));
 
-        $this->validate([
+        $validated = $this->validate([
             'name' => [
-                'required', 'min:3', 'max:100', Rule::unique('genders', 'name')->ignore($this->editingId)
-            ]],
-            [],
-            ['name' => 'género']);
+                'required',
+                'min:3',
+                'max:100',
+                Rule::unique('genders', 'name')->ignore($this->editingId),
+            ],
+        ], [], ['name' => 'género']);
 
         Gender::query()->findOrFail($this->editingId)->update(['name' => $this->name]);
         $this->resetState();
@@ -69,14 +79,13 @@ new class extends Component {
     {
         $gender = Gender::query()->findOrFail($id);
         $wasActive = $gender->is_active;
-        $gender->update(['is_active' => !$wasActive]);
+        $gender->update(['is_active' => ! $wasActive]);
         unset($this->genders);
         $this->getTypeMessage(
             $wasActive ? 'Género desactivado.' : 'Género activado.',
-            $wasActive ? 'notifyInfo' : 'notifySuccess'
+            $wasActive ? 'notifyInfo' : 'notifySuccess',
         );
     }
-
 
     public function delete(int $id): void
     {
@@ -98,65 +107,53 @@ new class extends Component {
 
 <div class="flex h-full flex-col" x-data="genderForm">
 
-    {{-- ══ FORM — label arriba, input + badge/botón + acciones en la misma fila ══ --}}
+    {{-- ══ FORM ══ --}}
     <div class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
 
-        <label for="gender-name"
-               class="mb-1.5 block font-label text-sm font-semibold text-slate-700 dark:text-gray-300">
-            Nombre del género <span class="text-rose-500">*</span>
-        </label>
+        {{-- items-start: cada hijo arranca desde arriba · botones con mt-[26px] = bajan al nivel del input --}}
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
 
-        {{-- Fila única: input · badge/botón · cancelar · guardar --}}
-        <div class="flex items-center gap-2">
-
-            {{-- Input (escape hatch justificado: layout inline) --}}
-            <input id="gender-name"
-                   type="text"
-                   wire:model="name"
-                   placeholder="Ej: Masculino, Femenino, No binario…"
-                   :class="errors.name
-                       ? 'border-rose-400 focus:border-rose-400 focus:ring-rose-400/25 dark:border-rose-500 dark:focus:border-rose-500 dark:focus:ring-rose-500/25'
-                       : 'border-indigo-200/80 focus:border-indigo-400 focus:ring-indigo-400/25 dark:border-gray-700 dark:focus:border-sky-500 dark:focus:ring-sky-400/25'"
-                   class="block min-w-0 flex-1 rounded-xl border bg-white px-4 py-2.5 text-sm placeholder-slate-400 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"/>
-
-            {{-- Badge "Editando" --}}
-            <div x-show="$wire.editingId !== null"
-                 x-cloak
-                 class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
-                <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                    Editando
-                </span>
+            <div class="min-w-0 flex-1">
+                <x-form-inputs.text_input
+                    label="Nombre del género"
+                    name="name"
+                    icon="identification"
+                    placeholder="Ej: Masculino, Femenino, No binario…"
+                    wire:model="name"
+                    alpineError="name"
+                    size="sm"
+                    required />
             </div>
 
-            {{-- Botón "Nueva entrada" --}}
-            <x-btn.new-record
-                    x-show="$wire.editingId === null"
-                    @click="cancelEdit"
-                    wire:click="cancelEdit"
-                    label="Nueva entrada"/>
+            {{-- Botones: mt-[26px] los ancla al nivel del input, nunca se mueven con el error --}}
+            <div class="flex shrink-0 items-center justify-end gap-2 sm:mt-[26px]">
 
-            {{-- Cancelar (icono compacto) --}}
-            <button type="button"
-                    wire:click="cancelEdit"
-                    class="shrink-0 rounded-lg p-2 text-slate-400 transition-all duration-150 hover:bg-slate-100 hover:text-slate-600 active:scale-[0.98] dark:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-400"
-                    aria-label="Cancelar">
-                <x-menu.heroicon name="x-mark" class="h-4 w-4"/>
-            </button>
-            <x-btn.save label="{{ $editingId ? 'Actualizar' : 'Guardar'  }}" @click="submit()"
-                        wire:target="create,update"/>
+                {{-- Badge "Editando" --}}
+                <div x-show="$wire.editingId !== null"
+                     x-cloak
+                     class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
+                    <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                    <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                        Editando
+                    </span>
+                </div>
 
+                {{-- Botón "Nueva entrada" --}}
+                <x-btn.new-record
+                        x-show="$wire.editingId === null"
+                        @click="cancelEdit"
+                        wire:click="cancelEdit"
+                        label="Nueva entrada"/>
+
+                {{-- Cancelar (icono compacto) --}}
+                <x-btn.mini-cancel wire:click="cancelEdit" />
+
+                <x-btn.save label="{{ $editingId ? 'Actualizar' : 'Guardar'  }}" @click="submit()"
+                            wire:target="create,update"/>
+
+            </div>
 
         </div>
-
-        <p x-show="errors.name"
-           x-text="errors.name"
-           x-cloak
-           class="mt-1.5 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
-
-        @error('name')
-        <p class="mt-1.5 text-xs font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
-        @enderror
 
     </div>
 
@@ -178,7 +175,7 @@ new class extends Component {
 
         {{-- Filas --}}
         @forelse($this->genders as $gender)
-            <div class="group flex items-center justify-between px-5 py-3 transition-colors duration-150 hover:bg-white/60 dark:hover:bg-gray-900/40
+            <div class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
                         {{ $editingId === $gender->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Nombre --}}
