@@ -22,6 +22,15 @@ final class RegionForm extends BaseForm
 
     public string $name = '';
 
+    public function fillRegionData(int $id): void
+    {
+        $region = $this->findRegion($id);
+        $this->country_id = $region->province->country->id;
+        $this->regionId = $region->id;
+        $this->province_id = $region->province_id;
+        $this->name = $region->name;
+    }
+
     public function storeRegion(): array
     {
         $data = $this->validateServiceData();
@@ -30,10 +39,27 @@ final class RegionForm extends BaseForm
         return $this->notificationService()->sendNotificacion($model, 'create');
     }
 
+    public function updateRegion(): array
+    {
+        $data = $this->validateServiceData($this->regionId);
+        $model = $this->findRegion($this->regionId);
+        $model->update($data);
+
+        return $this->notificationService()->sendNotificacion($model, 'update');
+    }
+
+    public function updateStatusRegion(int $id): array
+    {
+        $model = $this->findRegion($id);
+        $model->update(['is_active' => ! $model->is_active]);
+
+        return $this->notificationService()->sendNotificacion($model, 'update');
+    }
+
     protected function transformServiceData(): array
     {
         return [
-            'name' => ucfirst(mb_strtolower(mb_trim($this->name))),
+            'name' => ucwords(mb_strtolower(mb_trim($this->name))),
             'province_id' => $this->province_id,
         ];
     }
@@ -52,5 +78,10 @@ final class RegionForm extends BaseForm
             'name' => config('nicename.name'),
             'province_id' => config('nicename.province_id'),
         ];
+    }
+
+    private function findRegion(int $id): Region
+    {
+        return Region::query()->with('province.country:id')->findOrFail($id);
     }
 }

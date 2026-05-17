@@ -11,13 +11,15 @@ use Livewire\Attributes\Computed;
 
 trait WorldConfiguration
 {
+    protected static ?Collection $staticCountries = null;
+
     #[Computed(cache: true)]
     public function countries(): Collection
     {
-        return Country::query()->orderBy('name')->get();
+        return self::$staticCountries ??= Country::query()->orderBy('name')->get();
     }
 
-    #[Computed(cache: true)]
+    #[Computed]
     public function provinces(): Collection
     {
         $countryId = $this->getCountryIdForFilter();

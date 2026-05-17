@@ -42,7 +42,7 @@ final class Region extends Model
     protected function name(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => ucfirst(mb_strtolower(mb_trim($value))),
+            set: fn (string $value) => ucwords(mb_strtolower(mb_trim($value))),
         );
     }
 }

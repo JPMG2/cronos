@@ -48,9 +48,17 @@ final class NationalityForm extends BaseForm
     {
         $data = $this->validateServiceData();
         $country = Country::query()->create($data);
-        $country->refresh();
 
         return $this->notificationService()->sendNotificacion($country, 'create');
+    }
+
+    public function updateCountry(): array
+    {
+        $data = $this->validateServiceData($this->countryId);
+        $country = $this->findCountry($this->countryId);
+        $country->update($data);
+
+        return $this->notificationService()->sendNotificacion($country, 'update');
     }
 
     /**

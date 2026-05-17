@@ -4,6 +4,8 @@
 
 You must strictly follow these technical rules:
 
+1. Guidlines: Ensure that the guidelines from `CLAUDE.md` are followed.
+
 ## 1. SCOPE ARCHITECTURE
 - **Attribute**: Use `#[Scope]` from `Illuminate\Database\Eloquent\Attributes\Scope`.
 - **Visibility**: Methods MUST be `protected`.

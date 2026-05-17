@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Livewire\Forms\Configuracion\Parametros\RegionForm;
 use App\Models\Province;
 use App\Models\Region;
@@ -22,7 +24,7 @@ new class extends Component {
     }
 
 
-    #[Computed(persist: true)]
+    #[Computed]
     public function regions(): Collection
     {
         return Region::query()
@@ -47,7 +49,8 @@ new class extends Component {
     #[On('updateRegion')]
     public function update(): void
     {
-        dd('update');
+        [$message, $type] = $this->form->updateRegion();
+        $this->messageOutPut($message, $type);
     }
 
     #[On('createRegion')]
@@ -57,8 +60,16 @@ new class extends Component {
         $this->messageOutPut($message, $type);
     }
 
+
+    public function startEditRegion(int $id): void
+    {
+        $this->form->fillRegionData($id);
+    }
+
+
     public function cancelRegionEdit(): void
     {
+        unset($this->regions);
         $this->form->reset();
         $this->resetValidation();
     }
@@ -79,6 +90,14 @@ new class extends Component {
         $this->getTypeMessage($message, $type);
         $this->cancelRegionEdit();
     }
+
+
+    public function toggleRegionActive(int $id): void
+    {
+        [$message, $type] = $this->form->updateStatusRegion($id);
+        $this->messageOutPut($message, $type);
+    }
+
 };
 ?>
 {{-- ═════════════════════════ TAB: REGIONES ═══════════════════════════════════════ --}}
@@ -120,8 +139,7 @@ new class extends Component {
             <div class="h-2.5 w-28 rounded bg-slate-200 dark:bg-gray-700"></div>
             <div class="h-2.5 w-28 rounded bg-slate-200 dark:bg-gray-700"></div>
         </div>
-        <div
-            class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
+        <div class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
 
         {{-- Rows --}}
         @foreach(range(1, 6) as $i)
@@ -173,8 +191,7 @@ new class extends Component {
 
                 <div class="min-w-0 flex-1"
                      wire:key="region-{{ $this->form->country_id ?? 'all' }}"
-                     @change="$wire.provinceId(parseInt($event.target.value) || null)"
-                >
+                     @change="$wire.provinceId(parseInt($event.target.value) || null)">
                     <x-form-inputs.autocomplete
                         label="Provincia"
                         name="province_id"
@@ -211,10 +228,9 @@ new class extends Component {
                          x-cloak
                          class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
                         <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
-                        <span
-                            class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                                Editando
-                            </span>
+                        <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                            Editando
+                        </span>
                     </div>
 
                     <x-btn.new-record
@@ -239,14 +255,12 @@ new class extends Component {
 
         @if($this->regions->isNotEmpty())
             <div class="flex items-center justify-between px-5 py-2">
-                    <span
-                        class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                        Provincia · Nombre
-                    </span>
-                <span
-                    class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                        Estado · Acciones
-                    </span>
+                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
+                    Provincia · Nombre
+                </span>
+                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
+                    Estado · Acciones
+                </span>
             </div>
             <div
                 class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
@@ -258,14 +272,13 @@ new class extends Component {
                             {{ $this->form->regionId === $region->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 <div class="flex min-w-0 flex-1 items-center gap-2">
-                        <span
-                            class="max-w-[120px] truncate rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
-                            {{ $region->province->name ?? '—' }}
-                        </span>
+                    <span class="max-w-[120px] truncate rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+                        {{ $region->province->name ?? '—' }}
+                    </span>
                     <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
-                                     {{ $this->form->regionId === $region->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
-                            {{ $region->name }}
-                        </span>
+                                 {{ $this->form->regionId === $region->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
+                        {{ $region->name }}
+                    </span>
                 </div>
 
                 <div class="flex shrink-0 items-center gap-1.5">
@@ -277,23 +290,21 @@ new class extends Component {
                             class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                             aria-label="{{ $region->is_active ? 'Desactivar' : 'Activar' }} {{ $region->name }}">
                         @if($region->is_active)
-                            <span
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
-                                    Activo
-                                </span>
+                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
+                                Activo
+                            </span>
                         @else
-                            <span
-                                class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200/60 transition-colors duration-150 hover:bg-slate-200/80 dark:bg-gray-800 dark:text-gray-500 dark:ring-gray-700 dark:hover:bg-gray-700/60">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-gray-600"></span>
-                                    Inactivo
-                                </span>
+                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200/60 transition-colors duration-150 hover:bg-slate-200/80 dark:bg-gray-800 dark:text-gray-500 dark:ring-gray-700 dark:hover:bg-gray-700/60">
+                                <span class="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-gray-600"></span>
+                                Inactivo
+                            </span>
                         @endif
                     </button>
 
                     <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                    <x-btn.mini-edit lable="Editar" wire:click="startEditRegion({{ $region->id }})"/>
+                    <x-btn.mini-edit lable="Editar" wire:click="startEditRegion({{ $region->id }})"  @click="$dispatch('regions-edit-started')"/>
                     <x-btn.mini-delete lable="Eliminar" wire:click="deleteRegion({{ $region->id }})"/>
 
                 </div>
@@ -305,8 +316,7 @@ new class extends Component {
 
         @empty
             <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
-                <div
-                    class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
+                <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
                     <x-menu.heroicon name="map-pin" class="h-6 w-6"/>
                 </div>
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">

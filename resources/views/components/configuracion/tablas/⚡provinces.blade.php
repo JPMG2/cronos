@@ -176,19 +176,19 @@ new class extends Component {
                      class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
                     <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                     <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                            Editando
-                        </span>
+                        Editando
+                    </span>
                 </div>
 
                 <x-btn.new-record
-                        x-show="$wire.form.provinceId  === null"
+                        x-show="$wire.form.provinceId === null"
                         @click="errors = {}"
                         wire:click="cancelProvinceEdit"
                         label="Nueva entrada"/>
 
                 <x-btn.mini-cancel wire:click="cancelProvinceEdit" @click="errors = {}"/>
 
-                <x-btn.save label="{{ $this->form->provinceId  ? 'Actualizar' : 'Guardar' }}"
+                <x-btn.save label="{{ $this->form->provinceId ? 'Actualizar' : 'Guardar' }}"
                             wire:target="create,update"
                             @click="submitProvince($wire.form.country_id, $wire.form.name, $wire.form.provinceId)"
                 />
@@ -202,12 +202,12 @@ new class extends Component {
 
         @if($this->provinces->isNotEmpty())
             <div class="flex items-center justify-between px-5 py-2">
-                    <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                        País · Nombre
-                    </span>
                 <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                        Estado · Acciones
-                    </span>
+                    País · Nombre
+                </span>
+                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
+                    Estado · Acciones
+                </span>
             </div>
             <div class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
         @endif
@@ -218,13 +218,13 @@ new class extends Component {
                             {{ $this->form->provinceId === $province->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 <div class="flex min-w-0 flex-1 items-center gap-2">
-                        <span class="shrink-0 rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
-                            {{  $province->country->code ?? '-' }}
-                        </span>
+                    <span class="shrink-0 rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+                        {{ $province->country->code ?? '-' }}
+                    </span>
                     <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
-                                     {{ $this->form->provinceId  === $province->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
-                            {{ $province->name }}
-                        </span>
+                                 {{ $this->form->provinceId === $province->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
+                        {{ $province->name }}
+                    </span>
                 </div>
 
                 <div class="flex shrink-0 items-center gap-1.5">
@@ -237,14 +237,14 @@ new class extends Component {
                             aria-label="{{ $province->is_active ? 'Desactivar' : 'Activar' }} {{ $province->name }}">
                         @if($province->is_active)
                             <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
-                                    Activo
-                                </span>
+                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
+                                Activo
+                            </span>
                         @else
                             <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200/60 transition-colors duration-150 hover:bg-slate-200/80 dark:bg-gray-800 dark:text-gray-500 dark:ring-gray-700 dark:hover:bg-gray-700/60">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-gray-600"></span>
-                                    Inactivo
-                                </span>
+                                <span class="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-gray-600"></span>
+                                Inactivo
+                            </span>
                         @endif
                     </button>
 

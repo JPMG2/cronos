@@ -24,16 +24,6 @@ new class extends Component
 
     public bool $regionsLoaded = false;
 
-    // ── Región ────────────────────────────────────────────────────────────────
-    public ?int $regionCountryId = null;
-
-    public ?int $regionProvinceId = null;
-
-    public string $regionName = '';
-
-    public ?int $editingRegionId = null;
-
-
 
     public function loadProvinces(): void
     {
@@ -43,19 +33,6 @@ new class extends Component
     public function loadRegions(): void
     {
         $this->regionsLoaded = true;
-    }
-
-    // ── Updated hooks (cascada) ───────────────────────────────────────────────
-
-    public function updatedRegionCountryId(): void
-    {
-        $this->regionProvinceId = null;
-        unset($this->provincesOptions, $this->regions);
-    }
-
-    public function updatedRegionProvinceId(): void
-    {
-        unset($this->regions);
     }
 
     public function create(): void
@@ -83,29 +60,8 @@ new class extends Component
 
     public function updateCountry(): void
     {
-        $this->validate(
-            [
-                'countryName' => [
-                    'required', 'min:3', 'max:100', Rule::unique('countries', 'name')->ignore($this->countryId)
-                ],
-                'countryCode' => [
-                    'required', 'min:2', 'max:3', Rule::unique('countries', 'code')->ignore($this->countryId)
-                ],
-                'countryPhoneCode' => ['nullable', 'max:10'],
-            ],
-            [],
-            ['countryName' => 'nombre', 'countryCode' => 'código', 'countryPhoneCode' => 'cód. teléfono'],
-        );
-
-        Country::query()->findOrFail($this->countryId)->update([
-            'name' => $this->countryName,
-            'code' => mb_strtoupper($this->countryCode),
-            'phone_code' => $this->countryPhoneCode ?: null,
-        ]);
-
-        $this->cancelCountryEdit();
-        unset($this->countries);
-        $this->getTypeMessage('País actualizado correctamente.', 'notifySuccess');
+        [$message, $type] = $this->form->updateCountry();
+        $this->messageOutPut($message, $type);
     }
 
     public function cancelCountryEdit(): void
@@ -124,59 +80,6 @@ new class extends Component
     {
         dd('Queda por implementar confirmación');
     }
-
-
-
-    public function startEditRegion(int $id): void
-    {
-        $region = Region::query()->with('province')->findOrFail($id);
-        $this->editingRegionId = $id;
-        $this->regionProvinceId = $region->province_id;
-        $this->regionCountryId = $region->province->country_id;
-        $this->regionName = $region->name;
-        unset($this->provincesOptions);
-        $this->resetValidation();
-    }
-
-    public function updateRegion(): void
-    {
-        $this->validate(
-            [
-                'regionProvinceId' => ['required', 'integer', 'exists:provinces,id'],
-                'regionName' => [
-                    'required', 'min:3', 'max:100',
-                    Rule::unique('regions', 'name')
-                        ->where('province_id', $this->regionProvinceId)
-                        ->ignore($this->editingRegionId),
-                ],
-            ],
-            [],
-            ['regionProvinceId' => 'provincia', 'regionName' => 'nombre'],
-        );
-
-        Region::query()->findOrFail($this->editingRegionId)->update([
-            'province_id' => $this->regionProvinceId,
-            'name' => $this->regionName,
-        ]);
-
-        $this->regionName = '';
-        $this->editingRegionId = null;
-        unset($this->regions);
-        $this->getTypeMessage('Región actualizada correctamente.', 'notifySuccess');
-    }
-
-    public function toggleRegionActive(int $id): void
-    {
-        $region = Region::query()->findOrFail($id);
-        $wasActive = $region->is_active;
-        $region->update(['is_active' => !$wasActive]);
-        unset($this->regions);
-        $this->getTypeMessage(
-            $wasActive ? 'Región desactivada.' : 'Región activada.',
-            $wasActive ? 'notifyInfo' : 'notifySuccess',
-        );
-    }
-
 
 };
 ?>
@@ -366,8 +269,18 @@ new class extends Component
 
                         <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                        <x-btn.mini-edit lable="Editar"
-                                         @click="$wire.startEditCountry({{ $country->id }}), goTopNationality()"/>
+                        <x-btn.mini-edit
+                            lable="Editar"
+                            data-name="{{ $country->name }}"
+                            data-code="{{ $country->code }}"
+                            data-phone="{{ $country->phone_code }}"
+                            @click="
+                                $wire.form.countryName = $el.dataset.name;
+                                $wire.form.countryCode = $el.dataset.code;
+                                $wire.form.countryPhoneCode = $el.dataset.phone;
+                                $wire.startEditCountry({{ $country->id }});
+                                goTopNationality();
+                            "/>
                         <x-btn.mini-delete lable="Eliminar" wire:click="deleteCountry({{ $country->id }})"/>
 
                     </div>
