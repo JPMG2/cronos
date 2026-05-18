@@ -116,6 +116,14 @@ final class AttributeValidator
         ];
     }
 
+    public static function valueBoolean(bool $required): array
+    {
+        return [
+            $required ? 'required' : 'sometimes',
+            'boolean',
+        ];
+    }
+
     /**
      * Build an optional unique string rule.
      *

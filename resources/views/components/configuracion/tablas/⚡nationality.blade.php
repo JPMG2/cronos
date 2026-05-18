@@ -9,7 +9,6 @@ use App\Models\Region;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -23,7 +22,6 @@ new class extends Component
     public bool $provincesLoaded = false;
 
     public bool $regionsLoaded = false;
-
 
     public function loadProvinces(): void
     {
@@ -41,11 +39,6 @@ new class extends Component
         $this->messageOutPut($message, $type);
     }
 
-    /**
-     * @param  mixed  $message
-     * @param  mixed  $type
-     * @return void
-     */
     public function messageOutPut(mixed $message, mixed $type): void
     {
         unset($this->countries);
@@ -86,7 +79,7 @@ new class extends Component
 @placeholder
 <div class="flex h-full flex-col items-center justify-center px-6 py-12 text-center">
     <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-        <x-menu.heroicon name="globe-alt" class="h-6 w-6"/>
+        <x-menu.heroicon name="globe-alt" class="h-6 w-6" />
     </div>
     <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
         Cargando configuración de países…
@@ -107,7 +100,7 @@ new class extends Component
                     ? 'border-indigo-500 text-indigo-600 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-gray-600 dark:hover:text-gray-400'"
                 class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-150">
-            <x-menu.heroicon name="globe-alt" class="h-4 w-4"/>
+            <x-menu.heroicon name="globe-alt" class="h-4 w-4" />
             Países
         </button>
 
@@ -116,7 +109,7 @@ new class extends Component
                     ? 'border-indigo-500 text-indigo-600 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-gray-600 dark:hover:text-gray-400'"
                 class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-150">
-            <x-menu.heroicon name="building-library" class="h-4 w-4"/>
+            <x-menu.heroicon name="building-library" class="h-4 w-4" />
             Provincias
         </button>
 
@@ -125,7 +118,7 @@ new class extends Component
                     ? 'border-indigo-500 text-indigo-600 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-gray-600 dark:hover:text-gray-400'"
                 class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-150">
-            <x-menu.heroicon name="map-pin" class="h-4 w-4"/>
+            <x-menu.heroicon name="map-pin" class="h-4 w-4" />
             Regiones
         </button>
 
@@ -143,15 +136,15 @@ new class extends Component
                 {{-- Fila 1: Nombre (ancho completo) --}}
                 <div>
                     <x-form-inputs.text_input
-                            label="Nombre del país"
-                            name="name"
-                            icon="globe-alt"
-                            placeholder="Ej: Argentina"
-                            wire:model="form.countryName"
-                            alpine-error="name"
-                            class="uppercase"
-                            size="sm"
-                            required/>
+                        label="Nombre del país"
+                        name="name"
+                        icon="globe-alt"
+                        placeholder="Ej: Argentina"
+                        wire:model="form.countryName"
+                        alpine-error="name"
+                        class="uppercase"
+                        size="sm"
+                        required />
                 </div>
 
                 {{-- Fila 2: Código · Cód. Teléfono · Botones --}}
@@ -159,29 +152,29 @@ new class extends Component
 
                     <div class="sm:w-32 sm:shrink-0">
                         <x-form-inputs.text_input
-                                label="Código"
-                                name="code"
-                                icon="hashtag"
-                                placeholder="AR"
-                                maxlength="6"
-                                x-mask="aaaaaa"
-                                wire:model="form.countryCode"
-                                alpine-error="code"
-                                class="uppercase"
-                                size="sm"
-                                required/>
+                            label="Código"
+                            name="code"
+                            icon="hashtag"
+                            placeholder="AR"
+                            maxlength="6"
+                            x-mask="aaaaaa"
+                            wire:model="form.countryCode"
+                            alpine-error="code"
+                            class="uppercase"
+                            size="sm"
+                            required />
                     </div>
 
                     <div class="sm:w-40 sm:shrink-0">
                         <x-form-inputs.text_input
-                                label="Cód. teléfono"
-                                name="phone_code"
-                                placeholder="54"
-                                maxlength="8"
-                                x-mask="99999999"
-                                wire:model="form.countryPhoneCode"
-                                alpine-error="phone_code"
-                                size="sm"/>
+                            label="Cód. teléfono"
+                            name="phone_code"
+                            placeholder="54"
+                            maxlength="8"
+                            x-mask="99999999"
+                            wire:model="form.countryPhoneCode"
+                            alpine-error="phone_code"
+                            size="sm" />
                     </div>
 
                     <div class="flex flex-1 items-center justify-end gap-2 sm:mt-[26px]">
@@ -196,15 +189,15 @@ new class extends Component
                         </div>
 
                         <x-btn.new-record
-                                x-show="$wire.form.countryId === null"
-                                @click="cancelCountryEdit"
-                                label="Nueva entrada"/>
+                            x-show="$wire.form.countryId === null"
+                            @click="cancelCountryEdit"
+                            label="Nueva entrada" />
 
-                        <x-btn.mini-cancel wire:click="cancelCountryEdit"/>
+                        <x-btn.mini-cancel wire:click="cancelCountryEdit" />
 
                         <x-btn.save label="{{ $this->form->countryId ? 'Actualizar' : 'Guardar' }}"
                                     @click="submitCountry()"
-                                    wire:target="create,updateCountry"/>
+                                    wire:target="create,updateCountry" />
                     </div>
 
                 </div>
@@ -280,8 +273,8 @@ new class extends Component
                                 $wire.form.countryPhoneCode = $el.dataset.phone;
                                 $wire.startEditCountry({{ $country->id }});
                                 goTopNationality();
-                            "/>
-                        <x-btn.mini-delete lable="Eliminar" wire:click="deleteCountry({{ $country->id }})"/>
+                            " />
+                        <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $country->id }})" />
 
                     </div>
                 </div>
@@ -293,7 +286,7 @@ new class extends Component
             @empty
                 <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
                     <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-                        <x-menu.heroicon name="globe-alt" class="h-6 w-6"/>
+                        <x-menu.heroicon name="globe-alt" class="h-6 w-6" />
                     </div>
                     <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
                         Sin países registrados
@@ -307,6 +300,7 @@ new class extends Component
         </div>
 
     </div>
+
     <div x-show="activeTab === 'provinces'" x-cloak class="flex min-h-0 flex-1 flex-col">
         @if($provincesLoaded)
             <livewire:configuracion.tablas.provinces lazy/>
@@ -337,6 +331,7 @@ new class extends Component
             if (tab === 'regions' && !this.$wire.regionsLoaded) {
                 this.$wire.loadRegions();
             }
+
             this.errors = {};
         },
 
@@ -346,13 +341,15 @@ new class extends Component
         },
         submitCountry() {
             const isEditing = this.$wire.form.countryId !== null;
+
             this.errors = validate(
-                {name: this.$wire.form.countryName, code: this.$wire.form.countryCode},
+                { name: this.$wire.form.countryName, code: this.$wire.form.countryCode },
                 {
                     name: ['required', ['minLength', 3]],
                     code: ['required', ['minLength', 2]],
                 },
             );
+
             if (Object.keys(this.errors).length === 0) {
                 isEditing ? this.$wire.updateCountry() : this.$wire.create();
             }
@@ -364,9 +361,10 @@ new class extends Component
             const isEditing = provinceId !== null;
 
             this.errors = validate(
-                {country_id: countryId, name: name},
-                {country_id: ['required'], name: ['required', ['minLength', 3]]},
+                { country_id: countryId, name: name },
+                { country_id: ['required'], name: ['required', ['minLength', 3]] },
             );
+
             if (Object.keys(this.errors).length === 0) {
                 isEditing ? this.$dispatch('updateProvinces') : this.$dispatch('createProvinces');
             }
@@ -376,12 +374,14 @@ new class extends Component
             this.$wire.cancelRegionEdit();
             this.errors = {};
         },
-        submitRegion(countryId,provinceId,regionId,name) {
+        submitRegion(countryId, provinceId, regionId, name) {
             const isEditing = regionId !== null;
+
             this.errors = validate(
-                {country_id: countryId, province_id: provinceId, name: name},
-                {country_id: ['required'],province_id: ['required'], name: ['required', ['minLength', 3]]},
+                { country_id: countryId, province_id: provinceId, name: name },
+                { country_id: ['required'], province_id: ['required'], name: ['required', ['minLength', 3]] },
             );
+
             if (Object.keys(this.errors).length === 0) {
                 isEditing ? this.$dispatch('updateRegion') : this.$dispatch('createRegion');
             }

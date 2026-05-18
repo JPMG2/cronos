@@ -20,6 +20,7 @@ final class NotificationService
             'countries' => ['name' => 'País', 'genero' => 'M'],
             'provinces' => ['name' => 'Provincia', 'genero' => 'F'],
             'regions' => ['name' => 'Región', 'genero' => 'F'],
+            'tax_conditions' => ['name' => 'Condición fiscal', 'genero' => 'F'],
 
         ][mb_strtolower($tableName)] ?? ['name' => 'Registro', 'genero' => 'M'];
     }

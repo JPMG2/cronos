@@ -7,8 +7,6 @@ use App\Models\Country;
 use App\Models\Province;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
-use Illuminate\Support\Collection;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -17,7 +15,6 @@ new class extends Component {
     use WorldConfiguration;
 
     public ProvincesForm $form;
-
 
     protected function getCountryIdForFilter(): ?int
     {
@@ -67,11 +64,6 @@ new class extends Component {
         dd('Queda por implementar confirmación');
     }
 
-    /**
-     * @param  mixed  $message
-     * @param  mixed  $type
-     * @return void
-     */
     public function messageOutPut(mixed $message, mixed $type): void
     {
         unset($this->provinces);
@@ -137,7 +129,9 @@ new class extends Component {
     </div>
 </div>
 @endplaceholder
+
 <div class="flex h-full flex-col" @province-edit-started.window="$el.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+
     {{-- FORM Provincia --}}
     <div class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
@@ -145,28 +139,27 @@ new class extends Component {
             <div class="sm:w-52 sm:shrink-0"
                  wire:key="country-{{ $this->form->country_id }}"
                  @change="$wire.countryId(parseInt($event.target.value) || null)">
-
                 <x-form-inputs.autocomplete
-                        label="País"
-                        name="country_id"
-                        placeholder="Seleccionar país…"
-                        :options="$this->countries->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
-                        alpine-error="country_id"
-                        :value="$form->country_id"
-                        size="sm"
-                        required/>
+                    label="País"
+                    name="country_id"
+                    placeholder="Seleccionar país…"
+                    :options="$this->countries->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
+                    alpine-error="country_id"
+                    :value="$form->country_id"
+                    size="sm"
+                    required />
             </div>
 
             <div class="min-w-0 flex-1">
                 <x-form-inputs.text_input
-                        label="Provincia"
-                        name="name"
-                        icon="map-pin"
-                        placeholder="Ej: Buenos Aires"
-                        wire:model="form.name"
-                        alpine-error="name"
-                        size="sm"
-                        required/>
+                    label="Provincia"
+                    name="name"
+                    icon="map-pin"
+                    placeholder="Ej: Buenos Aires"
+                    wire:model="form.name"
+                    alpine-error="name"
+                    size="sm"
+                    required />
             </div>
 
             <div class="flex shrink-0 items-center justify-end gap-2 sm:mt-[26px]">
@@ -181,17 +174,17 @@ new class extends Component {
                 </div>
 
                 <x-btn.new-record
-                        x-show="$wire.form.provinceId === null"
-                        @click="errors = {}"
-                        wire:click="cancelProvinceEdit"
-                        label="Nueva entrada"/>
+                    x-show="$wire.form.provinceId === null"
+                    @click="errors = {}"
+                    wire:click="cancelProvinceEdit"
+                    label="Nueva entrada" />
 
-                <x-btn.mini-cancel wire:click="cancelProvinceEdit" @click="errors = {}"/>
+                <x-btn.mini-cancel wire:click="cancelProvinceEdit" @click="errors = {}" />
 
                 <x-btn.save label="{{ $this->form->provinceId ? 'Actualizar' : 'Guardar' }}"
                             wire:target="create,update"
-                            @click="submitProvince($wire.form.country_id, $wire.form.name, $wire.form.provinceId)"
-                />
+                            @click="submitProvince($wire.form.country_id, $wire.form.name, $wire.form.provinceId)" />
+
             </div>
 
         </div>
@@ -250,9 +243,12 @@ new class extends Component {
 
                     <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                    <x-btn.mini-edit lable="Editar" wire:click="startEditProvince({{ $province->id }})" @click="$dispatch('province-edit-started')"/>
+                    <x-btn.mini-edit
+                        lable="Editar"
+                        wire:click="startEditProvince({{ $province->id }})"
+                        @click="$dispatch('province-edit-started')" />
 
-                    <x-btn.mini-delete lable="Eliminar" wire:click="deleteProvince({{ $province->id }})"/>
+                    <x-btn.mini-delete lable="Eliminar" wire:click="deleteProvince({{ $province->id }})" />
 
                 </div>
             </div>
@@ -264,7 +260,7 @@ new class extends Component {
         @empty
             <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
                 <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-                    <x-menu.heroicon name="building-library" class="h-6 w-6"/>
+                    <x-menu.heroicon name="building-library" class="h-6 w-6" />
                 </div>
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
                     @if($this->form->country_id)

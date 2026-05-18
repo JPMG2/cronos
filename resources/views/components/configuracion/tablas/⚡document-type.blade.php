@@ -36,8 +36,8 @@ new class extends Component
 
     public function create(): void
     {
-            $this->dataForValidation();
-            $this->validate(
+        $this->dataForValidation();
+        $this->validate(
             [
                 'code' => ['required', 'min:2', 'max:10', 'unique:document_types,code'],
                 'name' => ['required', 'min:3', 'max:100', 'unique:document_types,name'],
@@ -114,10 +114,6 @@ new class extends Component
     public function delete(int $id): void
     {
         dd('Queda por implementar confirmación');
-        DocumentType::query()->findOrFail($id)->delete();
-        $this->resetState();
-        unset($this->documentTypes);
-        $this->getTypeMessage('Tipo de documento eliminado correctamente.', 'notifySuccess');
     }
 
     private function resetState(): void
@@ -194,14 +190,13 @@ new class extends Component
                         x-show="$wire.editingId === null"
                         @click="cancelEdit"
                         wire:click="cancelEdit"
-                        label="Nueva entrada"/>
+                        label="Nueva entrada" />
 
                     {{-- Cancelar (icono compacto) --}}
                     <x-btn.mini-cancel wire:click="cancelEdit" />
 
-
                     <x-btn.save label="{{ $editingId ? 'Actualizar' : 'Guardar' }}" @click="submit()"
-                                wire:target="create,update"/>
+                                wire:target="create,update" />
 
                 </div>
 
@@ -229,7 +224,8 @@ new class extends Component
 
         {{-- Filas --}}
         @forelse($this->documentTypes as $documentType)
-            <div class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
+            <div wire:key="document-type-{{ $documentType->id }}"
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
                         {{ $editingId === $documentType->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Código badge + Nombre --}}
@@ -272,8 +268,8 @@ new class extends Component
 
                     <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                    <x-btn.mini-edit lable="Editar" wire:click="startEdit({{ $documentType->id }})"/>
-                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $documentType->id }})"/>
+                    <x-btn.mini-edit lable="Editar" wire:click="startEdit({{ $documentType->id }})" />
+                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $documentType->id }})" />
 
                 </div>
             </div>
@@ -285,7 +281,7 @@ new class extends Component
         @empty
             <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
                 <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-                    <x-menu.heroicon name="identification" class="h-6 w-6"/>
+                    <x-menu.heroicon name="identification" class="h-6 w-6" />
                 </div>
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
                     Sin tipos de documento registrados

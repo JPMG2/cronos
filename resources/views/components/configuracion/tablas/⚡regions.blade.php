@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Livewire\Forms\Configuracion\Parametros\RegionForm;
-use App\Models\Province;
 use App\Models\Region;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
@@ -22,7 +21,6 @@ new class extends Component {
     {
         return $this->form->country_id;
     }
-
 
     #[Computed]
     public function regions(): Collection
@@ -60,12 +58,10 @@ new class extends Component {
         $this->messageOutPut($message, $type);
     }
 
-
     public function startEditRegion(int $id): void
     {
         $this->form->fillRegionData($id);
     }
-
 
     public function cancelRegionEdit(): void
     {
@@ -79,18 +75,12 @@ new class extends Component {
         dd('Queda por implementar confirmación');
     }
 
-    /**
-     * @param  mixed  $message
-     * @param  mixed  $type
-     * @return void
-     */
     public function messageOutPut(mixed $message, mixed $type): void
     {
         unset($this->regions);
         $this->getTypeMessage($message, $type);
         $this->cancelRegionEdit();
     }
-
 
     public function toggleRegionActive(int $id): void
     {
@@ -100,6 +90,7 @@ new class extends Component {
 
 };
 ?>
+
 {{-- ═════════════════════════ TAB: REGIONES ═══════════════════════════════════════ --}}
 
 @placeholder
@@ -177,7 +168,6 @@ new class extends Component {
                 <div class="sm:w-52 sm:shrink-0"
                      wire:key="country-{{ $this->form->country_id }}"
                      @change="$wire.countryId(parseInt($event.target.value) || null)">
-
                     <x-form-inputs.autocomplete
                         label="País"
                         name="country_id"
@@ -186,7 +176,7 @@ new class extends Component {
                         alpine-error="country_id"
                         :value="$form->country_id"
                         size="sm"
-                        required/>
+                        required />
                 </div>
 
                 <div class="min-w-0 flex-1"
@@ -202,7 +192,7 @@ new class extends Component {
                         size="sm"
                         loading="true"
                         loading-target="countryId"
-                        required/>
+                        required />
                 </div>
 
             </div>
@@ -219,7 +209,7 @@ new class extends Component {
                         wire:model="form.name"
                         alpineError="name"
                         size="sm"
-                        required/>
+                        required />
                 </div>
 
                 <div class="flex shrink-0 items-center justify-end gap-2 sm:mt-[26px]">
@@ -237,13 +227,14 @@ new class extends Component {
                         x-show="$wire.form.regionId === null"
                         @click="cancelRegionEdit"
                         wire:click="cancelRegionEdit"
-                        label="Nueva entrada"/>
+                        label="Nueva entrada" />
 
-                   <x-btn.mini-cancel wire:click="cancelRegionEdit" @click="errors = {}"/>
+                    <x-btn.mini-cancel wire:click="cancelRegionEdit" @click="errors = {}" />
 
                     <x-btn.save label="{{ $this->form->regionId ? 'Actualizar' : 'Guardar' }}"
-                                @click="submitRegion($wire.form.country_id,$wire.form.province_id,$wire.form.regionId,$wire.form.name)"
-                                wire:target="create,update"/>
+                                @click="submitRegion($wire.form.country_id, $wire.form.province_id, $wire.form.regionId, $wire.form.name)"
+                                wire:target="create,update" />
+
                 </div>
 
             </div>
@@ -262,8 +253,7 @@ new class extends Component {
                     Estado · Acciones
                 </span>
             </div>
-            <div
-                class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
+            <div class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
         @endif
 
         @forelse($this->regions as $region)
@@ -304,8 +294,12 @@ new class extends Component {
 
                     <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                    <x-btn.mini-edit lable="Editar" wire:click="startEditRegion({{ $region->id }})"  @click="$dispatch('regions-edit-started')"/>
-                    <x-btn.mini-delete lable="Eliminar" wire:click="deleteRegion({{ $region->id }})"/>
+                    <x-btn.mini-edit
+                        lable="Editar"
+                        wire:click="startEditRegion({{ $region->id }})"
+                        @click="$dispatch('regions-edit-started')" />
+
+                    <x-btn.mini-delete lable="Eliminar" wire:click="deleteRegion({{ $region->id }})" />
 
                 </div>
             </div>
@@ -317,7 +311,7 @@ new class extends Component {
         @empty
             <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
                 <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-                    <x-menu.heroicon name="map-pin" class="h-6 w-6"/>
+                    <x-menu.heroicon name="map-pin" class="h-6 w-6" />
                 </div>
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
                     @if($this->form->regionId)
