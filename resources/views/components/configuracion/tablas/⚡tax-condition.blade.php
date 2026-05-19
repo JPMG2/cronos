@@ -63,7 +63,7 @@ new class extends Component {
         $this->form->fillStatusData($id);
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): never
     {
         dd('Queda por implementar confirmación');
     }
@@ -137,7 +137,7 @@ new class extends Component {
                         @click="cancelEdit"
                         wire:click="cancelEdit"
                         label="Nueva entrada" />
-                    <x-btn.mini-cancel @click="cancelEdit" wire:target="cancelEdit" />
+                    <x-btn.mini-cancel @click="cancelEdit" wire:click="cancelEdit" />
                     <x-btn.save label="{{ $this->form->taxId ? 'Actualizar' : 'Guardar' }}" @click="submit()"
                                 wire:target="create,update" />
 
@@ -230,11 +230,11 @@ new class extends Component {
                         lable="Editar"
                         data-name="{{ $taxCondition->name }}"
                         data-code="{{ $taxCondition->code }}"
-                        data-discriminate_tax="{{ $taxCondition->discriminate_tax }}"
+                        data-discriminate_tax="{{ $taxCondition->discriminate_tax ? 'true' : 'false' }}"
                         @click="
                                 $wire.form.name = $el.dataset.name;
                                 $wire.form.code = $el.dataset.code;
-                                $wire.form.discriminate_tax = $el.dataset.discriminate_tax;
+                                $wire.form.discriminate_tax = $el.dataset.discriminate_tax === 'true';
                                 $wire.startEditTaxCondition({{ $taxCondition->id }});
                                 goTopTaxCondition();
                             " />

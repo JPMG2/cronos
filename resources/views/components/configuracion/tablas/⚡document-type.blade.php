@@ -111,7 +111,7 @@ new class extends Component
         );
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): never
     {
         dd('Queda por implementar confirmación');
     }

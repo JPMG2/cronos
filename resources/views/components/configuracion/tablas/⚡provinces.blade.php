@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use App\Livewire\Forms\Configuracion\Parametros\ProvincesForm;
-use App\Models\Country;
-use App\Models\Province;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
 use Livewire\Attributes\On;
@@ -59,7 +57,7 @@ new class extends Component {
         $this->messageOutPut($message, $type);
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): never
     {
         dd('Queda por implementar confirmación');
     }
@@ -248,7 +246,7 @@ new class extends Component {
                         wire:click="startEditProvince({{ $province->id }})"
                         @click="$dispatch('province-edit-started')" />
 
-                    <x-btn.mini-delete lable="Eliminar" wire:click="deleteProvince({{ $province->id }})" />
+                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $province->id }})" />
 
                 </div>
             </div>

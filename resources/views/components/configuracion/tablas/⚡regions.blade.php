@@ -70,7 +70,7 @@ new class extends Component {
         $this->resetValidation();
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): never
     {
         dd('Queda por implementar confirmación');
     }
@@ -87,7 +87,6 @@ new class extends Component {
         [$message, $type] = $this->form->updateStatusRegion($id);
         $this->messageOutPut($message, $type);
     }
-
 };
 ?>
 
@@ -299,7 +298,7 @@ new class extends Component {
                         wire:click="startEditRegion({{ $region->id }})"
                         @click="$dispatch('regions-edit-started')" />
 
-                    <x-btn.mini-delete lable="Eliminar" wire:click="deleteRegion({{ $region->id }})" />
+                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $region->id }})" />
 
                 </div>
             </div>

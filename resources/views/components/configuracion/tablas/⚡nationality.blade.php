@@ -69,7 +69,7 @@ new class extends Component
         $this->messageOutPut($message, $type);
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): never
     {
         dd('Queda por implementar confirmación');
     }
@@ -370,10 +370,6 @@ new class extends Component
             }
         },
 
-        cancelRegionEdit() {
-            this.$wire.cancelRegionEdit();
-            this.errors = {};
-        },
         submitRegion(countryId, provinceId, regionId, name) {
             const isEditing = regionId !== null;
 

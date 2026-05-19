@@ -27,7 +27,7 @@ new class extends Component
     {
         $this->name = ucfirst(mb_strtolower(mb_trim($this->name)));
 
-        $validated = $this->validate([
+        $this->validate([
             'name' => [
                 'required',
                 'min:3',
@@ -54,7 +54,7 @@ new class extends Component
     {
         $this->name = ucfirst(mb_strtolower(mb_trim($this->name)));
 
-        $validated = $this->validate([
+        $this->validate([
             'name' => [
                 'required',
                 'min:3',
@@ -87,7 +87,7 @@ new class extends Component
         );
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): never
     {
         dd('Qeuda por implementar confirmación');
         Gender::query()->findOrFail($id)->delete();
