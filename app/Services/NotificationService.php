@@ -21,7 +21,8 @@ final class NotificationService
             'provinces' => ['name' => 'Provincia', 'genero' => 'F'],
             'regions' => ['name' => 'Región', 'genero' => 'F'],
             'tax_conditions' => ['name' => 'Condición fiscal', 'genero' => 'F'],
-
+            'blood_types' => ['name' => 'Tipo sangre', 'genero' => 'F'],
+            'document_types' => ['name' => 'Tipo documento', 'genero' => 'M'],
         ][mb_strtolower($tableName)] ?? ['name' => 'Registro', 'genero' => 'M'];
     }
 

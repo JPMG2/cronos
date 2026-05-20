@@ -25,4 +25,5 @@ return [
     'current_value' => 'valor actual',
     'increment' => 'incremento',
     'description' => 'descripción',
+    'short_name' => 'abreviatura',
 ];

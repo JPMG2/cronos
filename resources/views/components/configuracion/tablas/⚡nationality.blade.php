@@ -3,17 +3,11 @@
 declare(strict_types=1);
 
 use App\Livewire\Forms\Configuracion\Parametros\NationalityForm;
-use App\Models\Country;
-use App\Models\Province;
-use App\Models\Region;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
-use Illuminate\Support\Collection;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
-new class extends Component
-{
+new class extends Component {
     use HasNotifications;
     use WorldConfiguration;
 
@@ -76,6 +70,7 @@ new class extends Component
 
 };
 ?>
+
 @placeholder
 <div class="flex h-full flex-col items-center justify-center px-6 py-12 text-center">
     <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
@@ -88,7 +83,6 @@ new class extends Component
         Por favor, espera mientras se cargan los datos.
     </p>
 </div>
-
 @endplaceholder
 <div class="flex h-full flex-col" x-data="nationalityForm">
 
