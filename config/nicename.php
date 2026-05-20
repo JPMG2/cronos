@@ -26,4 +26,10 @@ return [
     'increment' => 'incremento',
     'description' => 'descripción',
     'short_name' => 'abreviatura',
+    'abo_group' => 'grupo ABO',
+    'rh_factor' => 'factor Rh',
+    'can_donate_to' => 'puede donar a',
+    'can_receive_from' => 'puede recibir de',
+    'is_universal_donor' => 'donante universal',
+    'is_universal_recipient' => 'receptor universal',
 ];
