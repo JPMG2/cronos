@@ -168,17 +168,43 @@ Disponibles en toda la app sin necesidad de clases Tailwind largas:
 | Clase | Uso |
 |---|---|
 | `.signature-gradient` | Gradiente de marca — botones CTA y paneles hero. Light: `indigo-600→indigo-800`, Dark: `sky-500→indigo-600` |
-| `.glass-panel` | Panel glassmorphism — navs flotantes, headers sticky. 80% opacidad + `backdrop-blur(24px)` |
-| `.shadow-ambient` | Sombra suave teñida de primario: `0px 12px 32px rgba(79,70,229,0.08)` |
+| `.glass-panel` | Panel glassmorphism — navs flotantes, headers sticky. `bg 80% + blur(24px) + border rgba(255,255,255,0.20)` light / `border rgba(255,255,255,0.08)` dark |
+| `.shadow-ambient` | Sombra contextual teñida de primario: `0px 12px 32px rgba(79,70,229,0.08)` — cards destacadas |
+| `.shadow-ambient-hover` | Sombra hover de cards: `0px 16px 40px rgba(79,70,229,0.20)` |
 | `.card-surface` | Atajo: `bg-white rounded-2xl shadow-ambient dark:bg-gray-900` |
+| `.elevation-1` | Capa base — cards estáticas, paneles de contenido |
+| `.elevation-2` | Capa hover — cards al hacer hover, selects abiertos |
+| `.elevation-3` | Capa modal — modales, drawers, offcanvas |
+| `.elevation-4` | Capa flotante — popovers, tooltips, menús contextuales |
 
 ```html
 <!-- CTA con gradiente de marca -->
 <button class="signature-gradient text-white rounded-xl px-6 py-3 font-bold">Guardar</button>
 
-<!-- Panel flotante con glass -->
+<!-- Panel flotante con glass (border incluido automáticamente) -->
 <div class="glass-panel rounded-2xl p-6">...</div>
+
+<!-- Card con elevación semántica -->
+<div class="card-surface elevation-1 rounded-2xl p-5 transition-shadow duration-200 hover:elevation-2">...</div>
+
+<!-- Modal -->
+<div class="elevation-3 rounded-2xl bg-white dark:bg-gray-900 p-6">...</div>
 ```
+
+---
+
+## Sistema de Elevación (4 niveles)
+
+Usar `.elevation-*` en lugar de `shadow-sm/md/lg` sueltos para mantener jerarquía visual coherente. Las variables viven en `:root` dentro de `@layer base` en `app.css`.
+
+| Clase | Variables CSS | Cuándo usar |
+|---|---|---|
+| `.elevation-1` | `--elevation-1` | Cards estáticas, listas, paneles de contenido |
+| `.elevation-2` | `--elevation-2` | Estado hover/focus de cards, dropdowns internos |
+| `.elevation-3` | `--elevation-3` | Modales, drawers, side panels |
+| `.elevation-4` | `--elevation-4` | Popovers, tooltips, menús contextuales |
+
+> **Cuándo usar `.shadow-ambient` vs `.elevation-*`:** `.shadow-ambient` es para cards que deben resonar con el color de marca (tinte indigo). `.elevation-*` es jerarquía estructural neutral — usar en todo lo demás.
 
 ---
 

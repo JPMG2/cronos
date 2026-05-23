@@ -98,7 +98,7 @@ final class DepartmentForm extends BaseForm
         ];
     }
 
-    private function notificationService(): NotificationService
+    protected function notificationService(): NotificationService
     {
         return $this->notificationService ??= resolve(NotificationService::class);
     }
