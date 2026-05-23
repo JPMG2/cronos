@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Forms\Configuracion\Parametros\MaritalStatusForm;
-use App\Models\MaritalStatus;
+use App\Livewire\Forms\Configuracion\Parametros\OccupationForm;
+use App\Models\Occupation;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -12,36 +12,36 @@ use Livewire\Component;
 new class extends Component {
     use HasNotifications;
 
-    public MaritalStatusForm $form;
+    public OccupationForm $form;
 
     #[Computed]
-    public function maritalStatus(): Collection
+    public function occupations(): Collection
     {
-        return MaritalStatus::query()->orderBy('name')->get();
+        return Occupation::query()->orderBy('name')->get();
     }
 
     public function create(): void
     {
-        [$message, $type] = $this->form->storeMaritalStatus();
+        [$message, $type] = $this->form->storeOccupation();
         $this->messageOutPut($message, $type);
     }
 
     public function messageOutPut(mixed $message, mixed $type): void
     {
-        unset($this->maritalStatus);
+        unset($this->occupations);
         $this->getTypeMessage($message, $type);
         $this->cancelEdit();
     }
 
-    public function update(): void
-    {
-        [$message, $type] = $this->form->updateMaritalStatus();
-        $this->messageOutPut($message, $type);
-    }
-
     public function startEdit(int $id): void
     {
-        $this->form->fillMaritalStatus($id);
+        $this->form->fillOccupation($id);
+    }
+
+    public function update(): void
+    {
+        [$message, $type] = $this->form->updateOccupation();
+        $this->messageOutPut($message, $type);
     }
 
     public function cancelEdit(): void
@@ -52,34 +52,34 @@ new class extends Component {
 
     public function toggleActive(int $id): void
     {
-        [$message, $type] = $this->form->updateMaritalStatusActive($id);
+        [$message, $type] = $this->form->updateOccupationActive($id);
         $this->messageOutPut($message, $type);
     }
 
     public function delete(int $id): never
     {
-        dd('Qeuda por implementar confirmación');
+        dd('Queda por implementar confirmación');
     }
-
 };
 ?>
 
-<div class="flex h-full flex-col" x-data="maritalStatus">
+<div class="flex h-full flex-col" x-data="occupationForm">
 
     {{-- ══ FORM ══ --}}
-    <div class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
+    <div x-ref="occupationForm" class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
 
         <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
 
             <div class="min-w-0 flex-1">
                 <x-form-inputs.text_input
-                    label="Nombre del estado civil"
+                    label="Nombre de la ocupación"
                     name="name"
-                    icon="identification"
-                    placeholder="Ej: Soltero, Casado, Divorciado…"
+                    icon="briefcase"
+                    placeholder="Ej: Médico, Enfermero, Administrativo…"
                     wire:model="form.name"
                     alpineError="name"
                     size="sm"
+                    class="uppercase"
                     required/>
             </div>
 
@@ -105,6 +105,7 @@ new class extends Component {
 
                 {{-- Cancelar (icono compacto) --}}
                 <x-btn.mini-cancel wire:click="cancelEdit"/>
+
                 <x-btn.save label="{{ $this->form->editingId ? 'Actualizar' : 'Guardar' }}" @click="submit()"
                             wire:target="create,update"/>
 
@@ -118,7 +119,7 @@ new class extends Component {
     <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
 
         {{-- Cabecera de columnas --}}
-        @if($this->maritalStatus->isNotEmpty())
+        @if($this->occupations->isNotEmpty())
             <div class="flex items-center justify-between px-5 py-2">
                 <span
                     class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
@@ -134,15 +135,16 @@ new class extends Component {
         @endif
 
         {{-- Filas --}}
-        @forelse($this->maritalStatus as $maritalStatu)
-            <div class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
-                        {{ $this->form->editingId === $maritalStatu->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
+        @forelse($this->occupations as $occupation)
+            <div wire:key="occupation-{{ $occupation->id }}"
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
+                        {{ $this->form->editingId === $occupation->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Nombre --}}
                 <div class="min-w-0 flex-1">
                     <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
-                        {{ $this->form->editingId === $maritalStatu->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
-                        {{ $maritalStatu->name }}
+                        {{ $this->form->editingId === $occupation->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
+                        {{ $occupation->name }}
                     </span>
                 </div>
 
@@ -151,12 +153,12 @@ new class extends Component {
 
                     {{-- Badge activo/inactivo — clickeable para toggle --}}
                     <button type="button"
-                            wire:click="toggleActive({{ $maritalStatu->id }})"
+                            wire:click="toggleActive({{ $occupation->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
-                            wire:target="toggleActive({{ $maritalStatu->id }})"
+                            wire:target="toggleActive({{ $occupation->id }})"
                             class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
-                            aria-label="{{ $maritalStatu->is_active ? 'Desactivar' : 'Activar' }} {{ $maritalStatu->name }}">
-                        @if($maritalStatu->is_active)
+                            aria-label="{{ $occupation->is_active ? 'Desactivar' : 'Activar' }} {{ $occupation->name }}">
+                        @if($occupation->is_active)
                             <span
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">
                                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
@@ -174,8 +176,8 @@ new class extends Component {
                     {{-- Separador visual --}}
                     <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                    <x-btn.mini-edit lable="Editar" wire:click="startEdit({{ $maritalStatu->id }})"/>
-                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $maritalStatu->id }})"/>
+                    <x-btn.mini-edit lable="Editar" @click="$wire.startEdit({{ $occupation->id }}); goTopOccupation()"/>
+                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $occupation->id }})"/>
 
                 </div>
             </div>
@@ -185,33 +187,35 @@ new class extends Component {
             @endif
 
         @empty
-            {{-- Empty state — ícono + título + subtítulo (patrón obligatorio) --}}
             <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
                 <div
                     class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-                    <x-menu.heroicon name="user-circle" class="h-6 w-6"/>
+                    <x-menu.heroicon name="briefcase" class="h-6 w-6"/>
                 </div>
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
-                    Sin estados civiles registrados
+                    Sin ocupaciones registradas
                 </h3>
                 <p class="mt-1 text-xs text-slate-500 dark:text-gray-400">
-                    Usá el formulario de arriba para agregar el primero.
+                    Usá el formulario de arriba para agregar la primera.
                 </p>
             </div>
         @endforelse
 
     </div>
-</div>
 
+</div>
 
 @script
 <script>
-    Alpine.data('maritalStatus', () => ({
+    Alpine.data('occupationForm', () => ({
         errors: {},
 
         cancelEdit() {
             this.$wire.cancelEdit();
             this.errors = {};
+        },
+        goTopOccupation() {
+            this.$refs.occupationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
         submit() {
             const isEditing = this.$wire.form.editingId !== null;

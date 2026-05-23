@@ -81,6 +81,7 @@ new class extends Component {
                     placeholder="Ej: Masculino, Femenino, No binario…"
                     wire:model="form.name"
                     alpineError="name"
+                    class="uppercase"
                     size="sm"
                     required/>
             </div>

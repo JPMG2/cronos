@@ -79,6 +79,7 @@ new class extends Component {
                     placeholder="Ej: Documento Nacional de Identidad"
                     wire:model="form.name"
                     alpineError="name"
+                    class="uppercase"
                     size="sm"
                     required/>
             </div>

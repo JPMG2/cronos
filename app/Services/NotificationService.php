@@ -24,6 +24,8 @@ final class NotificationService
             'blood_types' => ['name' => 'Tipo sangre', 'genero' => 'F'],
             'document_types' => ['name' => 'Tipo documento', 'genero' => 'M'],
             'genders' => ['name' => 'Género', 'genero' => 'M'],
+            'marital_statuses' => ['name' => 'Estado civil', 'genero' => 'M'],
+            'occupations' => ['name' => 'Ocupación', 'genero' => 'F'],
         ][mb_strtolower($tableName)] ?? ['name' => 'Registro', 'genero' => 'M'];
     }
 

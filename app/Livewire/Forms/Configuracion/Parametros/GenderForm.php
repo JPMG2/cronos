@@ -26,7 +26,7 @@ final class GenderForm extends BaseForm
 
     public function updateGender(): array
     {
-        $data = $this->validateServiceData();
+        $data = $this->validateServiceData($this->editingId);
         $gender = $this->findGender($this->editingId);
         $gender->update($data);
 
