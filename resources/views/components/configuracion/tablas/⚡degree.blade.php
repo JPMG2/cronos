@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Livewire\Forms\Configuracion\Parametros\DocumentTypeForm;
-use App\Models\DocumentType;
+use App\Livewire\Forms\Configuracion\Parametros\DegreeForm;
+use App\Models\Degree;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -12,35 +12,35 @@ use Livewire\Component;
 new class extends Component {
     use HasNotifications;
 
-    public DocumentTypeForm $form;
+    public DegreeForm $form;
 
     #[Computed]
-    public function documentTypes(): Collection
+    public function degrees(): Collection
     {
-        return DocumentType::query()->orderBy('name')->get();
+        return Degree::query()->orderBy('name')->get();
     }
 
     public function create(): void
     {
-        [$message, $type] = $this->form->storeDocumentType();
+        [$message, $type] = $this->form->storeDegree();
         $this->messageOutPut($message, $type);
     }
 
     public function messageOutPut(mixed $message, mixed $type): void
     {
-        unset($this->documentTypes);
+        unset($this->degrees);
         $this->getTypeMessage($message, $type);
         $this->cancelEdit();
     }
 
     public function startEdit(int $id): void
     {
-        $this->form->fillDocumentType($id);
+        $this->form->fillDegree($id);
     }
 
     public function update(): void
     {
-        [$message, $type] = $this->form->updateDocumentType();
+        [$message, $type] = $this->form->updateDegree();
         $this->messageOutPut($message, $type);
     }
 
@@ -52,7 +52,7 @@ new class extends Component {
 
     public function toggleActive(int $id): void
     {
-        [$message, $type] = $this->form->updateDocumentTypeActive($id);
+        [$message, $type] = $this->form->updateDegreeActive($id);
         $this->messageOutPut($message, $type);
     }
 
@@ -63,28 +63,27 @@ new class extends Component {
 };
 ?>
 
-<div class="flex h-full flex-col" x-data="documentTypeForm">
+<div class="flex h-full flex-col" x-data="degreeForm">
 
-    {{-- ══ FORM — 3 campos: código (corto) · nombre (flex) · abreviatura (opcional) ══ --}}
-    <div class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
+    {{-- ══ FORM ══ --}}
+    <div x-ref="degreeForm" class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
 
         <div class="flex flex-col gap-2">
 
             {{-- Fila 1: Nombre (ancho completo) --}}
             <div>
                 <x-form-inputs.text_input
-                    label="Nombre"
+                    label="Título / Grado"
                     name="name"
-                    icon="identification"
-                    placeholder="Ej: Documento Nacional de Identidad"
+                    icon="academic-cap"
+                    placeholder="Ej: Doctor en Medicina"
                     wire:model="form.name"
                     alpineError="name"
-                    class="uppercase"
                     size="sm"
                     required/>
             </div>
 
-            {{-- Fila 2: Código · Abreviatura · Botones --}}
+            {{-- Fila 2: Código · Botones --}}
             <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
 
                 <div class="sm:w-40 sm:shrink-0">
@@ -92,23 +91,11 @@ new class extends Component {
                         label="Código"
                         name="code"
                         icon="hashtag"
-                        placeholder="DNI"
+                        placeholder="DR"
                         maxlength="10"
                         wire:model="form.code"
                         alpineError="code"
                         class="uppercase font-mono font-bold tracking-wider"
-                        size="sm"
-                        required/>
-                </div>
-
-                <div class="sm:w-36 sm:shrink-0">
-                    <x-form-inputs.text_input
-                        label="Abreviatura"
-                        name="shortName"
-                        placeholder="D.N.I"
-                        maxlength="10"
-                        wire:model="form.shortName"
-                        alpineError="shortName"
                         size="sm"/>
                 </div>
 
@@ -150,7 +137,7 @@ new class extends Component {
     <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
 
         {{-- Cabecera de columnas --}}
-        @if($this->documentTypes->isNotEmpty())
+        @if($this->degrees->isNotEmpty())
             <div class="flex items-center justify-between px-5 py-2">
                 <span
                     class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
@@ -166,38 +153,35 @@ new class extends Component {
         @endif
 
         {{-- Filas --}}
-        @forelse($this->documentTypes as $documentType)
-            <div wire:key="document-type-{{ $documentType->id }}"
-                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
-                        {{ $this->form->editingId === $documentType->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
+        @forelse($this->degrees as $degree)
+            <div wire:key="degree-{{ $degree->id }}"
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
+                        {{ $this->form->editingId === $degree->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Código badge + Nombre --}}
                 <div class="flex min-w-0 flex-1 items-center gap-2">
-                    <span
-                        class="shrink-0 rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
-                        {{ $documentType->code }}
-                    </span>
-                    <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
-                        {{ $this->form->editingId === $documentType->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
-                        {{ $documentType->name }}
-                    </span>
-                    @if($documentType->short_name)
-                        <span class="hidden shrink-0 text-xs text-slate-400 dark:text-gray-600 sm:block">
-                            {{ $documentType->short_name }}
+                    @if($degree->code)
+                        <span
+                            class="shrink-0 rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+                            {{ $degree->code }}
                         </span>
                     @endif
+                    <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
+                        {{ $this->form->editingId === $degree->id ? 'text-amber-700 dark:text-amber-300' : '' }}">
+                        {{ $degree->name }}
+                    </span>
                 </div>
 
                 {{-- Estado + Acciones --}}
                 <div class="flex shrink-0 items-center gap-1.5">
 
                     <button type="button"
-                            wire:click="toggleActive({{ $documentType->id }})"
+                            wire:click="toggleActive({{ $degree->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
-                            wire:target="toggleActive({{ $documentType->id }})"
+                            wire:target="toggleActive({{ $degree->id }})"
                             class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
-                            aria-label="{{ $documentType->is_active ? 'Desactivar' : 'Activar' }} {{ $documentType->name }}">
-                        @if($documentType->is_active)
+                            aria-label="{{ $degree->is_active ? 'Desactivar' : 'Activar' }} {{ $degree->name }}">
+                        @if($degree->is_active)
                             <span
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">
                                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
@@ -214,8 +198,9 @@ new class extends Component {
 
                     <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
 
-                    <x-btn.mini-edit lable="Editar" wire:click="startEdit({{ $documentType->id }})"/>
-                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $documentType->id }})"/>
+                    <x-btn.mini-edit lable="Editar"
+                                     @click="$wire.startEdit({{ $degree->id }}); goTopDegree()"/>
+                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $degree->id }})"/>
 
                 </div>
             </div>
@@ -228,10 +213,10 @@ new class extends Component {
             <div class="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
                 <div
                     class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-400">
-                    <x-menu.heroicon name="identification" class="h-6 w-6"/>
+                    <x-menu.heroicon name="academic-cap" class="h-6 w-6"/>
                 </div>
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
-                    Sin tipos de documento registrados
+                    Sin títulos registrados
                 </h3>
                 <p class="mt-1 text-xs text-slate-500 dark:text-gray-400">
                     Usá el formulario de arriba para agregar el primero.
@@ -245,22 +230,22 @@ new class extends Component {
 
 @script
 <script>
-    Alpine.data('documentTypeForm', () => ({
+    Alpine.data('degreeForm', () => ({
         errors: {},
 
         cancelEdit() {
             this.$wire.cancelEdit();
             this.errors = {};
         },
+        goTopDegree() {
+            this.$refs.degreeForm.scrollIntoView({behavior: 'smooth', block: 'start'});
+        },
         submit() {
             const isEditing = this.$wire.form.editingId !== null;
 
             this.errors = validate(
-                {code: this.$wire.form.code, name: this.$wire.form.name},
-                {
-                    code: ['required', ['minLength', 2]],
-                    name: ['required', ['minLength', 3]],
-                },
+                {name: this.$wire.form.name},
+                {name: ['required', ['minLength', 3]]},
             );
 
             if (Object.keys(this.errors).length === 0) {

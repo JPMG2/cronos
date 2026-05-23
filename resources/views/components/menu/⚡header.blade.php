@@ -39,7 +39,7 @@ new class extends Component {
                 <svg
                     wire:loading
                     wire:target="search"
-                    class="h-4 w-4 animate-spin text-indigo-400 dark:text-sky-500"
+                    class="h-4 w-4 motion-safe:animate-spin text-indigo-400 dark:text-sky-500"
                     fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 22 6.477 22 12h-4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -49,7 +49,7 @@ new class extends Component {
                 type="search"
                 wire:model.live.debounce.300ms="search"
                 aria-label="Buscar"
-                class="block w-full rounded-xl border border-indigo-200/80 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-600 dark:focus:border-sky-600/60 dark:focus:ring-sky-500/20"
+                class="block w-full rounded-xl border border-indigo-200/80 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 shadow-sm transition-colors duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-600 dark:focus:border-sky-600/60 dark:focus:ring-sky-500/20"
                 placeholder="Buscar..." />
         </div>
     </div>
@@ -150,14 +150,14 @@ new class extends Component {
                     <a
                         href="{{ route('profile.edit') }}"
                         role="menuitem"
-                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200">
+                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800 focus:outline-none focus-visible:bg-slate-50 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200 dark:focus-visible:bg-gray-700/60">
                         <x-menu.heroicon name="user-circle" class="h-4 w-4 text-slate-400 dark:text-gray-600" />
                         Mi Perfil
                     </a>
                     <a
                         href="#"
                         role="menuitem"
-                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200">
+                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800 focus:outline-none focus-visible:bg-slate-50 dark:text-gray-400 dark:hover:bg-gray-700/60 dark:hover:text-gray-200 dark:focus-visible:bg-gray-700/60">
                         <x-menu.heroicon name="cog-6-tooth" class="h-4 w-4 text-slate-400 dark:text-gray-600" />
                         Configuración
                     </a>
@@ -168,7 +168,7 @@ new class extends Component {
                         <button
                             type="submit"
                             role="menuitem"
-                            class="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-rose-500 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300">
+                            class="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-rose-500 transition-colors hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus-visible:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300 dark:focus-visible:bg-rose-500/10">
                             <x-menu.heroicon name="arrow-right-on-rectangle" class="h-4 w-4" />
                             Cerrar Sesión
                         </button>

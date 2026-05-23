@@ -9,6 +9,7 @@
     'required'    => false,
     'disabled'    => false,
     'readonly'    => false,
+    'alpineError' => null,
 ])
 
 @php
@@ -25,8 +26,8 @@
     $borderError = 'border border-rose-400 focus:border-rose-400 focus:ring-rose-400/25 dark:border-rose-500/60 dark:focus:ring-rose-500/20';
     $borderClass = $hasError ? $borderError : $borderBase;
 
-    $textareaBase  = 'block w-full rounded-xl bg-white text-slate-800 placeholder-slate-400 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 resize-none dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500';
-    $disabledClass = ($disabled || $readonly) ? 'opacity-60 cursor-not-allowed' : '';
+    $textareaBase  = 'block w-full rounded-xl bg-white text-slate-800 placeholder-slate-400 shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 resize-none dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500';
+    $disabledClass = $disabled ? 'opacity-60 cursor-not-allowed' : ($readonly ? 'opacity-60 cursor-default' : '');
 @endphp
 
 <div>
@@ -39,22 +40,32 @@
         </label>
     @endif
 
-    @if ($description)
-        <p class="mt-1 mb-1.5 text-xs text-slate-400 dark:text-gray-500">{{ $description }}</p>
-    @endif
-
-    <textarea
-        {{ $attributes->merge(['class' => implode(' ', array_filter([$textareaBase, $sizeClass, $borderClass, $disabledClass]))]) }}
-        id="{{ $name }}"
-        name="{{ $name }}"
-        rows="{{ $rows }}"
-        placeholder="{{ $placeholder }}"
-        @if ($required) required @endif
-        @if ($disabled) disabled @endif
-        @if ($readonly) readonly @endif
-    >{{ old($name, $value) }}</textarea>
+    <div class="mt-1.5">
+        <textarea
+            {{ $attributes->merge(['class' => implode(' ', array_filter([$textareaBase, $sizeClass, $borderClass, $disabledClass]))]) }}
+            id="{{ $name }}"
+            name="{{ $name }}"
+            rows="{{ $rows }}"
+            placeholder="{{ $placeholder }}"
+            @if ($required) required @endif
+            @if ($disabled) disabled @endif
+            @if ($readonly) readonly @endif
+        >{{ old($name, $value) }}</textarea>
+    </div>
 
     @error($name)
         <p class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400">{{ $message }}</p>
     @enderror
+
+    @if ($alpineError)
+        <p
+            x-show="errors.{{ $alpineError }}"
+            x-text="errors.{{ $alpineError }}"
+            x-transition
+            class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+    @endif
+
+    @if ($description && !$hasError)
+        <p class="mt-1 text-xs text-slate-400 dark:text-gray-500">{{ $description }}</p>
+    @endif
 </div>

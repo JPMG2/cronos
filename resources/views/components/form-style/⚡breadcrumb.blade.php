@@ -23,7 +23,7 @@ new class extends Component {
                 {{-- Home --}}
                 <li>
                     <a href="{{ route('dashboard') }}"
-                       class="flex items-center text-slate-400 transition-colors duration-200 hover:text-indigo-600 dark:text-gray-500 dark:hover:text-sky-400">
+                       class="flex items-center rounded text-slate-400 transition-colors duration-200 hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-gray-500 dark:hover:text-sky-400 dark:focus-visible:ring-sky-400">
                         <x-menu.heroicon name="home" class="h-4 w-4 shrink-0" />
                         <span class="sr-only">Inicio</span>
                     </a>
@@ -46,7 +46,7 @@ new class extends Component {
                             </span>
                         @elseif ($crumb['route'] && Route::has($crumb['route']))
                             <a href="{{ route($crumb['route']) }}"
-                               class="text-xs font-medium text-slate-500 transition-colors duration-200 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-sky-400">
+                               class="rounded text-xs font-medium text-slate-500 transition-colors duration-200 hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-gray-400 dark:hover:text-sky-400 dark:focus-visible:ring-sky-400">
                                 {{ $crumb['title'] }}
                             </a>
                         @else

@@ -121,16 +121,17 @@ class extends Component {
     #[On('storeBranch')]
     public function create(?array $params): void
     {
-      [$message, $type] = $this->form->createBranch();
-      $this->getTypeMessage($message, $type);
-      unset($this->branches)
+        [$message, $type] = $this->form->createBranch();
+        $this->getTypeMessage($message, $type);
+        unset($this->branches);
     }
+
     #[On('updateBranch')]
     public function update(): void
     {
-      [$message, $type] =  $this->form->updateBranch();
-      $this->getTypeMessage($message, $type);
-      unset($this->branches)
+        [$message, $type] = $this->form->updateBranch();
+        $this->getTypeMessage($message, $type);
+        unset($this->branches);
     }
 
     public function mount(): void
@@ -146,7 +147,7 @@ class extends Component {
         <div x-data="branchManager">
 
             {{-- ══ Header ══════════════════════════════════════════════════════════ --}}
-            <div class="flex items-start justify-between border-b border-slate-100 px-8 py-4 dark:border-gray-800">
+            <div class="flex items-start justify-between border-b border-slate-100 px-4 py-4 dark:border-gray-800 sm:px-6 lg:px-8">
                 <div>
                     <h2 class="font-headline text-xl font-extrabold tracking-tight text-slate-800 dark:text-gray-100"
                         x-text="mode === 'edit' ? 'Editando Sucursal' : 'Crear Nueva Sucursal'">
@@ -162,14 +163,14 @@ class extends Component {
                 <div x-show="mode === 'edit'"
                      x-cloak
                      class="hidden shrink-0 items-center gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-2 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                    <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                     <span class="font-label text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400"
                           x-text="'Editando · ' + editingCode"></span>
                 </div>
                 {{-- Badge: nueva --}}
                 <div x-show="mode === 'create'"
                      class="hidden shrink-0 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 dark:border-indigo-800/30 dark:bg-indigo-900/20 sm:flex">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
+                    <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
                     <span class="font-label text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-sky-400">
                         Nueva Sucursal.
                     </span>
@@ -217,7 +218,7 @@ class extends Component {
                                     role="combobox"
                                     :aria-expanded="dropOpen"
                                     aria-haspopup="listbox"
-                                    class="w-full rounded-xl border border-indigo-200/80 bg-white py-2.5 pl-10 pr-10 text-sm placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-sky-500 dark:focus:ring-sky-400/25"/>
+                                    class="w-full rounded-xl border border-indigo-200/80 bg-white py-2.5 pl-10 pr-10 text-sm placeholder-slate-400 shadow-sm transition-colors duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-sky-500 dark:focus:ring-sky-400/25"/>
                             <span class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 transition-transform duration-200"
                                   :class="dropOpen ? 'rotate - 180' : ''">
                                 <x-menu.heroicon name="chevron-up-down"
@@ -322,7 +323,7 @@ class extends Component {
             </div>{{-- /selector --}}
 
             {{-- ══ Formulario (ancho completo) ════════════════════════════════════ --}}
-            <div class="relative z-10 px-8 py-4">
+            <div class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 gap-3">
 
                     {{-- Card 01: Identificación — full width ─────────────────────── --}}
@@ -490,12 +491,13 @@ class extends Component {
                                                 : {{ $form->logo ? 'true' : 'false' }}
                                                     ? 'border-indigo-200 dark:border-indigo-700/60'
                                                     : 'border-indigo-200/80 dark:border-gray-700'"
-                                            class="group relative h-[7.5rem] w-[7.5rem] cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed bg-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:bg-gray-800/60 dark:focus:ring-sky-400/25"
+                                            class="group relative h-[7.5rem] w-[7.5rem] cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed bg-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:bg-gray-800/60 dark:focus:ring-sky-400/25"
                                             @click="$refs.logoInput.click()"
                                             role="button"
                                             aria-label="Subir logo de sucursal"
                                             tabindex="0"
-                                            @keydown.enter.prevent="$refs.logoInput.click()">
+                                            @keydown.enter.prevent="$refs.logoInput.click()"
+                                            @keydown.space.prevent="$refs.logoInput.click()">
                                         @if ($form->logo)
                                             <img
                                                     src="{{ $form->logo->temporaryUrl() }}"
@@ -511,14 +513,14 @@ class extends Component {
                                                 </span>
                                             </div>
                                         @endif
-                                        <div class="absolute inset-0 flex items-center justify-center rounded-2xl bg-indigo-900/50 opacity-0 transition-all duration-200 group-hover:opacity-100 dark:bg-black/60">
+                                        <div class="absolute inset-0 flex items-center justify-center rounded-2xl bg-indigo-900/50 opacity-0 motion-safe:transition-opacity duration-200 group-hover:opacity-100 dark:bg-black/60">
                                             <x-menu.heroicon name="arrow-up-tray" class="h-6 w-6 text-white"/>
                                         </div>
                                         <div
                                                 wire:loading
                                                 wire:target="form.logo"
                                                 class="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/80 dark:bg-gray-900/80">
-                                            <svg class="h-5 w-5 animate-spin text-indigo-500 dark:text-sky-400"
+                                            <svg class="h-5 w-5 motion-safe:animate-spin text-indigo-500 dark:text-sky-400"
                                                  fill="none"
                                                  viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -531,7 +533,7 @@ class extends Component {
                                         <button
                                                 wire:click="$set('form.logo', null)"
                                                 type="button"
-                                                class="text-[11px] font-medium text-rose-400 transition-colors hover:text-rose-600 dark:text-rose-500 dark:hover:text-rose-400">
+                                                class="px-2 py-1.5 text-[11px] font-medium text-rose-400 transition-colors hover:text-rose-600 dark:text-rose-500 dark:hover:text-rose-400">
                                             Quitar
                                         </button>
                                     @else

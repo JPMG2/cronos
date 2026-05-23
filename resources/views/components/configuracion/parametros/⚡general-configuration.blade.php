@@ -59,7 +59,7 @@ class extends Component {
                 </p>
             </div>
             <div class="hidden shrink-0 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 dark:border-indigo-800/30 dark:bg-indigo-900/20 sm:flex">
-                <span class="h-2 w-2 animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
+                <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
                 <span class="font-label text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-sky-400">
                     Módulos Generales
                 </span>
@@ -86,7 +86,7 @@ class extends Component {
                             type="text"
                             x-model="search"
                             placeholder="Buscar módulo…"
-                            class="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-8 pr-3 text-xs placeholder-slate-400 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"/>
+                            class="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-8 pr-3 text-xs placeholder-slate-400 shadow-sm transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500"/>
                     </div>
 
                     {{-- Grupos + ítems --}}
@@ -99,7 +99,7 @@ class extends Component {
                                 <button
                                     type="button"
                                     @click="open = !open"
-                                    class="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-gray-800/60">
+                                    class="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-slate-100 dark:hover:bg-gray-800/60">
                                     <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-500">
                                         {{ $group }}
                                     </span>
@@ -122,7 +122,7 @@ class extends Component {
                                             wire:click="selectCatalog({{ $catalog->id }})"
                                             wire:loading.class="opacity-40 pointer-events-none" wire:target="selectCatalog"
                                             x-show="search === '' || '{{ strtolower($catalog->title) }}'.includes(search.toLowerCase())"
-                                            class="group relative flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-all duration-150"
+                                            class="group relative flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors duration-150"
                                             :class="selectedId === {{ $catalog->id }}
                                                 ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-sky-300'
                                                 : 'text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm dark:text-gray-400 dark:hover:bg-gray-800/70 dark:hover:text-gray-200'">
@@ -191,7 +191,7 @@ class extends Component {
                         <button
                             type="button"
                             @click="selectedId = null; $wire.set('selectedId', null)"
-                            class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50 dark:text-sky-400 dark:hover:bg-indigo-500/10">
+                            class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-50 dark:text-sky-400 dark:hover:bg-indigo-500/10">
                             <x-menu.heroicon name="arrow-left" class="h-4 w-4"/>
                             Volver
                         </button>

@@ -126,7 +126,7 @@ new class extends Component {
                     <div x-show="$wire.form.taxId !== null"
                          x-cloak
                          class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                        <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                        <span class="h-1.5 w-1.5 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                         <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                             Editando
                         </span>
@@ -188,7 +188,7 @@ new class extends Component {
                             wire:click="toggleDiscriminateTax({{ $taxCondition->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
                             wire:target="toggleDiscriminateTax({{ $taxCondition->id }})"
-                            class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                             aria-label="{{ $taxCondition->discriminate_tax ? 'Desactivar' : 'Activar' }} {{ $taxCondition->name }}">
                         @if($taxCondition->discriminate_tax)
                             <span class="hidden items-center gap-1 rounded-lg bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-700 ring-1 ring-inset ring-violet-200/60 dark:bg-violet-500/10 dark:text-violet-400 dark:ring-violet-500/20 sm:inline-flex">
@@ -209,7 +209,7 @@ new class extends Component {
                             wire:click="toggleStatusTax({{ $taxCondition->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
                             wire:target="toggleStatusTax({{ $taxCondition->id }})"
-                            class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                             aria-label="{{ $taxCondition->is_active ? 'Desactivar' : 'Activar' }} {{ $taxCondition->name }}">
                         @if($taxCondition->is_active)
                             <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">

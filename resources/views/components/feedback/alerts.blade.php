@@ -1,7 +1,7 @@
 @props([
-    "type"    => "info",
-    "message" => false,
-    "size"    => "md",
+    'type'    => 'info',
+    'message' => null,
+    'size'    => 'md',
 ])
 @php
     $variants = [

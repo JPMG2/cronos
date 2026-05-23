@@ -242,13 +242,12 @@
         </p>
     @enderror
 
+    @if ($alpineError)
+        <p
+            x-show="errors.{{ $alpineError }}"
+            x-text="errors.{{ $alpineError }}"
+            x-transition
+            class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+    @endif
 
 </div>
-
-@if ($alpineError)
-    <p
-        x-show="errors.{{ $alpineError }}"
-        x-text="errors.{{ $alpineError }}"
-        x-transition
-        class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
-@endif

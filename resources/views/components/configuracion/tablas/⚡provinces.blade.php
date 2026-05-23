@@ -74,7 +74,7 @@ new class extends Component {
 {{-- ═════════════════════════ TAB: PROVINCIAS ═══════════════════════════════════════ --}}
 
 @placeholder
-<div class="animate-pulse">
+<div class="motion-safe:animate-pulse">
     {{-- Form skeleton --}}
     <div class="border-b border-slate-100 bg-white/70 px-5 py-3.5 dark:border-gray-800 dark:bg-gray-900/50">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-start">
@@ -165,7 +165,7 @@ new class extends Component {
                 <div x-show="$wire.form.provinceId !== null"
                      x-cloak
                      class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                    <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                    <span class="h-1.5 w-1.5 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                     <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                         Editando
                     </span>
@@ -224,7 +224,7 @@ new class extends Component {
                             wire:click="toggleProvinceActive({{ $province->id }})"
                             wire:loading.class="cursor-wait opacity-50"
                             wire:target="toggleProvinceActive({{ $province->id }})"
-                            class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                             aria-label="{{ $province->is_active ? 'Desactivar' : 'Activar' }} {{ $province->name }}">
                         @if($province->is_active)
                             <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">

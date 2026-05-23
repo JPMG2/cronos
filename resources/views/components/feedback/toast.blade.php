@@ -126,7 +126,7 @@
                 {{-- Botón cerrar --}}
                 <button
                     @click="dismiss(toast.id)"
-                    class="ml-1 shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-400"
+                    class="ml-1 shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400/40 dark:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-400"
                     aria-label="Cerrar notificación">
                     <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

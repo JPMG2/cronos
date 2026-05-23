@@ -38,7 +38,7 @@
         ? 'bg-slate-100 text-slate-900 dark:bg-gray-700/70 dark:text-gray-50'
         : 'bg-white text-slate-800 dark:bg-gray-800 dark:text-gray-100';
 
-    $inputBase = "block w-full rounded-xl {$bgText} placeholder-slate-400 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 dark:placeholder-gray-500";
+    $inputBase = "block w-full rounded-xl {$bgText} placeholder-slate-400 shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 dark:placeholder-gray-500";
     $disabledClass = $disabled ? 'opacity-60 cursor-not-allowed' : ($readonly ? 'cursor-default' : '');
 @endphp
 

@@ -93,7 +93,7 @@ new class extends Component {
                 :class="activeTab === 'countries'
                     ? 'border-indigo-500 text-indigo-600 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-gray-600 dark:hover:text-gray-400'"
-                class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-150">
+                class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-colors duration-150">
             <x-menu.heroicon name="globe-alt" class="h-4 w-4" />
             Países
         </button>
@@ -102,7 +102,7 @@ new class extends Component {
                 :class="activeTab === 'provinces'
                     ? 'border-indigo-500 text-indigo-600 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-gray-600 dark:hover:text-gray-400'"
-                class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-150">
+                class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-colors duration-150">
             <x-menu.heroicon name="building-library" class="h-4 w-4" />
             Provincias
         </button>
@@ -111,7 +111,7 @@ new class extends Component {
                 :class="activeTab === 'regions'
                     ? 'border-indigo-500 text-indigo-600 dark:border-sky-400 dark:text-sky-400'
                     : 'border-transparent text-slate-400 hover:text-slate-600 dark:text-gray-600 dark:hover:text-gray-400'"
-                class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-150">
+                class="flex items-center gap-2 border-b-2 px-5 py-3 text-xs font-bold uppercase tracking-wider transition-colors duration-150">
             <x-menu.heroicon name="map-pin" class="h-4 w-4" />
             Regiones
         </button>
@@ -176,7 +176,7 @@ new class extends Component {
                         <div x-show="$wire.form.countryId !== null"
                              x-cloak
                              class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                            <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                            <span class="h-1.5 w-1.5 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                             <span class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                                 Editando
                             </span>
@@ -239,7 +239,7 @@ new class extends Component {
                                 wire:click="toggleCountryActive({{ $country->id }})"
                                 wire:loading.class="cursor-wait opacity-50"
                                 wire:target="toggleCountryActive({{ $country->id }})"
-                                class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                                class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                                 aria-label="{{ $country->is_active ? 'Desactivar' : 'Activar' }} {{ $country->name }}">
                             @if($country->is_active)
                                 <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">

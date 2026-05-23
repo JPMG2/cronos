@@ -124,13 +124,20 @@ class extends Component {
                 description="Configure los datos de la organización médica para integrar sus servicios clínicos."
                 sign="{{ $isExisting ? 'Empresa Registrada.' : 'Nueva Empresa.' }}"/>
         <div x-data="companyForm">
-            <div class="relative z-10 px-8 py-4">
+            <div class="relative px-4 py-4 sm:px-6 lg:px-8">
                 {{-- ── Grid 2×2: 4 cards hijos directos — alturas iguales por fila ── --}}
                 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
 
                     {{-- Card 01: Datos Fiscales ──────────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
                         <x-form-style.number-tag number="01" label="Datos Fiscales"/>
+
+                        @if($isExisting)
+                            <p class="mb-3 flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+                                <x-menu.heroicon name="lock-closed" class="h-3.5 w-3.5"/>
+                                Nombre y CUIT no pueden modificarse una vez registrados.
+                            </p>
+                        @endif
 
                         <div class="space-y-4">
                             <x-form-inputs.text_input
@@ -173,6 +180,47 @@ class extends Component {
                                     </x-form-inputs.select>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {{-- Card 02: Ubicación ────────────────────────────────── --}}
+                    <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                        <x-form-style.number-tag number="02" label="Ubicación"/>
+
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="col-span-2">
+                                    <x-form-inputs.autocomplete
+                                            wire:key="region-{{ $form->regionId }}"
+                                            label="Ciudad"
+                                            name="regionId"
+                                            placeholder="Seleccionar ciudad…"
+                                            :options="$this->regions->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
+                                            wire:model="form.regionId"
+                                            alpine-error="regionId"
+                                            :value="$form->regionId"
+                                            required/>
+                                </div>
+                                <x-form-inputs.text_input
+                                        label="Cód. Postal"
+                                        name="postalCode"
+                                        icon="inbox-arrow-down"
+                                        placeholder="999999"
+                                        maxlength="6"
+                                        wire:model="form.postalCode"
+                                        alpine-error="postalCode"
+                                        required/>
+                            </div>
+                            <x-form-inputs.text_input
+                                    label="Dirección"
+                                    name="address"
+                                    icon="map"
+                                    placeholder="Calle, Altura"
+                                    maxlength="200"
+                                    wire:model="form.address"
+                                    alpine-error="address"
+                                    class="capitalize"
+                                    required/>
                         </div>
                     </div>
 
@@ -219,47 +267,6 @@ class extends Component {
                         </div>
                     </div>
 
-                    {{-- Card 02: Ubicación ────────────────────────────────── --}}
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-                        <x-form-style.number-tag number="02" label="Ubicación"/>
-
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-3 gap-4">
-                                <div class="col-span-2">
-                                    <x-form-inputs.autocomplete
-                                            wire:key="region-{{ $form->regionId }}"
-                                            label="Ciudad"
-                                            name="regionId"
-                                            placeholder="Seleccionar ciudad…"
-                                            :options="$this->regions->map(fn($p) => ['value' => $p->id, 'label' => $p->name])"
-                                            wire:model="form.regionId"
-                                            alpine-error="regionId"
-                                            :value="$form->regionId"
-                                            required/>
-                                </div>
-                                <x-form-inputs.text_input
-                                        label="Cód. Postal"
-                                        name="postalCode"
-                                        icon="inbox-arrow-down"
-                                        placeholder="999999"
-                                        maxlength="6"
-                                        wire:model="form.postalCode"
-                                        alpine-error="postalCode"
-                                        required/>
-                            </div>
-                            <x-form-inputs.text_input
-                                    label="Dirección"
-                                    name="address"
-                                    icon="map"
-                                    placeholder="Calle, Altura"
-                                    maxlength="200"
-                                    wire:model="form.address"
-                                    alpine-error="address"
-                                    class="capitalize"
-                                    required/>
-                        </div>
-                    </div>
-
                     {{-- Card 04: Identidad de Marca ──────────────────────── --}}
                     <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900"
                          x-data="{ dragging: false }">
@@ -285,12 +292,13 @@ class extends Component {
                                         : {{ $form->logo ? 'true' : 'false' }}
                                             ? 'border-indigo-200 dark:border-indigo-700/60'
                                             : 'border-indigo-200/80 dark:border-gray-700'"
-                                        class="group relative h-[7.5rem] w-[7.5rem] cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed bg-white transition-all duration-200 dark:bg-gray-800/60"
+                                        class="group relative h-[7.5rem] w-[7.5rem] cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed bg-white motion-safe:transition-colors motion-safe:transition-shadow motion-safe:duration-200 dark:bg-gray-800/60"
                                         @click="$refs.logoInput.click()"
                                         role="button"
                                         aria-label="Subir logo de empresa"
                                         tabindex="0"
-                                        @keydown.enter.prevent="$refs.logoInput.click()">
+                                        @keydown.enter.prevent="$refs.logoInput.click()"
+                                        @keydown.space.prevent="$refs.logoInput.click()">
                                     @if ($form->logo)
                                         <img
                                                 src="{{ $form->logo->temporaryUrl() }}"
@@ -306,7 +314,7 @@ class extends Component {
                                                 </span>
                                         </div>
                                     @endif
-                                    <div class="absolute inset-0 flex items-center justify-center rounded-2xl bg-indigo-900/50 opacity-0 transition-all duration-200 group-hover:opacity-100 dark:bg-black/60">
+                                    <div class="absolute inset-0 flex items-center justify-center rounded-2xl bg-indigo-900/50 opacity-0 motion-safe:transition-opacity motion-safe:duration-200 motion-safe:group-hover:opacity-100 dark:bg-black/60">
                                         <x-menu.heroicon name="arrow-up-tray" class="h-6 w-6 text-white"/>
                                     </div>
                                     <div
@@ -325,7 +333,7 @@ class extends Component {
                                     <button
                                             wire:click="$set('form.logo', null)"
                                             type="button"
-                                            class="text-[11px] font-medium text-rose-400 transition-colors hover:text-rose-600 dark:text-rose-500 dark:hover:text-rose-400">
+                                            class="px-2 py-1.5 text-[11px] font-medium text-rose-400 motion-safe:transition-colors motion-safe:duration-150 hover:text-rose-600 dark:text-rose-500 dark:hover:text-rose-400">
                                         Quitar
                                     </button>
                                 @else
@@ -345,7 +353,7 @@ class extends Component {
                             </div>
 
                             {{-- Estado operativo ──────────────────────────── --}}
-                            <div class="flex flex-1 flex-col">
+                            <div class="flex flex-1 flex-col justify-between">
                                 <x-form-inputs.select
                                         label="Estado"
                                         name="currentStatusId"
@@ -369,7 +377,7 @@ class extends Component {
 
                     <div class="flex w-full items-center gap-2 sm:w-auto">
                         <x-btn.cancel label="Descartar" wire:click="cancel"/>
-                        <x-btn.save label=" Guardar Empresa" @click="submit()" wire:target="adviceCompany"/>
+                        <x-btn.save label="Guardar Empresa" @click="submit()" wire:target="adviceCompany"/>
                     </div>
                 </x-form-style.footer-button>
             </div>

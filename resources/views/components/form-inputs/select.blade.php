@@ -25,7 +25,7 @@
     $borderError = 'border border-rose-400 focus:border-rose-400 focus:ring-rose-400/25 dark:border-rose-500/60 dark:focus:ring-rose-500/20';
     $borderClass = $hasError ? $borderError : $borderBase;
 
-    $selectBase  = 'block w-full rounded-xl bg-white text-slate-800 shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-gray-100';
+    $selectBase  = 'block w-full rounded-xl bg-white text-slate-800 shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-gray-100';
     $disabledClass = $disabled ? 'opacity-60 cursor-not-allowed' : '';
 @endphp
 
@@ -37,10 +37,6 @@
                 <span class="ml-0.5 text-rose-500" aria-hidden="true">*</span>
             @endif
         </label>
-    @endif
-
-    @if ($description)
-        <p class="mt-1 mb-1.5 text-xs text-slate-400 dark:text-gray-500">{{ $description }}</p>
     @endif
 
     <div class="relative mt-1.5 group">
@@ -55,7 +51,7 @@
         @endif
 
         <select
-            {{ $attributes->merge(['class' => 'appearance-none bg-none pr-10 ' . implode(' ', array_filter([$selectBase, $sizeClass, $paddingLeft, $borderClass, $disabledClass]))]) }}
+            {{ $attributes->merge(['class' => 'appearance-none bg-none cursor-pointer pr-10 ' . implode(' ', array_filter([$selectBase, $sizeClass, $paddingLeft, $borderClass, $disabledClass]))]) }}
             style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none;"
             id="{{ $name }}"
             name="{{ $name }}"
@@ -84,5 +80,9 @@
             x-text="errors.{{ $alpineError }}"
             x-transition
             class="mt-1 text-xs font-medium text-rose-500 dark:text-rose-400"></p>
+    @endif
+
+    @if ($description && !$hasError)
+        <p class="mt-1 text-xs text-slate-400 dark:text-gray-500">{{ $description }}</p>
     @endif
 </div>

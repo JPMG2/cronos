@@ -36,7 +36,7 @@
                 x-transition:enter="transition duration-300 ease-out"
                 x-transition:enter-start="opacity-0 -translate-y-1.5 scale-[0.98]"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                x-transition:leave="transition duration-250 ease-in"
+                x-transition:leave="transition duration-300 ease-in"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 -translate-y-1.5"
                 class="{{ $type->alertWrapperClass() }} relative overflow-hidden rounded-xl shadow-sm shadow-slate-200/50 dark:shadow-black/20"
@@ -61,7 +61,7 @@
                     {{-- Botón cerrar --}}
                     <button
                         @click="show = false"
-                        class="shrink-0 rounded-md p-0.5 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-600 dark:text-gray-600 dark:hover:bg-white/5 dark:hover:text-gray-400"
+                        class="shrink-0 rounded-md p-0.5 text-slate-400 transition-colors hover:bg-black/5 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400/40 dark:text-gray-600 dark:hover:bg-white/5 dark:hover:text-gray-400"
                         aria-label="Cerrar aviso">
                         <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

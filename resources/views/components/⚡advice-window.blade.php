@@ -1,18 +1,25 @@
 <?php
 
 use App\Dto\Style\ModalConfig;
-use App\Enums\Styles\InformacionColors;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-new class extends Component {
+new class extends Component
+{
     public bool $show = false;
+
     public string $title = '';
-    public string $type='';
+
+    public string $type = '';
+
     public string $message = '';
-    public string $btnLabel='';
+
+    public string $btnLabel = '';
+
     public string $btnClass = '';
+
     public string $nameAction = '';
+
     public array $paramsEvent = [];
 
     #[On('openModal')]
@@ -21,28 +28,31 @@ new class extends Component {
         $modal = ModalConfig::fromArray($config);
         $this->title = $modal->title;
         $this->message = $modal->message;
-        $this->type  = $modal->type;
+        $this->type = $modal->type;
         $this->btnLabel = $modal->buttons[0]['label'] ?? '';
         $this->btnClass = $modal->buttons[0]['class'] ?? '';
         $this->nameAction = $modal->buttons[0]['action'] ?? '';
         $this->paramsEvent = $modal->buttons[0]['params'] ?? [];
-        $this->show  = true;
+        $this->show = true;
     }
 
     public function fireEvent(): void
     {
-      $this->show   = false;
-      $this->dispatch($this->nameAction,  (array) $this->paramsEvent);
+        $this->show = false;
+        $this->dispatch($this->nameAction, (array) $this->paramsEvent);
     }
 };
 ?>
 
-<x-modal name="advice-modal">
+<x-modal name="advice-modal" focusable>
 
     {{-- ── HEADER ── --}}
     <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-gray-800">
 
-        @php $color = InformacionColors::tryFrom($type) ?? InformacionColors::Info; @endphp
+        @php
+            use App\Enums\Styles\InformacionColors;
+            $color = InformacionColors::tryFrom($type) ?? InformacionColors::Info;
+        @endphp
         <div class="flex items-center gap-3">
             <div class="flex h-8 w-8 items-center justify-center rounded-lg {{ $color->badgeClasses() }}">
                 <x-menu.heroicon name="{{ $color->icon() }}" class="h-4 w-4"/>
@@ -54,9 +64,7 @@ new class extends Component {
 
         <button
                 x-on:click="$dispatch('close-modal', 'advice-modal')"
-                class="rounded-lg p-1.5 text-slate-400 transition-colors
-                   hover:bg-slate-100 hover:text-slate-600
-                   dark:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-400"
+                class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-400/40 dark:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-400"
                 aria-label="Cerrar modal">
             <x-menu.heroicon name="x-mark" class="h-5 w-5"/>
         </button>
@@ -64,14 +72,9 @@ new class extends Component {
 
     {{-- ── BODY ── --}}
     <div class="space-y-4 px-6 py-5">
-
         <p class="font-body text-sm leading-relaxed text-slate-700 dark:text-gray-300">
             {{ $message }}
         </p>
-
-
-
-
     </div>
 
     {{-- ── FOOTER ── --}}

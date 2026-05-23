@@ -10,9 +10,9 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 new class extends Component {
-    public GenderForm $form;
-
     use HasNotifications;
+
+    public GenderForm $form;
 
     #[Computed]
     public function genders(): Collection
@@ -93,7 +93,7 @@ new class extends Component {
                 <div x-show="$wire.form.editingId !== null"
                      x-cloak
                      class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                    <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                    <span class="h-1.5 w-1.5 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                     <span
                         class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                         Editando
@@ -140,7 +140,8 @@ new class extends Component {
 
         {{-- Filas --}}
         @forelse($this->genders as $gender)
-            <div class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
+            <div wire:key="gender-{{ $gender->id }}"
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
                         {{ $this->form->editingId === $gender->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Nombre --}}
@@ -159,7 +160,7 @@ new class extends Component {
                             wire:click="toggleActive({{ $gender->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
                             wire:target="toggleActive({{ $gender->id }})"
-                            class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                             aria-label="{{ $gender->is_active ? 'Desactivar' : 'Activar' }} {{ $gender->name }}">
                         @if($gender->is_active)
                             <span

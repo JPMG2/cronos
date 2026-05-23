@@ -59,7 +59,7 @@ final class DocumentTypeForm extends BaseForm
         $documentType = $this->findDocumentType($id);
         $this->code = $documentType->code;
         $this->name = $documentType->name;
-        $this->shortName = $documentType->short_name;
+        $this->shortName = $documentType->short_name ?? '';
         $this->editingId = $documentType->id;
     }
 

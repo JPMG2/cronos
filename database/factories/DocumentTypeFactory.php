@@ -12,15 +12,18 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 final class DocumentTypeFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'code' => mb_strtoupper(fake()->unique()->lexify('??')),
+            'name' => ucfirst(fake()->unique()->words(2, true)),
+            'short_name' => null,
+            'is_active' => true,
         ];
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(['is_active' => false]);
     }
 }

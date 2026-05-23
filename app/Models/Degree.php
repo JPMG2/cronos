@@ -21,4 +21,18 @@ final class Degree extends Model
             'is_active' => 'boolean',
         ];
     }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => ucfirst(mb_strtolower(mb_trim($value))),
+        );
+    }
+
+    protected function code(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => mb_strtoupper(mb_strtolower(mb_trim($value))),
+        );
+    }
 }

@@ -20,4 +20,11 @@ final class Occupation extends Model
             'is_active' => 'boolean',
         ];
     }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => ucfirst(mb_strtolower(mb_trim($value))),
+        );
+    }
 }

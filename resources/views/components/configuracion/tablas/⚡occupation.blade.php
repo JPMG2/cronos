@@ -89,7 +89,7 @@ new class extends Component {
                 <div x-show="$wire.form.editingId !== null"
                      x-cloak
                      class="hidden shrink-0 items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50 px-2.5 py-1.5 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                    <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                    <span class="h-1.5 w-1.5 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                     <span
                         class="font-label text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                         Editando
@@ -156,7 +156,7 @@ new class extends Component {
                             wire:click="toggleActive({{ $occupation->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
                             wire:target="toggleActive({{ $occupation->id }})"
-                            class="rounded-lg transition-all duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
                             aria-label="{{ $occupation->is_active ? 'Desactivar' : 'Activar' }} {{ $occupation->name }}">
                         @if($occupation->is_active)
                             <span

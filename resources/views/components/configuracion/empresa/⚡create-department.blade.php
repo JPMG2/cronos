@@ -106,7 +106,7 @@ class extends Component {
         <div x-data="departmentManager">
 
             {{-- ══ Header ══════════════════════════════════════════════════════════ --}}
-            <div class="flex items-start justify-between border-b border-slate-100 px-6 py-3 dark:border-gray-800">
+            <div class="flex items-start justify-between border-b border-slate-100 px-4 py-4 dark:border-gray-800 sm:px-6 lg:px-8">
                 <div>
                     <h2 class="font-headline text-xl font-extrabold tracking-tight text-slate-800 dark:text-gray-100"
                         x-text="mode === 'edit' ? 'Editando Departamento' : 'Nuevo Departamento'">
@@ -123,7 +123,7 @@ class extends Component {
                 <div x-show="mode === 'edit'"
                      x-cloak
                      class="hidden shrink-0 items-center gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-2 dark:border-amber-700/30 dark:bg-amber-900/20 sm:flex">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
+                    <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-amber-500 dark:bg-amber-400"></span>
                     <span class="font-label text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400"
                           x-text="'Editando · ' + editingCode"></span>
                 </div>
@@ -131,7 +131,7 @@ class extends Component {
                 {{-- Badge: nuevo --}}
                 <div x-show="mode === 'create'"
                      class="hidden shrink-0 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 dark:border-indigo-800/30 dark:bg-indigo-900/20 sm:flex">
-                    <span class="h-2 w-2 animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
+                    <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
                     <span class="font-label text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-sky-400">
                         Nuevo Departamento
                     </span>
@@ -175,7 +175,7 @@ class extends Component {
                                     role="combobox"
                                     :aria-expanded="dropOpen"
                                     aria-haspopup="listbox"
-                                    class="w-full rounded-xl border border-indigo-200/80 bg-white py-2.5 pl-10 pr-10 text-sm placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-sky-500 dark:focus:ring-sky-400/25"/>
+                                    class="w-full rounded-xl border border-indigo-200/80 bg-white py-2.5 pl-10 pr-10 text-sm placeholder-slate-400 shadow-sm transition-colors duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/25 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-sky-500 dark:focus:ring-sky-400/25"/>
                             <span class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 transition-transform duration-200"
                                   :class="dropOpen ? 'rotate-180' : ''">
                                 <x-menu.heroicon name="chevron-up-down"
@@ -269,7 +269,7 @@ class extends Component {
             </div>{{-- /selector --}}
 
             {{-- ══ Formulario ══════════════════════════════════════════════════════ --}}
-            <div class="relative z-10 px-6 py-3">
+            <div class="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
 
                 {{-- Card único ───────────────────────────────────────────────── --}}
                 <div class="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
@@ -330,7 +330,7 @@ class extends Component {
                             <x-form-inputs.textarea
                                     name="description"
                                     placeholder="Breve descripción del departamento y sus funciones…"
-                                    wire-model="form.description"
+                                    wire:model="form.description"
                                     :rows="2"/>
                         </div>
 

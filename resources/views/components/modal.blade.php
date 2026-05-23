@@ -58,6 +58,7 @@ $maxWidth = [
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="fixed inset-0 bg-black/40 backdrop-blur-sm dark:bg-black/60"
+        aria-hidden="true"
     ></div>
 
     {{-- Drag handle mobile --}}
@@ -72,6 +73,8 @@ $maxWidth = [
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        role="dialog"
+        aria-modal="true"
         class="relative z-10 w-full rounded-t-2xl bg-white shadow-2xl shadow-slate-300/30 ring-1 ring-slate-200/80
                dark:bg-gray-900 dark:shadow-black/40 dark:ring-gray-800
                sm:rounded-2xl {{ $maxWidth }}"
