@@ -9,256 +9,183 @@ use Illuminate\Database\Seeder;
 
 final class MenuSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // ========================================
-        // MÓDULO: OBRAS
+        // DASHBOARD
         // ========================================
-        $obras = Menu::create([
-            'title' => 'OBRAS',
-            'icon' => 'building-office-2',
-            'route' => null,
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        $gestionObras = Menu::create([
-            'parent_id' => $obras->id,
-            'title' => 'Gestión de Obras',
-            'icon' => 'cog-6-tooth',
-            'route' => null,
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
         Menu::create([
-            'parent_id' => $gestionObras->id,
-            'title' => 'Listado de Obras',
-            'icon' => 'list-bullet',
-            'route' => 'obras.index',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $gestionObras->id,
-            'title' => 'Obra Interna',
+            'title' => 'Dashboard',
             'icon' => 'home',
-            'route' => 'obras.interna',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $gestionObras->id,
-            'title' => 'Actualizar Obra',
-            'icon' => 'pencil-square',
-            'route' => 'obras.edit',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $gestionObras->id,
-            'title' => 'Auditar Obra',
-            'icon' => 'magnifying-glass',
-            'route' => 'auditorias.obra',
-            'order' => 4,
-            'is_active' => true,
-        ]);
-
-        $ordenesTrabajo = Menu::create([
-            'parent_id' => $obras->id,
-            'title' => 'Órdenes de Trabajo',
-            'icon' => 'document-text',
-            'route' => null,
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $ordenesTrabajo->id,
-            'title' => 'Nueva Orden',
-            'icon' => 'plus-circle',
-            'route' => 'ordenes.create',
+            'route' => 'dashboard',
             'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $ordenesTrabajo->id,
-            'title' => 'Listado de Órdenes',
-            'icon' => 'queue-list',
-            'route' => 'ordenes.index',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        // Submódulo: Producción
-        $produccion = Menu::create([
-            'parent_id' => $obras->id,
-            'title' => 'Producción',
-            'icon' => 'cog',
-            'route' => null,
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $produccion->id,
-            'title' => 'Planificación',
-            'icon' => 'calendar-days',
-            'route' => 'produccion.planificacion',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $produccion->id,
-            'title' => 'Hoja de producción',
-            'icon' => 'clipboard-document-list',
-            'route' => 'produccion.ordenes',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $produccion->id,
-            'title' => 'Carga de Producción',
-            'icon' => 'arrow-path',
-            'route' => 'produccion.carga',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        // Submódulo: Control de Calidad
-        $controlCalidad = Menu::create([
-            'parent_id' => $obras->id,
-            'title' => 'Control de Calidad',
-            'icon' => 'shield-check',
-            'route' => null,
-            'order' => 4,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $controlCalidad->id,
-            'title' => 'Registro de Probeta',
-            'icon' => 'beaker',
-            'route' => 'calidad.probeta.registro',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $controlCalidad->id,
-            'title' => 'Control de Probeta',
-            'icon' => 'clipboard-document-check',
-            'route' => 'calidad.probeta.control',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $controlCalidad->id,
-            'title' => 'Liberación de Molde',
-            'icon' => 'check-circle',
-            'route' => 'calidad.molde.liberacion',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $controlCalidad->id,
-            'title' => 'Acta de Inspección',
-            'icon' => 'document-text',
-            'route' => 'calidad.inspeccion',
-            'order' => 4,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $controlCalidad->id,
-            'title' => 'Hoja de Calidad',
-            'icon' => 'document-check',
-            'route' => 'calidad.hoja',
-            'order' => 5,
-            'is_active' => true,
-        ]);
-
-        // Submódulo: Ventas
-        $ventas = Menu::create([
-            'parent_id' => $obras->id,
-            'title' => 'Ventas',
-            'icon' => 'currency-dollar',
-            'route' => null,
-            'order' => 5,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $ventas->id,
-            'title' => 'Registro de Venta',
-            'icon' => 'arrow-path-rounded-square',
-            'route' => 'registro.venta',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        // Submódulo: Logística y Despacho
-        $logisticaDespacho = Menu::create([
-            'parent_id' => $obras->id,
-            'title' => 'Logística y Despacho',
-            'icon' => 'truck',
-            'route' => null,
-            'order' => 6,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $logisticaDespacho->id,
-            'title' => 'Turno de Carga',
-            'icon' => 'clock',
-            'route' => 'logistica.turno',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $logisticaDespacho->id,
-            'title' => 'Orden de Carga',
-            'icon' => 'document-duplicate',
-            'route' => 'logistica.orden',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $logisticaDespacho->id,
-            'title' => 'Control de Despacho',
-            'icon' => 'clipboard-document-list',
-            'route' => 'logistica.despacho',
-            'order' => 3,
             'is_active' => true,
         ]);
 
         // ========================================
-        // MÓDULO: REPORTES Y ANÁLISIS
+        // MÓDULO: CLÍNICA
+        // ========================================
+        $clinica = Menu::create([
+            'title' => 'CLÍNICA',
+            'icon' => 'user-group',
+            'route' => null,
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        $pacientes = Menu::create([
+            'parent_id' => $clinica->id,
+            'title' => 'Pacientes',
+            'icon' => 'users',
+            'route' => null,
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $pacientes->id,
+            'title' => 'Listado de Pacientes',
+            'icon' => 'queue-list',
+            'route' => 'clinica.pacientes.index',
+            'order' => 1,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $pacientes->id,
+            'title' => 'Nuevo Paciente',
+            'icon' => 'user-plus',
+            'route' => 'clinica.pacientes.create',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        $profesionales = Menu::create([
+            'parent_id' => $clinica->id,
+            'title' => 'Profesionales',
+            'icon' => 'academic-cap',
+            'route' => null,
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $profesionales->id,
+            'title' => 'Listado de Profesionales',
+            'icon' => 'queue-list',
+            'route' => 'clinica.profesionales.index',
+            'order' => 1,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $profesionales->id,
+            'title' => 'Nuevo Profesional',
+            'icon' => 'user-plus',
+            'route' => 'clinica.profesionales.create',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        // ========================================
+        // MÓDULO: AGENDA
+        // ========================================
+        $agenda = Menu::create([
+            'title' => 'AGENDA',
+            'icon' => 'calendar-days',
+            'route' => null,
+            'order' => 3,
+            'is_active' => true,
+        ]);
+
+        $turnos = Menu::create([
+            'parent_id' => $agenda->id,
+            'title' => 'Turnos',
+            'icon' => 'clock',
+            'route' => null,
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $turnos->id,
+            'title' => 'Ver Agenda',
+            'icon' => 'calendar',
+            'route' => 'agenda.index',
+            'order' => 1,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $turnos->id,
+            'title' => 'Nuevo Turno',
+            'icon' => 'plus-circle',
+            'route' => 'agenda.create',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $agenda->id,
+            'title' => 'Calendario',
+            'icon' => 'calendar-days',
+            'route' => 'agenda.calendario',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        // ========================================
+        // MÓDULO: HISTORIA CLÍNICA
+        // ========================================
+        $historiaClinica = Menu::create([
+            'title' => 'HISTORIA CLÍNICA',
+            'icon' => 'clipboard-document-list',
+            'route' => null,
+            'order' => 4,
+            'is_active' => true,
+        ]);
+
+        $consultas = Menu::create([
+            'parent_id' => $historiaClinica->id,
+            'title' => 'Consultas',
+            'icon' => 'document-text',
+            'route' => null,
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $consultas->id,
+            'title' => 'Listado de Consultas',
+            'icon' => 'queue-list',
+            'route' => 'hc.consultas.index',
+            'order' => 1,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $consultas->id,
+            'title' => 'Nueva Consulta',
+            'icon' => 'plus-circle',
+            'route' => 'hc.consultas.create',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        // ========================================
+        // MÓDULO: REPORTES
         // ========================================
         $reportes = Menu::create([
-            'title' => 'REPORTES Y ANÁLISIS',
+            'title' => 'REPORTES',
             'icon' => 'chart-bar',
             'route' => null,
-            'order' => 2,
+            'order' => 5,
             'is_active' => true,
         ]);
 
-        $reportesOperativos = Menu::create([
+        $reportesClinicos = Menu::create([
             'parent_id' => $reportes->id,
-            'title' => 'Reportes Operativos',
+            'title' => 'Reportes Clínicos',
             'icon' => 'document-chart-bar',
             'route' => null,
             'order' => 1,
@@ -266,95 +193,21 @@ final class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
-            'parent_id' => $reportesOperativos->id,
-            'title' => 'Avance de Obra',
-            'icon' => 'arrow-trending-up',
-            'route' => 'reportes.avance',
+            'parent_id' => $reportesClinicos->id,
+            'title' => 'Pacientes Atendidos',
+            'icon' => 'users',
+            'route' => 'reportes.pacientes',
             'order' => 1,
-            'is_active' => true,
+            'is_active' => false,
         ]);
 
         Menu::create([
-            'parent_id' => $reportesOperativos->id,
-            'title' => 'Diagrama de Obra',
-            'icon' => 'chart-pie',
-            'route' => 'reportes.diagrama',
+            'parent_id' => $reportesClinicos->id,
+            'title' => 'Turnos por Período',
+            'icon' => 'calendar-days',
+            'route' => 'reportes.turnos',
             'order' => 2,
-            'is_active' => true,
-        ]);
-
-        $auditoriasControl = Menu::create([
-            'parent_id' => $reportes->id,
-            'title' => 'Auditorías y Control',
-            'icon' => 'shield-check',
-            'route' => null,
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $auditoriasControl->id,
-            'title' => 'Auditar Obra',
-            'icon' => 'magnifying-glass',
-            'route' => 'auditorias.obra',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $auditoriasControl->id,
-            'title' => 'Control de Obras',
-            'icon' => 'clipboard-document-check',
-            'route' => 'auditorias.control',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        // ========================================
-        // MÓDULO: MAESTROS
-        // ========================================
-        $maestros = Menu::create([
-            'title' => 'MAESTROS',
-            'icon' => 'cube',
-            'route' => null,
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $maestros->id,
-            'title' => 'Productos',
-            'icon' => 'cube-transparent',
-            'route' => 'productos.index',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $maestros->id,
-            'title' => 'Actividades',
-            'icon' => 'clipboard-document-list',
-            'route' => 'actividades.index',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $maestros->id,
-            'title' => 'Materiales',
-            'icon' => 'archive-box',
-            'route' => 'materiales.index',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $maestros->id,
-            'title' => 'Sectores',
-            'icon' => 'squares-2x2',
-            'route' => 'sectores.index',
-            'order' => 4,
-            'is_active' => true,
+            'is_active' => false,
         ]);
 
         // ========================================
@@ -364,7 +217,7 @@ final class MenuSeeder extends Seeder
             'title' => 'CONFIGURACIÓN',
             'icon' => 'cog-8-tooth',
             'route' => null,
-            'order' => 4,
+            'order' => 6,
             'is_active' => true,
         ]);
 
@@ -389,7 +242,7 @@ final class MenuSeeder extends Seeder
 
         Menu::create([
             'parent_id' => $empresa->id,
-            'title' => 'Datos Sucursal',
+            'title' => 'Sucursales',
             'icon' => 'building-storefront',
             'route' => 'empresa.sucursal',
             'order' => 2,
@@ -411,7 +264,7 @@ final class MenuSeeder extends Seeder
             'icon' => 'chart-bar-square',
             'route' => 'empresa.estructura',
             'order' => 4,
-            'is_active' => true,
+            'is_active' => false,
         ]);
 
         // Submódulo: Usuarios y Seguridad
@@ -428,17 +281,26 @@ final class MenuSeeder extends Seeder
             'parent_id' => $usuariosSeguridad->id,
             'title' => 'Usuarios',
             'icon' => 'users',
-            'route' => 'usuarios.index',
+            'route' => 'admin.usuarios.index',
             'order' => 1,
-            'is_active' => true,
+            'is_active' => false,
         ]);
 
         Menu::create([
             'parent_id' => $usuariosSeguridad->id,
             'title' => 'Roles y Permisos',
             'icon' => 'key',
-            'route' => 'roles.index',
+            'route' => 'admin.roles.index',
             'order' => 2,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $usuariosSeguridad->id,
+            'title' => 'Acceso al Menú',
+            'icon' => 'bars-3',
+            'route' => 'admin.menu-access.index',
+            'order' => 3,
             'is_active' => true,
         ]);
 
@@ -446,64 +308,9 @@ final class MenuSeeder extends Seeder
             'parent_id' => $usuariosSeguridad->id,
             'title' => 'Logs de Auditoría',
             'icon' => 'document-magnifying-glass',
-            'route' => 'logs.index',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $usuariosSeguridad->id,
-            'title' => 'Sesiones Activas',
-            'icon' => 'computer-desktop',
-            'route' => 'sesiones.index',
+            'route' => 'admin.logs.index',
             'order' => 4,
-            'is_active' => true,
-        ]);
-
-        // Submódulo: Integraciones
-        $integraciones = Menu::create([
-            'parent_id' => $configuracion->id,
-            'title' => 'Integraciones',
-            'icon' => 'link',
-            'route' => null,
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Configuración SAP',
-            'icon' => 'server',
-            'route' => 'integraciones.sap',
-            'order' => 1,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Configuración WhatsApp',
-            'icon' => 'chat-bubble-left-right',
-            'route' => 'integraciones.whatsapp',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Configuración n8n',
-            'icon' => 'arrows-right-left',
-            'route' => 'integraciones.n8n',
-            'order' => 3,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $integraciones->id,
-            'title' => 'Estado de APIs',
-            'icon' => 'signal',
-            'route' => 'integraciones.status',
-            'order' => 4,
-            'is_active' => true,
+            'is_active' => false,
         ]);
 
         // Submódulo: Parámetros
@@ -512,7 +319,7 @@ final class MenuSeeder extends Seeder
             'title' => 'Parámetros',
             'icon' => 'adjustments-horizontal',
             'route' => null,
-            'order' => 4,
+            'order' => 3,
             'is_active' => true,
         ]);
 
@@ -527,19 +334,10 @@ final class MenuSeeder extends Seeder
 
         Menu::create([
             'parent_id' => $parametros->id,
-            'title' => 'Parámetros del Sistema',
-            'icon' => 'wrench-screwdriver',
-            'route' => 'empresa.parametros',
-            'order' => 2,
-            'is_active' => true,
-        ]);
-
-        Menu::create([
-            'parent_id' => $parametros->id,
             'title' => 'Configuración General',
             'icon' => 'cog-6-tooth',
             'route' => 'empresa.configuracion',
-            'order' => 3,
+            'order' => 2,
             'is_active' => true,
         ]);
 
@@ -548,9 +346,27 @@ final class MenuSeeder extends Seeder
             'title' => 'Secuencias de Código',
             'icon' => 'hashtag',
             'route' => 'parametros.secuencias',
-            'order' => 4,
-            'is_active' => false,
+            'order' => 3,
+            'is_active' => true,
         ]);
 
+        // Submódulo: Integraciones
+        $integraciones = Menu::create([
+            'parent_id' => $configuracion->id,
+            'title' => 'Integraciones',
+            'icon' => 'link',
+            'route' => null,
+            'order' => 4,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $integraciones->id,
+            'title' => 'WhatsApp',
+            'icon' => 'chat-bubble-left-right',
+            'route' => 'integraciones.whatsapp',
+            'order' => 1,
+            'is_active' => false,
+        ]);
     }
 }

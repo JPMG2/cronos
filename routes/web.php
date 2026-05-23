@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
     /**Configuracion/Parámetros**/
     Route::livewire('/configuracion/codesequence', 'configuracion.parametros.code-sequence')->name('parametros.secuencias');
     Route::livewire('/configuracion/generalconf', 'configuracion.parametros.general-configuration')->name('empresa.configuracion');
+
+    /**Admin / Usuarios y Seguridad**/
+    Route::livewire('/admin/roles', 'admin.seguridad.manage-roles')->name('admin.roles.index');
+    Route::livewire('/admin/menu-access', 'admin.seguridad.manage-menu-access')->name('admin.menu-access.index');
 });
 
 require __DIR__ . '/auth.php';

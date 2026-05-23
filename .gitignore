@@ -27,3 +27,6 @@ Thumbs.db
 /pw-browsers
 /.npm-cache
 .npm-cache
+/.claude/projects/
+/.claude/skills/
+**/__pycache__/
