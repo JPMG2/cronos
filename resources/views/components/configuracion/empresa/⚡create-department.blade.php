@@ -10,6 +10,7 @@ use App\Models\Department;
 use App\Models\Sequence;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -86,6 +87,7 @@ class extends Component {
     #[On('storeDepartment')]
     public function create(): void
     {
+        Gate::authorize('departamentos.create');
         [$message, $type] = $this->form->createDepartment();
         $this->getTypeMessage($message, $type);
         unset($this->departments);
@@ -94,6 +96,7 @@ class extends Component {
     #[On('updateDepartment')]
     public function update(): void
     {
+        Gate::authorize('departamentos.update');
         [$message, $type] = $this->form->updateDepartment();
         $this->getTypeMessage($message, $type);
         unset($this->departments);

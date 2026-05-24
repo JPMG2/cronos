@@ -14,29 +14,46 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    // ── Perfil (Breeze — sin restricción de permiso) ──────────────────────────
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    /**Configuracion/Empresa**/
-    Route::livewire('/configuracion/company', 'configuracion.empresa.create-company')->name('empresa.datos');
+    // ── Configuración › Empresa ───────────────────────────────────────────────
+    Route::livewire('/configuracion/company', 'configuracion.empresa.create-company')
+        ->name('empresa.datos')
+        ->middleware('permission:empresa.view');
+
     Route::livewire('/configuracion/branch', 'configuracion.empresa.create-branch')
         ->name('empresa.sucursal')
-        ->middleware('company.exists');
+        ->middleware(['permission:sucursales.view', 'company.exists']);
+
     Route::livewire('/configuracion/department', 'configuracion.empresa.create-department')
         ->name('empresa.departamentos')
-        ->middleware('company.exists')
-        ->middleware('branch.exists');
+        ->middleware(['permission:departamentos.view', 'company.exists', 'branch.exists']);
 
-    Route::livewire('/configuracion/regional', 'configuracion.parametros.create-region')->name('empresa.parametroregional');
+    // ── Configuración › Parámetros ────────────────────────────────────────────
+    Route::livewire('/configuracion/regional', 'configuracion.parametros.create-region')
+        ->name('empresa.parametroregional')
+        ->middleware('permission:parametros.view');
 
-    /**Configuracion/Parámetros**/
-    Route::livewire('/configuracion/codesequence', 'configuracion.parametros.code-sequence')->name('parametros.secuencias');
-    Route::livewire('/configuracion/generalconf', 'configuracion.parametros.general-configuration')->name('empresa.configuracion');
+    Route::livewire('/configuracion/codesequence', 'configuracion.parametros.code-sequence')
+        ->name('parametros.secuencias')
+        ->middleware('permission:secuencias.view');
 
-    /**Admin / Usuarios y Seguridad**/
-    Route::livewire('/admin/roles', 'admin.seguridad.manage-roles')->name('admin.roles.index');
-    Route::livewire('/admin/menu-access', 'admin.seguridad.manage-menu-access')->name('admin.menu-access.index');
+    Route::livewire('/configuracion/generalconf', 'configuracion.parametros.general-configuration')
+        ->name('empresa.configuracion')
+        ->middleware('permission:parametros.view');
+
+    // ── Admin › Seguridad ─────────────────────────────────────────────────────
+    Route::livewire('/admin/roles', 'admin.seguridad.manage-roles')
+        ->name('admin.roles.index')
+        ->middleware('permission:roles.view');
+
+    Route::livewire('/admin/menu-access', 'admin.seguridad.manage-menu-access')
+        ->name('admin.menu-access.index')
+        ->middleware('permission:menu-acceso.view');
 });
 
 require __DIR__ . '/auth.php';

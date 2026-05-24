@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Blaze\Blaze;
@@ -31,6 +33,7 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureDates();
         $this->configureRequests();
+        $this->configureGate();
         Model::preventLazyLoading(! app()->isProduction());
         Model::preventSilentlyDiscardingAttributes(! app()->isProduction());
         Model::preventAccessingMissingAttributes(! app()->isProduction());
@@ -60,5 +63,12 @@ final class AppServiceProvider extends ServiceProvider
         if (app()->environment('testing')) {
             Http::preventStrayRequests();
         }
+    }
+
+    private function configureGate(): void
+    {
+        Gate::before(function (User $user, string $ability): ?bool {
+            return $user->hasRole('super-admin') ? true : null;
+        });
     }
 }

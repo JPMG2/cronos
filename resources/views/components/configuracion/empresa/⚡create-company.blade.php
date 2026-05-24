@@ -11,6 +11,7 @@ use App\Models\TaxCondition;
 use App\Models\WorldSettings;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -110,6 +111,7 @@ class extends Component {
     #[On('storeCompany')]
     public function create(?array $params): void
     {
+        Gate::authorize('empresa.update');
         [$message, $type] = $this->form->handleCompanyCreation();
         $this->isExisting = $this->form->companyId !== null;
         $this->getTypeMessage($message, $type);

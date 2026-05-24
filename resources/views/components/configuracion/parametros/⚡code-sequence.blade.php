@@ -5,6 +5,7 @@ use App\Livewire\Forms\Configuracion\Parametros\SequenceForm;
 use App\Models\Sequence;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -53,6 +54,7 @@ class extends Component {
     #[On('storeSequence')]
     public function create(): void
     {
+        Gate::authorize('secuencias.update');
         [$message, $type] = $this->form->createSequence();
         $this->getTypeMessage($message, $type);
         $this->resetFormValues();
@@ -62,7 +64,8 @@ class extends Component {
     #[On('updateSequence')]
     public function update()
     {
-       [$message, $type] = $this->form->updateSequence();
+        Gate::authorize('secuencias.update');
+        [$message, $type] = $this->form->updateSequence();
         $this->getTypeMessage($message, $type);
         $this->resetFormValues();
         unset($this->sequences);

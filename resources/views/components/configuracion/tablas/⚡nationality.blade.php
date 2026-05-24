@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Livewire\Forms\Configuracion\Parametros\NationalityForm;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 new class extends Component {
@@ -29,6 +30,7 @@ new class extends Component {
 
     public function create(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->storeCountry();
         $this->messageOutPut($message, $type);
     }
@@ -47,6 +49,7 @@ new class extends Component {
 
     public function updateCountry(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateCountry();
         $this->messageOutPut($message, $type);
     }
@@ -59,12 +62,14 @@ new class extends Component {
 
     public function toggleCountryActive(int $id): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateStatusCountry($id);
         $this->messageOutPut($message, $type);
     }
 
     public function delete(int $id): never
     {
+        Gate::authorize('parametros.update');
         dd('Queda por implementar confirmación');
     }
 

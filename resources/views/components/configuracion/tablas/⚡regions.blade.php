@@ -7,6 +7,7 @@ use App\Models\Region;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -47,6 +48,7 @@ new class extends Component {
     #[On('updateRegion')]
     public function update(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateRegion();
         $this->messageOutPut($message, $type);
     }
@@ -54,6 +56,7 @@ new class extends Component {
     #[On('createRegion')]
     public function create(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->storeRegion();
         $this->messageOutPut($message, $type);
     }
@@ -72,6 +75,7 @@ new class extends Component {
 
     public function delete(int $id): never
     {
+        Gate::authorize('parametros.update');
         dd('Queda por implementar confirmación');
     }
 
@@ -84,6 +88,7 @@ new class extends Component {
 
     public function toggleRegionActive(int $id): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateStatusRegion($id);
         $this->messageOutPut($message, $type);
     }

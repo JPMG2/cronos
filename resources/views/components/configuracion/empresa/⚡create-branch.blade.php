@@ -14,6 +14,7 @@ use App\Models\Sequence;
 use App\Models\WorldSettings;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -121,6 +122,7 @@ class extends Component {
     #[On('storeBranch')]
     public function create(?array $params): void
     {
+        Gate::authorize('sucursales.create');
         [$message, $type] = $this->form->createBranch();
         $this->getTypeMessage($message, $type);
         unset($this->branches);
@@ -129,6 +131,7 @@ class extends Component {
     #[On('updateBranch')]
     public function update(): void
     {
+        Gate::authorize('sucursales.update');
         [$message, $type] = $this->form->updateBranch();
         $this->getTypeMessage($message, $type);
         unset($this->branches);

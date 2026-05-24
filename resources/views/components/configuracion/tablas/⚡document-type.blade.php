@@ -6,6 +6,7 @@ use App\Livewire\Forms\Configuracion\Parametros\DocumentTypeForm;
 use App\Models\DocumentType;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -22,6 +23,7 @@ new class extends Component {
 
     public function create(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->storeDocumentType();
         $this->messageOutPut($message, $type);
     }
@@ -40,6 +42,7 @@ new class extends Component {
 
     public function update(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateDocumentType();
         $this->messageOutPut($message, $type);
     }
@@ -52,12 +55,14 @@ new class extends Component {
 
     public function toggleActive(int $id): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateDocumentTypeActive($id);
         $this->messageOutPut($message, $type);
     }
 
     public function delete(int $id): never
     {
+        Gate::authorize('parametros.update');
         dd('Queda por implementar confirmación');
     }
 };

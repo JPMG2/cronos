@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\Role;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -63,6 +64,8 @@ class extends Component {
 
     public function save(): void
     {
+        Gate::authorize('menu-acceso.manage');
+
         if (! $this->selectedRoleId) {
             return;
         }

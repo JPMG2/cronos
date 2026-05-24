@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Livewire\Forms\Configuracion\Parametros\ProvincesForm;
 use App\Traits\Livewire\HasNotifications;
 use App\Traits\Utilities\WorldConfiguration;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -28,6 +29,7 @@ new class extends Component {
 
     public function toggleProvinceActive(int $id): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateStatusProvinces($id);
         $this->messageOutPut($message, $type);
     }
@@ -46,6 +48,7 @@ new class extends Component {
     #[On('createProvinces')]
     public function create(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->storeProvinces();
         $this->messageOutPut($message, $type);
     }
@@ -53,12 +56,14 @@ new class extends Component {
     #[On('updateProvinces')]
     public function update(): void
     {
+        Gate::authorize('parametros.update');
         [$message, $type] = $this->form->updateProvinces();
         $this->messageOutPut($message, $type);
     }
 
     public function delete(int $id): never
     {
+        Gate::authorize('parametros.update');
         dd('Queda por implementar confirmación');
     }
 

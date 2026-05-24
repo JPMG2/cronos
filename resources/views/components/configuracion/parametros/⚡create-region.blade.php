@@ -8,6 +8,7 @@ use App\Models\WorldSettings;
 use App\Traits\Livewire\HasNotifications;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -130,6 +131,8 @@ new #[Title('Parámetros Regionales')] class extends Component {
     
     public function createUpdateRegion(): array
     {
+        Gate::authorize('parametros.update');
+
         return DB::transaction(function () {
 
             $currencyChanged = Currency::query()->updateOrCreate(

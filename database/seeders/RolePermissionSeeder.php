@@ -15,59 +15,93 @@ final class RolePermissionSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // ── Permisos agrupados por módulo ─────────────────────────────
+        // Limpia permisos anteriores para recrear con granularidad real
+        Permission::query()->where('guard_name', 'web')->delete();
+
+        // ── Permisos por módulo real del sistema ──────────────────────
         $permissions = [
-            // Configuración
-            'configuracion.ver',
-            'configuracion.editar',
 
-            // Empresa
-            'empresa.ver',
-            'empresa.editar',
+            // ── CLÍNICA ──────────────────────────────────────────────
+            'pacientes.view',
+            'pacientes.create',
+            'pacientes.update',
+            'pacientes.delete',
+            'pacientes.print',
+            'pacientes.export',
 
-            // Usuarios
-            'usuarios.ver',
-            'usuarios.crear',
-            'usuarios.editar',
-            'usuarios.eliminar',
+            'profesionales.view',
+            'profesionales.create',
+            'profesionales.update',
+            'profesionales.delete',
 
-            // Roles
-            'roles.ver',
-            'roles.gestionar',
+            // ── AGENDA ───────────────────────────────────────────────
+            'turnos.view',
+            'turnos.create',
+            'turnos.update',
+            'turnos.delete',
+            'turnos.print',
+            'turnos.export',
 
-            // Parámetros / Maestros
-            'parametros.ver',
-            'parametros.editar',
+            'calendario.view',
 
-            // Pacientes
-            'pacientes.ver',
-            'pacientes.crear',
-            'pacientes.editar',
-            'pacientes.eliminar',
+            // ── HISTORIA CLÍNICA ─────────────────────────────────────
+            // Sin delete: los registros médicos no se eliminan
+            'consultas.view',
+            'consultas.create',
+            'consultas.update',
+            'consultas.print',
+            'consultas.export',
 
-            // Profesionales
-            'profesionales.ver',
-            'profesionales.crear',
-            'profesionales.editar',
-            'profesionales.eliminar',
+            // ── REPORTES ─────────────────────────────────────────────
+            'reportes.view',
+            'reportes.print',
+            'reportes.export',
 
-            // Agenda
-            'agenda.ver',
-            'agenda.crear',
-            'agenda.editar',
-            'agenda.eliminar',
+            // ── CONFIGURACIÓN › EMPRESA ──────────────────────────────
+            'empresa.view',
+            'empresa.update',
 
-            // Historia Clínica
-            'historia-clinica.ver',
-            'historia-clinica.crear',
-            'historia-clinica.editar',
+            'sucursales.view',
+            'sucursales.create',
+            'sucursales.update',
+            'sucursales.delete',
 
-            // Reportes
-            'reportes.ver',
+            'departamentos.view',
+            'departamentos.create',
+            'departamentos.update',
+            'departamentos.delete',
+
+            'estructura.view',
+
+            // ── CONFIGURACIÓN › USUARIOS Y SEGURIDAD ─────────────────
+            'usuarios.view',
+            'usuarios.create',
+            'usuarios.update',
+            'usuarios.delete',
+
+            'roles.view',
+            'roles.manage',
+
+            'menu-acceso.view',
+            'menu-acceso.manage',
+
+            'auditoria.view',
+            'auditoria.export',
+
+            // ── CONFIGURACIÓN › PARÁMETROS ────────────────────────────
+            'parametros.view',
+            'parametros.update',
+
+            'secuencias.view',
+            'secuencias.update',
+
+            // ── CONFIGURACIÓN › INTEGRACIONES ────────────────────────
+            'integraciones.view',
+            'integraciones.update',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+            Permission::create(['name' => $permission, 'guard_name' => 'web']);
         }
 
         // ── Roles médicos ─────────────────────────────────────────────
@@ -80,39 +114,47 @@ final class RolePermissionSeeder extends Seeder
         // Super Admin — todos los permisos
         $superAdmin->syncPermissions(Permission::all());
 
-        // Admin — configuración + usuarios + empresa + parámetros + reportes
+        // Admin — configuración completa + vista clínica + reportes
         $admin->syncPermissions([
-            'configuracion.ver', 'configuracion.editar',
-            'empresa.ver', 'empresa.editar',
-            'usuarios.ver', 'usuarios.crear', 'usuarios.editar', 'usuarios.eliminar',
-            'roles.ver', 'roles.gestionar',
-            'parametros.ver', 'parametros.editar',
-            'pacientes.ver',
-            'profesionales.ver',
-            'agenda.ver',
-            'reportes.ver',
+            'empresa.view', 'empresa.update',
+            'sucursales.view', 'sucursales.create', 'sucursales.update', 'sucursales.delete',
+            'departamentos.view', 'departamentos.create', 'departamentos.update', 'departamentos.delete',
+            'estructura.view',
+            'usuarios.view', 'usuarios.create', 'usuarios.update', 'usuarios.delete',
+            'roles.view', 'roles.manage',
+            'menu-acceso.view', 'menu-acceso.manage',
+            'auditoria.view', 'auditoria.export',
+            'parametros.view', 'parametros.update',
+            'secuencias.view', 'secuencias.update',
+            'integraciones.view', 'integraciones.update',
+            'pacientes.view', 'pacientes.export',
+            'profesionales.view',
+            'turnos.view', 'turnos.export',
+            'reportes.view', 'reportes.print', 'reportes.export',
         ]);
 
         // Médico — clínica completa, sin configuración
         $medico->syncPermissions([
-            'pacientes.ver', 'pacientes.crear', 'pacientes.editar',
-            'profesionales.ver',
-            'agenda.ver', 'agenda.crear', 'agenda.editar',
-            'historia-clinica.ver', 'historia-clinica.crear', 'historia-clinica.editar',
-            'reportes.ver',
+            'pacientes.view', 'pacientes.create', 'pacientes.update', 'pacientes.print',
+            'profesionales.view',
+            'turnos.view', 'turnos.create', 'turnos.update', 'turnos.print',
+            'calendario.view',
+            'consultas.view', 'consultas.create', 'consultas.update', 'consultas.print',
+            'reportes.view', 'reportes.print',
         ]);
 
         // Recepcionista — agenda y registro de pacientes, sin historia clínica
         $recepcionista->syncPermissions([
-            'pacientes.ver', 'pacientes.crear', 'pacientes.editar',
-            'profesionales.ver',
-            'agenda.ver', 'agenda.crear', 'agenda.editar', 'agenda.eliminar',
+            'pacientes.view', 'pacientes.create', 'pacientes.update',
+            'profesionales.view',
+            'turnos.view', 'turnos.create', 'turnos.update', 'turnos.delete', 'turnos.print',
+            'calendario.view',
         ]);
 
         // Enfermero — historia clínica y pacientes, sin agenda ni config
         $enfermero->syncPermissions([
-            'pacientes.ver',
-            'historia-clinica.ver', 'historia-clinica.crear', 'historia-clinica.editar',
+            'pacientes.view',
+            'consultas.view', 'consultas.create', 'consultas.update',
         ]);
     }
 }
