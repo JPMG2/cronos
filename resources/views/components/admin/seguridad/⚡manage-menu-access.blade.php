@@ -35,6 +35,23 @@ class extends Component {
             ->get();
     }
 
+    #[Computed]
+    public function leafIds(): array
+    {
+        $ids  = [];
+        $walk = function ($nodes) use (&$walk, &$ids): void {
+            foreach ($nodes as $n) {
+                if ($n->childrenRecursive->isEmpty()) {
+                    $ids[] = $n->id;
+                } else {
+                    $walk($n->childrenRecursive);
+                }
+            }
+        };
+        $walk($this->menuTree);
+        return $ids;
+    }
+
     public function selectRole(int $id): void
     {
         $this->selectedRoleId = $id;
@@ -67,6 +84,16 @@ class extends Component {
         }
         return $ids;
     };
+    $roleIcons = [
+        'super-admin' => 'shield-check',
+        'medico'      => 'academic-cap',
+        'enfermeria'  => 'heart',
+        'recepcion'   => 'identification',
+        'admin'       => 'cog-8-tooth',
+        'auditor'     => 'eye',
+    ];
+    $leafIds     = $this->leafIds;
+    $totalLeaves = count($leafIds);
 @endphp
 
 <x-form-style.border-style>
@@ -82,16 +109,16 @@ class extends Component {
                     Definí qué secciones del sistema puede ver cada rol.
                 </p>
             </div>
-            <div class="hidden shrink-0 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 dark:border-indigo-800/30 dark:bg-indigo-900/20 sm:flex">
-                <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
-                <span class="font-label text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-sky-400">
-                    Menú por Rol
+            <div class="hidden shrink-0 items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-2 dark:border-emerald-800/30 dark:bg-emerald-900/20 sm:flex">
+                <span class="live-dot"></span>
+                <span class="font-label text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                    Cambios autoguardados
                 </span>
             </div>
         </div>
 
         {{-- ══ Dos paneles ════════════════════════════════════════════════════════ --}}
-        <div class="flex min-h-[560px] flex-col lg:flex-row"
+        <div class="grid min-h-[560px] grid-cols-1 lg:grid-cols-[250px_1fr_360px]"
              x-data="manageMenuAccess">
 
             {{-- ── Panel 1: Lista de roles ──────────────────────────────────────── --}}
@@ -123,7 +150,7 @@ class extends Component {
                                       :class="{{ $role->id }} === activeRoleId
                                           ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-sky-400'
                                           : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-500 dark:bg-gray-800 dark:text-gray-500'">
-                                    <x-menu.heroicon name="{{ $role->name === 'super-admin' ? 'shield-check' : 'key' }}" class="h-3.5 w-3.5"/>
+                                    <x-menu.heroicon name="{{ $roleIcons[$role->name] ?? 'key' }}" class="h-3.5 w-3.5"/>
                                 </span>
 
                                 <div class="min-w-0 flex-1">
@@ -178,8 +205,8 @@ class extends Component {
                 {{-- Contenido del árbol ——————————————————————————————————————————— --}}
                 <div x-show="showTree" x-cloak class="flex flex-1 flex-col overflow-hidden">
 
-                    {{-- Header: nombre del rol + botón guardar --}}
-                    <div class="flex items-center gap-3 border-b border-slate-100 px-6 py-4 dark:border-gray-800">
+                    {{-- Header: nombre del rol + botones --}}
+                    <div class="flex flex-wrap items-center gap-3 border-b border-slate-100 px-6 py-4 dark:border-gray-800">
                         <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-sky-400">
                             <x-menu.heroicon name="bars-3" class="h-5 w-5"/>
                         </div>
@@ -191,7 +218,26 @@ class extends Component {
                                 Marcá las secciones que este rol puede ver
                             </p>
                         </div>
+                        <button type="button"
+                                @click="$dispatch('open-copy-from-role')"
+                                class="btn-base btn-secondary btn-sm">
+                            <x-menu.heroicon name="document-duplicate" class="h-3.5 w-3.5"/>
+                            Copiar de otro rol
+                        </button>
                         <x-btn.save wire:click="save" label="Guardar acceso"/>
+                    </div>
+
+                    {{-- Barra de cobertura --}}
+                    <div class="border-b border-slate-100 px-6 py-3 dark:border-gray-800">
+                        <div class="flex items-center gap-3">
+                            <span class="shrink-0 text-xs font-semibold text-slate-500 dark:text-gray-400">Cobertura</span>
+                            <div class="progress-bar flex-1">
+                                <span :style="`width: ${coveragePercent}%`"
+                                      class="!bg-gradient-to-r !from-indigo-600 !to-indigo-800 dark:!from-sky-500 dark:!to-indigo-600"></span>
+                            </div>
+                            <span class="shrink-0 font-headline text-sm font-bold tabular-nums text-slate-700 dark:text-gray-200"
+                                  x-text="`${coveragePercent}%`"></span>
+                        </div>
                     </div>
 
                     {{-- Árbol ————————————————————————————————————————————————————— --}}
@@ -331,6 +377,82 @@ class extends Component {
 
             </div>
 
+            {{-- ── Panel 3: Sidebar preview en vivo ──────────────────────────── --}}
+            <aside class="hidden border-l border-slate-100 bg-white dark:border-gray-800 dark:bg-gray-900 lg:flex lg:flex-col">
+
+                {{-- Header --}}
+                <div class="flex items-center gap-2 border-b border-slate-100 px-5 py-3.5 dark:border-gray-800">
+                    <x-menu.heroicon name="eye" class="h-3.5 w-3.5 text-indigo-600 dark:text-sky-400"/>
+                    <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-gray-300">
+                        Sidebar como
+                        <span x-text="activeRoleName" class="text-indigo-700 dark:text-sky-300"></span>
+                    </span>
+                    <span class="live-dot ml-auto"></span>
+                </div>
+
+                {{-- Mock sidebar oscuro --}}
+                <div class="m-4 flex-1 overflow-y-auto rounded-2xl p-4"
+                     style="background: linear-gradient(180deg, #0f1117 0%, #161824 100%); color: #cbd5e1;">
+
+                    {{-- Brand --}}
+                    <div class="flex items-center gap-2.5 border-b border-white/5 px-2 pb-4">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg"
+                             style="background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);">
+                            <x-menu.heroicon name="heart" class="h-4 w-4 text-white"/>
+                        </div>
+                        <div>
+                            <div class="text-[13px] font-extrabold text-slate-100">Cronos</div>
+                            <div class="text-[9px] font-semibold uppercase tracking-wider text-slate-500">Centro Médico</div>
+                        </div>
+                    </div>
+
+                    {{-- Árbol filtrado por selectedMenuIds --}}
+                    <div class="mt-4 space-y-0.5">
+                        @foreach($this->menuTree as $root)
+                            @php $allRootIds = $collectIds($root); @endphp
+                            <template x-if="isMenuVisible({{ $root->id }}, {{ json_encode($allRootIds) }})">
+                                <div>
+                                    <div class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold"
+                                         :class="isMenuChecked({{ $root->id }})
+                                             ? 'bg-indigo-500/15 text-indigo-300'
+                                             : 'text-slate-300'">
+                                        <x-menu.heroicon name="{{ $root->icon ?? 'squares-2x2' }}" class="h-3.5 w-3.5"/>
+                                        <span class="flex-1">{{ $root->title }}</span>
+                                    </div>
+                                    @foreach($root->childrenRecursive as $l1)
+                                        @php $l1AllIds = $collectIds($l1); @endphp
+                                        <template x-if="isMenuVisible({{ $l1->id }}, {{ json_encode($l1AllIds) }})">
+                                            <div>
+                                                <div class="flex items-center gap-2 rounded-md py-1 pl-8 pr-2 text-[11.5px] text-slate-400">
+                                                    <x-menu.heroicon name="{{ $l1->icon ?? 'document' }}" class="h-3 w-3"/>
+                                                    <span class="flex-1">{{ $l1->title }}</span>
+                                                </div>
+                                                @foreach($l1->childrenRecursive as $l2)
+                                                    <template x-if="isMenuChecked({{ $l2->id }})">
+                                                        <div class="flex items-center gap-2 rounded-md py-1 pl-14 pr-2 text-[11px] text-slate-500">
+                                                            <x-menu.heroicon name="{{ $l2->icon ?? 'document' }}" class="h-2.5 w-2.5"/>
+                                                            <span class="flex-1">{{ $l2->title }}</span>
+                                                        </div>
+                                                    </template>
+                                                @endforeach
+                                            </div>
+                                        </template>
+                                    @endforeach
+                                </div>
+                            </template>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Footer info --}}
+                <div class="border-t border-slate-100 px-5 py-3 dark:border-gray-800">
+                    <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-gray-500">
+                        <x-menu.heroicon name="exclamation-triangle" class="h-3 w-3 text-amber-500"/>
+                        <span x-text="`${totalLeaves - grantedLeaves} secciones ocultas`"></span>
+                    </div>
+                </div>
+            </aside>
+
         </div>
 
     </x-form-style.main-div>
@@ -342,9 +464,38 @@ class extends Component {
         activeRoleId: null,
         showTree: false,
         expanded: {},
+        totalLeaves: {{ $totalLeaves }},
+        leafIds: {!! json_encode($leafIds) !!},
 
         init() {
             this.$wire.$on('menu-access-saved', () => {});
+        },
+
+        get grantedLeaves() {
+            return (this.$wire.selectedMenuIds || []).filter(id =>
+                this.leafIds.includes(parseInt(id))
+            ).length;
+        },
+
+        get coveragePercent() {
+            return this.totalLeaves > 0
+                ? Math.round((this.grantedLeaves / this.totalLeaves) * 100)
+                : 0;
+        },
+
+        get activeRoleName() {
+            if (!this.activeRoleId) return '—';
+            const roles = {!! $this->roles->mapWithKeys(fn($r) => [$r->id => $r->name])->toJson() !!};
+            return roles[this.activeRoleId] || '—';
+        },
+
+        isMenuChecked(id) {
+            return this.$wire.selectedMenuIds.includes(String(id));
+        },
+
+        isMenuVisible(id, descendantIds) {
+            return this.isMenuChecked(id) ||
+                   descendantIds.some(d => this.$wire.selectedMenuIds.includes(String(d)));
         },
 
         isExpanded(id) {

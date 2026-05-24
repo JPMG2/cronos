@@ -20,7 +20,7 @@ class extends Component {
     #[Computed]
     public function roles(): Collection
     {
-        return Role::query()->with('permissions')->orderBy('name')->get();
+        return Role::query()->with('permissions')->withCount('users')->orderBy('name')->get();
     }
 
     #[Computed]
@@ -28,6 +28,12 @@ class extends Component {
     {
         return Permission::query()->orderBy('name')->get()
             ->groupBy(fn (Permission $p) => explode('.', $p->name)[0]);
+    }
+
+    #[Computed]
+    public function totalPermissions(): int
+    {
+        return Permission::query()->count();
     }
 
     public function create(): void
@@ -100,6 +106,14 @@ class extends Component {
         'eliminar'  => 'Eliminar',
         'gestionar' => 'Gestionar',
     ];
+    $roleIcons = [
+        'super-admin' => 'shield-check',
+        'medico'      => 'academic-cap',
+        'enfermeria'  => 'heart',
+        'recepcion'   => 'identification',
+        'admin'       => 'cog-8-tooth',
+        'auditor'     => 'eye',
+    ];
 @endphp
 
 <x-form-style.border-style>
@@ -115,10 +129,10 @@ class extends Component {
                     Definí los roles del sistema y asignales los permisos por módulo.
                 </p>
             </div>
-            <div class="hidden shrink-0 items-center gap-2 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2 dark:border-indigo-800/30 dark:bg-indigo-900/20 sm:flex">
-                <span class="h-2 w-2 motion-safe:animate-pulse rounded-full bg-indigo-500 dark:bg-sky-400"></span>
-                <span class="font-label text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-sky-400">
-                    Roles del Sistema
+            <div class="hidden shrink-0 items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-2 dark:border-emerald-800/30 dark:bg-emerald-900/20 sm:flex">
+                <span class="live-dot"></span>
+                <span class="font-label text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                    Sincronizado · {{ $this->roles->count() }} roles
                 </span>
             </div>
         </div>
@@ -167,13 +181,19 @@ class extends Component {
                                       :class="{{ $role->id }} === activeRoleId
                                           ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-sky-400'
                                           : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-500 dark:bg-gray-800 dark:text-gray-500'">
-                                    <x-menu.heroicon name="{{ $role->name === 'super-admin' ? 'shield-check' : 'key' }}" class="h-3.5 w-3.5"/>
+                                    <x-menu.heroicon name="{{ $roleIcons[$role->name] ?? 'key' }}" class="h-3.5 w-3.5"/>
                                 </span>
 
                                 {{-- Nombre + permisos --}}
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-xs font-semibold leading-none">{{ $role->name }}</p>
-                                    <p class="mt-0.5 text-[10px] leading-none opacity-60">{{ $role->permissions->count() }} permisos</p>
+                                    <p class="mt-0.5 text-[10px] leading-none opacity-60">
+                                        {{ $role->permissions->count() }} permisos · {{ $role->users_count ?? 0 }} usuarios
+                                    </p>
+                                    @php $coverage = $this->totalPermissions > 0 ? ($role->permissions->count() / $this->totalPermissions) * 100 : 0; @endphp
+                                    <div class="progress-bar mt-1.5">
+                                        <span style="width: {{ round($coverage) }}%"></span>
+                                    </div>
                                 </div>
 
                                 <x-menu.heroicon name="chevron-right" class="ml-auto h-3 w-3 shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-50"
@@ -219,10 +239,16 @@ class extends Component {
                             required/>
                         <div class="mt-2 flex items-center justify-end gap-2">
                             <x-btn.mini-cancel @click="cancelEdit"/>
-                            <x-btn.save
-                                label="{{ $this->form->editingId ? 'Actualizar' : 'Guardar' }}"
-                                @click="submit()"
-                                wireTarget="create,update"/>
+                            <div class="relative inline-flex items-center">
+                                <x-btn.save
+                                    label="{{ $this->form->editingId ? 'Actualizar' : 'Guardar' }}"
+                                    @click="submit()"
+                                    wireTarget="create,update"/>
+                                <template x-if="diffCount > 0">
+                                    <span class="absolute -right-1.5 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white"
+                                          x-text="diffCount"></span>
+                                </template>
+                            </div>
                         </div>
                     </div>
 
@@ -274,7 +300,29 @@ class extends Component {
                                         </p>
                                     </div>
 
-                                    <x-menu.heroicon name="chevron-right" class="ml-auto h-3 w-3 shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-50"
+                                    {{-- Donut de cobertura --}}
+                                    @php
+                                        $modPerms    = $permissions->pluck('name')->toArray();
+                                        $modGranted  = collect($this->form->selectedPermissions ?? [])->intersect($modPerms)->count();
+                                        $modTotal    = count($modPerms);
+                                        $modRatio    = $modTotal > 0 ? $modGranted / $modTotal : 0;
+                                    @endphp
+                                    <div class="flex shrink-0 items-center gap-0.5">
+                                        <div class="relative h-4 w-4">
+                                            <svg viewBox="0 0 18 18" class="-rotate-90">
+                                                <circle cx="9" cy="9" r="7" fill="none" stroke="currentColor"
+                                                        class="text-slate-200 dark:text-gray-700" stroke-width="2"/>
+                                                <circle cx="9" cy="9" r="7" fill="none"
+                                                        class="{{ $modRatio >= 1.0 ? 'text-emerald-500' : 'text-indigo-500' }}"
+                                                        stroke="currentColor" stroke-width="2"
+                                                        stroke-dasharray="{{ round($modRatio * 43.98, 2) }} 43.98"
+                                                        stroke-linecap="round"/>
+                                            </svg>
+                                        </div>
+                                        <span class="text-[10px] tabular-nums font-semibold text-slate-400 dark:text-gray-600">{{ $modGranted }}/{{ $modTotal }}</span>
+                                    </div>
+
+                                    <x-menu.heroicon name="chevron-right" class="ml-1 h-3 w-3 shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-50"
                                                      :class="selectedModule === '{{ $module }}' ? '!opacity-50' : ''"/>
                                 </button>
                             @endforeach
@@ -327,6 +375,7 @@ class extends Component {
 
                 {{-- Permisos por módulo --}}
                 @foreach($this->permissionGroups as $module => $permissions)
+                    @php $permNames = $permissions->pluck('name')->toArray(); @endphp
                     <div x-show="selectedModule === '{{ $module }}'" x-cloak>
 
                         {{-- Header del módulo --}}
@@ -342,10 +391,17 @@ class extends Component {
                                     {{ $permissions->count() }} {{ $permissions->count() === 1 ? 'permiso disponible' : 'permisos disponibles' }}
                                 </p>
                             </div>
-                            <div class="shrink-0 rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-1 dark:border-indigo-800/30 dark:bg-indigo-900/20">
-                                <span class="font-label text-[10px] font-bold uppercase tracking-wider text-indigo-500 dark:text-sky-400">
-                                    Permisos
-                                </span>
+                            <div class="ml-auto flex items-center gap-2">
+                                <button type="button"
+                                        @click="toggleGroup('{{ $module }}', {{ json_encode($permNames) }}, true)"
+                                        class="btn-base btn-secondary btn-sm">
+                                    <x-menu.heroicon name="check-circle" class="h-3 w-3"/>Marcar todo
+                                </button>
+                                <button type="button"
+                                        @click="toggleGroup('{{ $module }}', {{ json_encode($permNames) }}, false)"
+                                        class="btn-base btn-secondary btn-sm">
+                                    <x-menu.heroicon name="x-mark" class="h-3 w-3"/>Limpiar
+                                </button>
                             </div>
                         </div>
 
@@ -354,15 +410,24 @@ class extends Component {
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                 @foreach($permissions as $permission)
                                     @php $action = explode('.', $permission->name)[1] ?? $permission->name; @endphp
-                                    <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm transition-all duration-150 hover:border-indigo-200 hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/40 dark:hover:border-indigo-700/40">
+                                    <label class="perm-card"
+                                           :class="($wire.form.selectedPermissions || []).includes('{{ $permission->name }}')
+                                               ? 'perm-card-on' : 'perm-card-off'">
+                                        <template x-if="permState('{{ $permission->name }}') === 'added'">
+                                            <span class="diff-badge diff-badge-added">Nuevo</span>
+                                        </template>
+                                        <template x-if="permState('{{ $permission->name }}') === 'removed'">
+                                            <span class="diff-badge diff-badge-removed">Quitado</span>
+                                        </template>
                                         <input
                                             type="checkbox"
                                             wire:model="form.selectedPermissions"
                                             value="{{ $permission->name }}"
                                             class="mt-0.5 h-4 w-4 cursor-pointer rounded border-slate-300 text-indigo-600 focus:ring-2 focus:ring-indigo-500/25 dark:border-gray-600 dark:bg-gray-800 dark:text-indigo-400"/>
                                         <div class="min-w-0 flex-1">
-                                            <p class="text-sm font-semibold text-slate-700 dark:text-gray-200">
+                                            <p class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-gray-200">
                                                 {{ $actionLabels[$action] ?? ucfirst($action) }}
+                                                @if($action === 'gestionar')<span class="pill-warning">FULL</span>@endif
                                             </p>
                                             <p class="mt-0.5 text-xs text-slate-400 dark:text-gray-500">
                                                 {{ $permission->name }}
@@ -390,6 +455,8 @@ class extends Component {
         selectedModule: null,
         activeRoleId: null,
         errors: {},
+        originalPerms: [],
+        _captureNext: false,
 
         init() {
             this.$wire.$on('role-saved', () => {
@@ -397,6 +464,15 @@ class extends Component {
                 this.selectedModule = null;
                 this.activeRoleId = null;
                 this.errors = {};
+                this.originalPerms = [];
+                this._captureNext = false;
+            });
+            // Captura los permisos originales después de que Livewire complete fillRole
+            this.$watch(() => JSON.stringify(this.$wire.form.selectedPermissions), () => {
+                if (this._captureNext) {
+                    this.originalPerms = [...(this.$wire.form.selectedPermissions || [])];
+                    this._captureNext = false;
+                }
             });
         },
 
@@ -405,6 +481,8 @@ class extends Component {
             this.selectedModule = null;
             this.activeRoleId = null;
             this.errors = {};
+            this.originalPerms = [];
+            this._captureNext = false;
         },
 
         selectRole(id) {
@@ -412,6 +490,7 @@ class extends Component {
             this.selectedModule = null;
             this.activeRoleId = id;
             this.errors = {};
+            this._captureNext = true;
         },
 
         cancelEdit() {
@@ -420,6 +499,25 @@ class extends Component {
             this.selectedModule = null;
             this.activeRoleId = null;
             this.errors = {};
+            this.originalPerms = [];
+            this._captureNext = false;
+        },
+
+        get diffCount() {
+            if (!this.activeRoleId) return 0;
+            const cur = this.$wire.form.selectedPermissions || [];
+            const og  = this.originalPerms;
+            return cur.filter(p => !og.includes(p)).length +
+                   og.filter(p => !cur.includes(p)).length;
+        },
+
+        permState(name) {
+            if (!this.activeRoleId) return null;
+            const cur = (this.$wire.form.selectedPermissions || []).includes(name);
+            const was = this.originalPerms.includes(name);
+            if (cur && !was) return 'added';
+            if (!cur && was) return 'removed';
+            return null;
         },
 
         groupAllChecked(module, permNames) {

@@ -176,6 +176,17 @@ Disponibles en toda la app sin necesidad de clases Tailwind largas:
 | `.elevation-2` | Capa hover — cards al hacer hover, selects abiertos |
 | `.elevation-3` | Capa modal — modales, drawers, offcanvas |
 | `.elevation-4` | Capa flotante — popovers, tooltips, menús contextuales |
+| `.live-dot` | Dot animado emerald (pulse) — indica estado sincronizado/activo en tiempo real |
+| `.pill-warning` | Pill amber — acciones de alto impacto (FULL, etc.) |
+| `.pill-success` | Pill emerald — estados positivos confirmados |
+| `.pill-neutral` | Pill slate — etiquetas neutras / informativas |
+| `.progress-bar` | Barra de progreso `h-1` — cobertura de permisos, porcentaje de completitud |
+| `.diff-badge` | Badge absoluto (base) — posicionado en esquina superior derecha de un `.relative` |
+| `.diff-badge-added` | Variante verde de `.diff-badge` — permiso/ítem nuevo sin guardar |
+| `.diff-badge-removed` | Variante roja de `.diff-badge` — permiso/ítem quitado sin guardar |
+| `.perm-card` | Card clickeable para checkboxes de permisos — base con hover y sombra |
+| `.perm-card-on` | Modificador de `.perm-card` — estado activo (borde indigo + ring) |
+| `.perm-card-off` | Modificador de `.perm-card` — estado inactivo (fondo slate sutil) |
 
 ```html
 <!-- CTA con gradiente de marca -->
@@ -189,7 +200,58 @@ Disponibles en toda la app sin necesidad de clases Tailwind largas:
 
 <!-- Modal -->
 <div class="elevation-3 rounded-2xl bg-white dark:bg-gray-900 p-6">...</div>
+
+<!-- Pill de estado activo en header de panel -->
+<div class="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-2 dark:border-emerald-800/30 dark:bg-emerald-900/20">
+    <span class="live-dot"></span>
+    <span class="font-label text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+        Sincronizado · 6 roles
+    </span>
+</div>
+
+<!-- Barra de progreso (cobertura de permisos) -->
+<div class="progress-bar">
+    <span style="width: 65%"></span>
+</div>
+<!-- Con gradiente override -->
+<div class="progress-bar flex-1">
+    <span :style="`width: ${coveragePercent}%`"
+          class="!bg-gradient-to-r !from-indigo-600 !to-indigo-800 dark:!from-sky-500 dark:!to-indigo-600"></span>
+</div>
+
+<!-- Pill semántica inline -->
+<p class="flex items-center gap-1.5 text-sm font-semibold">
+    Gestionar <span class="pill-warning">FULL</span>
+</p>
+
+<!-- Perm-card con estado reactivo (Alpine + Livewire) -->
+<label class="perm-card"
+       :class="($wire.form.selectedPermissions || []).includes('modulo.accion')
+           ? 'perm-card-on' : 'perm-card-off'">
+    <!-- diff badge (solo aparece con cambios sin guardar) -->
+    <template x-if="permState('modulo.accion') === 'added'">
+        <span class="diff-badge diff-badge-added">Nuevo</span>
+    </template>
+    <template x-if="permState('modulo.accion') === 'removed'">
+        <span class="diff-badge diff-badge-removed">Quitado</span>
+    </template>
+    <input type="checkbox" wire:model="form.selectedPermissions" value="modulo.accion" .../>
+    <div>...</div>
+</label>
+
+<!-- Contador de cambios pendientes flotante sobre un botón -->
+<div class="relative inline-flex items-center">
+    <x-btn.save ... />
+    <template x-if="diffCount > 0">
+        <span class="absolute -right-1.5 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white"
+              x-text="diffCount"></span>
+    </template>
+</div>
 ```
+
+> **⚠️ `.perm-card` requiere `relative` en el label** — ya está incluido en la clase. Los `.diff-badge` se posicionan con `absolute -top-1.5 right-2` respecto al label.
+
+> **⚠️ `.progress-bar > span`** define `bg-indigo-600` por defecto. Para override con gradiente, usar `!bg-gradient-to-r` + `!from-X !to-Y` (el `!` fuerza sobre el `@apply` del componente).
 
 ---
 
@@ -1095,9 +1157,11 @@ Estructura obligatoria: **icono + título claro + subtítulo + CTA principal**.
 ```
 
 **Íconos registrados relevantes:**
-`envelope`, `lock-closed`, `eye`, `eye-slash`, `map-pin`, `phone`, `building-office`, `building-library`, `identification`, `chevron-up-down`, `information-circle`, `check-circle`, `x-circle`, `x-mark`, `shield-check`, `calendar`, `beaker`, `users`, `document-check`, `login`, `sun`, `moon`, `bars-3`, `pencil`, `trash`, `plus-circle`, `magnifying-glass`, `currency-dollar`, `globe-alt`, `clock`, `hashtag`
+`envelope`, `lock-closed`, `eye`, `eye-slash`, `map-pin`, `phone`, `building-office`, `building-library`, `identification`, `chevron-up-down`, `information-circle`, `check-circle`, `x-circle`, `x-mark`, `shield-check`, `calendar`, `beaker`, `users`, `document-check`, `login`, `sun`, `moon`, `bars-3`, `pencil`, `trash`, `plus-circle`, `magnifying-glass`, `currency-dollar`, `globe-alt`, `clock`, `hashtag`, `academic-cap`, `heart`, `cog-8-tooth`, `document-duplicate`, `exclamation-triangle`, `key`, `adjustments-horizontal`, `user-group`, `calendar-days`, `clipboard-document-list`, `chart-bar`, `squares-2x2`, `chevron-right`, `chevron-down`, `arrow-left`, `plus`
 
 > `light-tem` y `dark-tem` son aliases legacy de `sun` y `moon` — usar los nombres primarios.
+
+> **`check` (solitario) NO está registrado** — usar `check-circle` en su lugar.
 
 **Tamaños estándar:**
 - `h-4 w-4` — inline, badges, items de dropdown

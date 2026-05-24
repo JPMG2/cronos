@@ -170,4 +170,68 @@
       .avatar-4 { @apply bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400; }
       .avatar-5 { @apply bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400; }
 
+      /* ── Live dot — estado "vivo / sincronizado" ─────────────────── */
+      @keyframes cronos-pulse {
+          0%, 100% { opacity: 1; }
+          50%      { opacity: 0.4; }
+      }
+      .live-dot {
+          @apply h-1.5 w-1.5 rounded-full bg-emerald-500;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+          animation: cronos-pulse 2s ease-in-out infinite;
+      }
+      .dark .live-dot {
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      }
+
+      /* ── Pills semánticas ────────────────────────────────────────── */
+      .pill-warning {
+          @apply inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5
+                 text-[11px] font-semibold text-amber-600
+                 dark:bg-amber-500/10 dark:text-amber-400;
+      }
+      .pill-success {
+          @apply inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5
+                 text-[11px] font-semibold text-emerald-700
+                 dark:bg-emerald-500/10 dark:text-emerald-400;
+      }
+      .pill-neutral {
+          @apply inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5
+                 text-[11px] font-semibold text-slate-600
+                 dark:bg-gray-800 dark:text-gray-400;
+      }
+
+      /* ── Mini barra de progreso ──────────────────────────────────── */
+      .progress-bar {
+          @apply h-1 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-gray-800;
+      }
+      .progress-bar > span {
+          @apply block h-full rounded-full bg-indigo-600 dark:bg-indigo-400
+                 transition-[width] duration-300 ease-out;
+      }
+
+      /* ── Diff badge (NUEVO / QUITADO) ───────────────────────────── */
+      .diff-badge {
+          @apply absolute -top-1.5 right-2 rounded px-1.5 py-0.5
+                 text-[9px] font-bold uppercase tracking-wider text-white;
+      }
+      .diff-badge-added   { @apply bg-emerald-500; }
+      .diff-badge-removed { @apply bg-rose-500; }
+
+      /* ── Permission card ─────────────────────────────────────────── */
+      .perm-card {
+          @apply relative flex cursor-pointer items-start gap-3 rounded-xl border bg-white p-4
+                 shadow-sm transition-all duration-150
+                 hover:border-indigo-200 hover:shadow-md
+                 dark:bg-gray-800/40 dark:hover:border-indigo-700/40;
+      }
+      .perm-card-on {
+          @apply border-indigo-500 ring-4 ring-indigo-500/10
+                 dark:border-indigo-500 dark:ring-indigo-500/15;
+      }
+      .perm-card-off {
+          @apply border-slate-200/80 bg-slate-50/50
+                 dark:border-gray-700/60;
+      }
+
   }
