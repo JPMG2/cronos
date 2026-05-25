@@ -88,6 +88,22 @@ final class RolePermissionSeeder extends Seeder
             'auditoria.view',
             'auditoria.export',
 
+            // ── MAESTROS › OBRAS SOCIALES ────────────────────────────
+            'obras-sociales.view',
+            'obras-sociales.create',
+            'obras-sociales.update',
+            'obras-sociales.delete',
+
+            'planes.view',
+            'planes.create',
+            'planes.update',
+            'planes.delete',
+
+            'coberturas.view',
+            'coberturas.create',
+            'coberturas.update',
+            'coberturas.delete',
+
             // ── CONFIGURACIÓN › PARÁMETROS ────────────────────────────
             'parametros.view',
             'parametros.update',
@@ -114,7 +130,7 @@ final class RolePermissionSeeder extends Seeder
         // Super Admin — todos los permisos
         $superAdmin->syncPermissions(Permission::all());
 
-        // Admin — configuración completa + vista clínica + reportes
+        // Admin — configuración completa + maestros + vista clínica + reportes
         $admin->syncPermissions([
             'empresa.view', 'empresa.update',
             'sucursales.view', 'sucursales.create', 'sucursales.update', 'sucursales.delete',
@@ -127,28 +143,37 @@ final class RolePermissionSeeder extends Seeder
             'parametros.view', 'parametros.update',
             'secuencias.view', 'secuencias.update',
             'integraciones.view', 'integraciones.update',
+            'obras-sociales.view', 'obras-sociales.create', 'obras-sociales.update', 'obras-sociales.delete',
+            'planes.view', 'planes.create', 'planes.update', 'planes.delete',
+            'coberturas.view', 'coberturas.create', 'coberturas.update', 'coberturas.delete',
             'pacientes.view', 'pacientes.export',
             'profesionales.view',
             'turnos.view', 'turnos.export',
             'reportes.view', 'reportes.print', 'reportes.export',
         ]);
 
-        // Médico — clínica completa, sin configuración
+        // Médico — clínica completa + consulta obras sociales, sin configuración
         $medico->syncPermissions([
             'pacientes.view', 'pacientes.create', 'pacientes.update', 'pacientes.print',
             'profesionales.view',
             'turnos.view', 'turnos.create', 'turnos.update', 'turnos.print',
             'calendario.view',
             'consultas.view', 'consultas.create', 'consultas.update', 'consultas.print',
+            'obras-sociales.view',
+            'planes.view',
+            'coberturas.view',
             'reportes.view', 'reportes.print',
         ]);
 
-        // Recepcionista — agenda y registro de pacientes, sin historia clínica
+        // Recepcionista — agenda, pacientes + consulta obras sociales para registro
         $recepcionista->syncPermissions([
             'pacientes.view', 'pacientes.create', 'pacientes.update',
             'profesionales.view',
             'turnos.view', 'turnos.create', 'turnos.update', 'turnos.delete', 'turnos.print',
             'calendario.view',
+            'obras-sociales.view',
+            'planes.view',
+            'coberturas.view',
         ]);
 
         // Enfermero — historia clínica y pacientes, sin agenda ni config

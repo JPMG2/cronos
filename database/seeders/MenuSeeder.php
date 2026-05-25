@@ -173,13 +173,60 @@ final class MenuSeeder extends Seeder
         ]);
 
         // ========================================
+        // MÓDULO: MAESTROS
+        // ========================================
+        $maestros = Menu::create([
+            'title' => 'MAESTROS',
+            'icon' => 'rectangle-stack',
+            'route' => null,
+            'order' => 5,
+            'is_active' => true,
+        ]);
+
+        $obrasSociales = Menu::create([
+            'parent_id' => $maestros->id,
+            'title' => 'Obras Sociales',
+            'icon' => 'shield-check',
+            'route' => null,
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $obrasSociales->id,
+            'title' => 'Listado de Obras Sociales',
+            'icon' => 'queue-list',
+            'route' => 'maestros.obras-sociales.index',
+            'order' => 1,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $obrasSociales->id,
+            'title' => 'Nueva Obra Social',
+            'icon' => 'plus-circle',
+            'route' => 'maestros.obras-sociales.create',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $obrasSociales->id,
+            'title' => 'Planes de Cobertura',
+            'icon' => 'document-text',
+            'route' => 'maestros.planes.index',
+            'order' => 3,
+            'is_active' => false,
+        ]);
+
+        // ========================================
         // MÓDULO: REPORTES
         // ========================================
         $reportes = Menu::create([
             'title' => 'REPORTES',
             'icon' => 'chart-bar',
             'route' => null,
-            'order' => 5,
+            'order' => 6,
             'is_active' => true,
         ]);
 
@@ -217,7 +264,7 @@ final class MenuSeeder extends Seeder
             'title' => 'CONFIGURACIÓN',
             'icon' => 'cog-8-tooth',
             'route' => null,
-            'order' => 6,
+            'order' => 7,
             'is_active' => true,
         ]);
 
