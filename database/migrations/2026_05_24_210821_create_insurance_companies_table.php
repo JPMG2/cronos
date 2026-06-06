@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\CoverageType;
 use App\Models\CurrentStatus;
 use App\Models\Region;
 use Illuminate\Database\Migrations\Migration;
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(CurrentStatus::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(Region::class)->nullable()->constrained()->nullOnDelete();
+            $table->foreignIdFor(CoverageType::class)->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->string('code', 20)->nullable()->index();
             $table->string('cuit', 20)->nullable()->unique();

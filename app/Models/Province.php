@@ -35,6 +35,7 @@ final class Province extends Model
     {
         return [
             'country_id' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
 

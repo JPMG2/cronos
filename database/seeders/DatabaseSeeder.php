@@ -25,6 +25,7 @@ final class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(CatalogFormSeeder::class);
+        $this->call(CoverageTypeSeeder::class);
         $this->call(RolePermissionSeeder::class);
     }
 }

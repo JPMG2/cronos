@@ -46,6 +46,15 @@ Route::middleware('auth')->group(function () {
         ->name('empresa.configuracion')
         ->middleware('permission:parametros.view');
 
+    Route::livewire('/configuracion/tipos-cobertura', 'configuracion.coverage.coverage-type')
+        ->name('parametros.tipos-cobertura')
+        ->middleware('permission:parametros.view');
+
+    // ── Maestros ─────────────────────────────────────────────────────────────
+    Route::livewire('/maestros/obras-sociales', 'master.insurances')
+        ->name('maestros.obras-sociales.create')
+        ->middleware('permission:obras-sociales.view');
+
     // ── Admin › Seguridad ─────────────────────────────────────────────────────
     Route::livewire('/admin/roles', 'admin.seguridad.manage-roles')
         ->name('admin.roles.index')

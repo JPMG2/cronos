@@ -229,30 +229,19 @@ new class extends Component {
 
         {{-- Cabecera de columnas --}}
         @if($this->bloodTypes->isNotEmpty())
-            <div class="flex items-center justify-between px-5 py-2">
-                <span
-                    class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                    Código · Nombre
-                </span>
-                <span
-                    class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                    Acciones
-                </span>
-            </div>
-            <div
-                class="mx-5 h-px bg-gradient-to-r from-transparent via-rose-200/60 to-transparent dark:via-rose-800/40"></div>
+            <x-list.header :code="true" :status="null" color="rose" />
         @endif
 
         {{-- Filas --}}
         @forelse($this->bloodTypes as $bloodType)
             <div wire:key="blood-type-{{ $bloodType->id }}"
-                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
                         {{ $this->form->editingId === $bloodType->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Código badge + Nombre + Universales --}}
                 <div class="flex min-w-0 flex-1 items-center gap-2">
                     <span
-                        class="shrink-0 rounded-lg bg-rose-100 px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:bg-rose-500/15 dark:text-rose-300">
+                        class="shrink-0 min-w-[52px] text-center rounded-lg bg-rose-100 px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:bg-rose-500/15 dark:text-rose-300">
                         {{ $bloodType->code }}
                     </span>
                     <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
@@ -276,10 +265,10 @@ new class extends Component {
                 </div>
 
                 {{-- Acciones --}}
-                <div class="flex shrink-0 items-center gap-1.5">
+                <x-list.actions>
                     <x-btn.mini-edit lable="Editar" wire:click="startEdit({{ $bloodType->id }})"/>
                     <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $bloodType->id }})"/>
-                </div>
+                </x-list.actions>
             </div>
 
             @if(! $loop->last)
@@ -295,7 +284,7 @@ new class extends Component {
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
                     Sin tipos de sangre registrados
                 </h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-gray-400">
+                <p class="mt-1 font-body text-xs text-slate-500 dark:text-gray-400">
                     Usá el formulario de arriba para agregar el primero.
                 </p>
             </div>

@@ -197,24 +197,16 @@ new class extends Component {
     <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
 
         @if($this->provinces->isNotEmpty())
-            <div class="flex items-center justify-between px-5 py-2">
-                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                    País · Nombre
-                </span>
-                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                    Estado · Acciones
-                </span>
-            </div>
-            <div class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
+            <x-list.header :code="true" code-label="País" />
         @endif
 
         @forelse($this->provinces as $province)
             <div wire:key="province-{{ $province->id }}"
-                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
                             {{ $this->form->provinceId === $province->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 <div class="flex min-w-0 flex-1 items-center gap-2">
-                    <span class="shrink-0 rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+                    <span class="shrink-0 min-w-[52px] text-center rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
                         {{ $province->country->code ?? '-' }}
                     </span>
                     <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200
@@ -225,33 +217,23 @@ new class extends Component {
 
                 <div class="flex shrink-0 items-center gap-1.5">
 
-                    <button type="button"
-                            wire:click="toggleProvinceActive({{ $province->id }})"
-                            wire:loading.class="cursor-wait opacity-50"
-                            wire:target="toggleProvinceActive({{ $province->id }})"
-                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
-                            aria-label="{{ $province->is_active ? 'Desactivar' : 'Activar' }} {{ $province->name }}">
-                        @if($province->is_active)
-                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 transition-colors duration-150 hover:bg-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20 dark:hover:bg-emerald-500/20">
-                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
-                                Activo
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200/60 transition-colors duration-150 hover:bg-slate-200/80 dark:bg-gray-800 dark:text-gray-500 dark:ring-gray-700 dark:hover:bg-gray-700/60">
-                                <span class="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-gray-600"></span>
-                                Inactivo
-                            </span>
-                        @endif
-                    </button>
+                    <x-list.toggle
+                        :active="$province->is_active"
+                        size="sm"
+                        wire:click="toggleProvinceActive({{ $province->id }})"
+                        wire:loading.class="cursor-wait opacity-50"
+                        wire:target="toggleProvinceActive({{ $province->id }})"
+                        aria-label="{{ $province->is_active ? 'Desactivar' : 'Activar' }} {{ $province->name }}" />
 
-                    <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
+                    <x-list.divider />
 
-                    <x-btn.mini-edit
-                        lable="Editar"
-                        wire:click="startEditProvince({{ $province->id }})"
-                        @click="$dispatch('province-edit-started')" />
-
-                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $province->id }})" />
+                    <x-list.actions>
+                        <x-btn.mini-edit
+                            lable="Editar"
+                            wire:click="startEditProvince({{ $province->id }})"
+                            @click="$dispatch('province-edit-started')" />
+                        <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $province->id }})" />
+                    </x-list.actions>
 
                 </div>
             </div>
@@ -272,7 +254,7 @@ new class extends Component {
                         Sin provincias registradas
                     @endif
                 </h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-gray-400">
+                <p class="mt-1 font-body text-xs text-slate-500 dark:text-gray-400">
                     @if($this->form->country_id)
                         Creá la primera con el formulario de arriba.
                     @else

@@ -23,6 +23,7 @@ final class InsuranceCompany extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'coverage_type_id',
         'current_status_id',
         'region_id',
         'name',
@@ -46,6 +47,11 @@ final class InsuranceCompany extends Model
             ->logOnlyDirty()
             ->useLogName('insurance_company')
             ->dontLogEmptyChanges();
+    }
+
+    public function coverageType(): BelongsTo
+    {
+        return $this->belongsTo(CoverageType::class);
     }
 
     public function plans(): HasMany
@@ -88,6 +94,7 @@ final class InsuranceCompany extends Model
     protected function casts(): array
     {
         return [
+            'coverage_type_id' => 'integer',
             'current_status_id' => 'integer',
             'region_id' => 'integer',
             'created_by' => 'integer',

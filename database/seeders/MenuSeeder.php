@@ -183,9 +183,10 @@ final class MenuSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        $obrasSociales = Menu::create([
+        // ── Aseguradoras (Obras Sociales + Prepagas + EPS + IVSS + HCM) ─────
+        $aseguradoras = Menu::create([
             'parent_id' => $maestros->id,
-            'title' => 'Obras Sociales',
+            'title' => 'Aseguradoras',
             'icon' => 'shield-check',
             'route' => null,
             'order' => 1,
@@ -193,29 +194,76 @@ final class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
-            'parent_id' => $obrasSociales->id,
-            'title' => 'Listado de Obras Sociales',
+            'parent_id' => $aseguradoras->id,
+            'title' => 'Listado de Aseguradoras',
             'icon' => 'queue-list',
-            'route' => 'maestros.obras-sociales.index',
+            'route' => 'maestros.aseguradoras.index',
             'order' => 1,
             'is_active' => false,
         ]);
 
         Menu::create([
-            'parent_id' => $obrasSociales->id,
-            'title' => 'Nueva Obra Social',
+            'parent_id' => $aseguradoras->id,
+            'title' => 'Nueva Aseguradora',
             'icon' => 'plus-circle',
             'route' => 'maestros.obras-sociales.create',
             'order' => 2,
+            'is_active' => true,
+        ]);
+
+        // ── ARTs / ARLs ───────────────────────────────────────────────────
+        $arts = Menu::create([
+            'parent_id' => $maestros->id,
+            'title' => 'ARTs / ARLs',
+            'icon' => 'briefcase',
+            'route' => null,
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $arts->id,
+            'title' => 'Listado de ARTs',
+            'icon' => 'queue-list',
+            'route' => 'maestros.arts.index',
+            'order' => 1,
             'is_active' => false,
         ]);
 
         Menu::create([
-            'parent_id' => $obrasSociales->id,
-            'title' => 'Planes de Cobertura',
-            'icon' => 'document-text',
-            'route' => 'maestros.planes.index',
+            'parent_id' => $arts->id,
+            'title' => 'Nueva ART / ARL',
+            'icon' => 'plus-circle',
+            'route' => 'maestros.arts.create',
+            'order' => 2,
+            'is_active' => false,
+        ]);
+
+        // ── Convenios ─────────────────────────────────────────────────────
+        $convenios = Menu::create([
+            'parent_id' => $maestros->id,
+            'title' => 'Convenios',
+            'icon' => 'document-check',
+            'route' => null,
             'order' => 3,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $convenios->id,
+            'title' => 'Listado de Convenios',
+            'icon' => 'queue-list',
+            'route' => 'maestros.convenios.index',
+            'order' => 1,
+            'is_active' => false,
+        ]);
+
+        Menu::create([
+            'parent_id' => $convenios->id,
+            'title' => 'Nuevo Convenio',
+            'icon' => 'plus-circle',
+            'route' => 'maestros.convenios.create',
+            'order' => 2,
             'is_active' => false,
         ]);
 
@@ -394,6 +442,15 @@ final class MenuSeeder extends Seeder
             'icon' => 'hashtag',
             'route' => 'parametros.secuencias',
             'order' => 3,
+            'is_active' => true,
+        ]);
+
+        Menu::create([
+            'parent_id' => $parametros->id,
+            'title' => 'Tipos de Cobertura',
+            'icon' => 'tag',
+            'route' => 'parametros.tipos-cobertura',
+            'order' => 4,
             'is_active' => true,
         ]);
 

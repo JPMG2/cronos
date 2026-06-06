@@ -160,26 +160,18 @@ new class extends Component {
 
         {{-- Cabecera de columnas --}}
         @if($this->taxConditions->isNotEmpty())
-            <div class="flex items-center justify-between px-5 py-2">
-                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                    Código · Nombre
-                </span>
-                <span class="font-label text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-gray-600">
-                    Discrimina · Estado · Acciones
-                </span>
-            </div>
-            <div class="mx-5 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent dark:via-indigo-800/40"></div>
+            <x-list.header :code="true" :toggles="['Discrimina']" />
         @endif
 
         {{-- Filas --}}
         @forelse($this->taxConditions as $taxCondition)
             <div wire:key="tax-condition-{{ $taxCondition->id }}"
-                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-900/40
+                 class="group flex items-center justify-between px-5 py-1.5 transition-colors duration-150 hover:bg-indigo-50/60 dark:hover:bg-gray-900/40
                             {{ $this->form->taxId === $taxCondition->id ? 'border-l-2 border-amber-400 bg-amber-50/50 dark:border-amber-500 dark:bg-amber-900/10' : 'border-l-2 border-transparent' }}">
 
                 {{-- Código badge + Nombre --}}
                 <div class="flex min-w-0 flex-1 items-center gap-2">
-                    <span class="shrink-0 rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
+                    <span class="shrink-0 min-w-[52px] text-center rounded-lg bg-indigo-100 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
                         {{ $taxCondition->code }}
                     </span>
                     <span class="truncate text-sm font-semibold text-slate-700 dark:text-gray-200">
@@ -190,12 +182,13 @@ new class extends Component {
                 {{-- Discrimina · Estado · Acciones --}}
                 <div class="flex shrink-0 items-center gap-1.5">
 
+                    {{-- Discrimina IVA: toggle custom con ícono, ancho fijo w-24 para alinear con header --}}
                     <button type="button"
                             wire:click="toggleDiscriminateTax({{ $taxCondition->id }})"
                             wire:loading.class="opacity-50 cursor-wait"
                             wire:target="toggleDiscriminateTax({{ $taxCondition->id }})"
-                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
-                            aria-label="{{ $taxCondition->discriminate_tax ? 'Desactivar' : 'Activar' }} {{ $taxCondition->name }}">
+                            class="flex w-24 items-center justify-center rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
+                            aria-label="{{ $taxCondition->discriminate_tax ? 'No discrimina' : 'Discrimina' }} IVA">
                         @if($taxCondition->discriminate_tax)
                             <span class="hidden items-center gap-1 rounded-lg bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-700 ring-1 ring-inset ring-violet-200/60 dark:bg-violet-500/10 dark:text-violet-400 dark:ring-violet-500/20 sm:inline-flex">
                                 <x-menu.heroicon name="receipt-percent" class="h-3 w-3" />
@@ -208,43 +201,31 @@ new class extends Component {
                         @endif
                     </button>
 
-                    <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
+                    <x-list.toggle
+                        :active="$taxCondition->is_active"
+                        size="sm"
+                        wire:click="toggleStatusTax({{ $taxCondition->id }})"
+                        wire:loading.class="opacity-50 cursor-wait"
+                        wire:target="toggleStatusTax({{ $taxCondition->id }})"
+                        aria-label="{{ $taxCondition->is_active ? 'Desactivar' : 'Activar' }} {{ $taxCondition->name }}" />
 
-                    {{-- Estado --}}
-                    <button type="button"
-                            wire:click="toggleStatusTax({{ $taxCondition->id }})"
-                            wire:loading.class="opacity-50 cursor-wait"
-                            wire:target="toggleStatusTax({{ $taxCondition->id }})"
-                            class="rounded-lg transition-colors duration-150 active:scale-95 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-400/40 dark:focus:ring-sky-400/40"
-                            aria-label="{{ $taxCondition->is_active ? 'Desactivar' : 'Activar' }} {{ $taxCondition->name }}">
-                        @if($taxCondition->is_active)
-                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200/60 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
-                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
-                                Activo
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200/60 dark:bg-gray-800 dark:text-gray-500 dark:ring-gray-700">
-                                <span class="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-gray-600"></span>
-                                Inactivo
-                            </span>
-                        @endif
-                    </button>
+                    <x-list.divider />
 
-                    <span class="h-4 w-px bg-slate-200 dark:bg-gray-700"></span>
-
-                    <x-btn.mini-edit
-                        lable="Editar"
-                        data-name="{{ $taxCondition->name }}"
-                        data-code="{{ $taxCondition->code }}"
-                        data-discriminate_tax="{{ $taxCondition->discriminate_tax ? 'true' : 'false' }}"
-                        @click="
+                    <x-list.actions>
+                        <x-btn.mini-edit
+                            lable="Editar"
+                            data-name="{{ $taxCondition->name }}"
+                            data-code="{{ $taxCondition->code }}"
+                            data-discriminate_tax="{{ $taxCondition->discriminate_tax ? 'true' : 'false' }}"
+                            @click="
                                 $wire.form.name = $el.dataset.name;
                                 $wire.form.code = $el.dataset.code;
                                 $wire.form.discriminate_tax = $el.dataset.discriminate_tax === 'true';
                                 $wire.startEditTaxCondition({{ $taxCondition->id }});
                                 goTopTaxCondition();
                             " />
-                    <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $taxCondition->id }})" />
+                        <x-btn.mini-delete lable="Eliminar" wire:click="delete({{ $taxCondition->id }})" />
+                    </x-list.actions>
 
                 </div>
             </div>
@@ -261,7 +242,7 @@ new class extends Component {
                 <h3 class="font-headline text-sm font-bold text-slate-800 dark:text-gray-100">
                     Sin condiciones impositivas registradas
                 </h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-gray-400">
+                <p class="mt-1 font-body text-xs text-slate-500 dark:text-gray-400">
                     Usá el formulario de arriba para agregar la primera.
                 </p>
             </div>

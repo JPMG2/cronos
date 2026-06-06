@@ -45,25 +45,13 @@ new class extends Component {
 
     public function render(): Illuminate\View\View
     {
-        $homeMenu = (object) [
-            "id" => 0,
-            "title" => "Inicio",
-            "icon" => "home",
-            "route" => "dashboard",
-            "order" => -1,
-            "is_active" => true,
-            "childrenRecursive" => collect(),
-        ];
-
-        $dbMenus = Cache::remember("sidebar_menus_db", now()->addHours(24), function () {
+        $menus = Cache::remember("sidebar_menus_db", now()->addHours(24), function () {
             return Menu::active()
                 ->whereNull("parent_id")
                 ->with("childrenRecursive")
                 ->orderBy("order")
                 ->get();
         });
-
-        $menus = collect([$homeMenu])->concat($dbMenus);
 
         return $this->view(["menus" => $menus]);
     }

@@ -32,4 +32,6 @@ return [
     'can_receive_from' => 'puede recibir de',
     'is_universal_donor' => 'donante universal',
     'is_universal_recipient' => 'receptor universal',
+    'is_active' => 'estado',
+    'requires_insurance_data' => 'requiere datos de cobertura',
 ];
